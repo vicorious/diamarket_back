@@ -12,8 +12,7 @@ class Auth {
                 const token = jwt.sign({ _id: dataUser._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
                 return {
                     token: token,
-                    user: dataUser,
-                    statusCode: '200'
+                    user: dataUser
                 }
             }
             return { error: 'Usuario no validado o usuario y/o contraseña incorrectos', statusCode: '401' }
