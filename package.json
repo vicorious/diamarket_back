@@ -1,0 +1,32 @@
+{
+  "name": "tuikit_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@sendgrid/mail": "^6.4.0",
+    "asyncify": "^2.1.2",
+    "aws-sdk": "^2.549.0",
+    "body-parser": "^1.19.0",
+    "chalk": "^2.4.2",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "express": "^4.17.1",
+    "express-asyncify": "^1.0.0",
+    "http": "0.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.7.3",
+    "morgan": "^1.9.1",
+    "multer": "^1.4.2",
+    "node-uuid": "^1.4.8",
+    "nodemon": "^1.19.1",
+    "twilio": "^3.35.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js",
+    "start:develop": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
