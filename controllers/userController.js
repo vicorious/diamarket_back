@@ -1,6 +1,6 @@
 'use strict'
 
-const UserModel = require('../models/userShema')
+const UserModel = require('../models/userSchema')
 const SmsController = require('../controllers/smsController')
 const GeneralController = require('../controllers/generalController')
 const EmailController = require('../controllers/emailController')

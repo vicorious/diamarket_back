@@ -44,28 +44,28 @@ const Schema = new mongoose.Schema({
         default: Date.now()
     },
     imageProfile: {
-        type: Type.String
+        type: Types.String
     },
-    location:{
+    location: {
         type: Types.Point
     },
-    credits:{
-      type: Types.String
+    credits: {
+        type: Types.String
     },
-    logs:[{
-        type:Types.Mixed
-    }],
-    cards:[{
-      type: Types.Mixed
-    }],
-    directions:[{
-      type: Types.Mixed
-    }],
-    userList:[{
+    logs: [{
         type: Types.Mixed
     }],
-    order:[{
-      type: Types.Mixed
+    cards: [{
+        type: Types.Mixed
+    }],
+    directions: [{
+        type: Types.Mixed
+    }],
+    userList: [{
+        type: Types.Mixed
+    }],
+    order: [{
+        type: Types.Mixed
     }]
 })
 
