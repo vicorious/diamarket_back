@@ -44,10 +44,7 @@ const Schema = new mongoose.Schema({
         default: Date.now()
     },
     imageProfile: {
-        type: Type.String
-    },
-    location:{
-        type: Types.Point
+        type: Types.String
     },
     credits:{
       type: Types.String

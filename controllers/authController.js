@@ -1,6 +1,6 @@
 'use strict'
 const jwt = require('jsonwebtoken')
-const UserModel = require('../models/userShema')
+const UserModel = require('../models/userSchema')
 const makePassword = require('../utils/makePassword')
 const SECRET = 'Cb6t%5UpGtx-G@jUM[RG~Aei8k8MKStC]=}pBlIT:C-9jr2{8fVaLZNUmqt%'
 class Auth {
