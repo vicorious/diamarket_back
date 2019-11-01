@@ -46,9 +46,6 @@ const Schema = new mongoose.Schema({
     imageProfile: {
         type: Types.String
     },
-    location: {
-        type: Types.Point
-    },
     credits: {
         type: Types.String
     },
