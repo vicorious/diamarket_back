@@ -3,7 +3,7 @@ const asyncify = require('express-asyncify')
 const routes = asyncify(express.Router())
 const availabilityController = require('../controllers/availabilityController')
 
-routes.use('/create', async(request, response) => {
+routes.post('/create', async(request, response) => {
 
 })
 

@@ -6,7 +6,7 @@ const Types = mongoose.Schema.Types
 const Schema = new mongoose.Schema({
     status: {
         type: Types.Boolean,
-        require: [true, 'El id es requerido']
+        default: true
     },
     name: {
         type: Types.String,
@@ -24,23 +24,23 @@ const Schema = new mongoose.Schema({
         require: [true, 'La localización es requerida']
     },
     neigborhood: {
-        type: Types.string,
+        type: Types.String,
         require: [true, 'El barrio es requerido']
     },
     locality: {
-        type: Types.string,
+        type: Types.String,
         require: [true, 'La localidad es requerida']
     },
     email: {
-        type: Types.string,
+        type: Types.String,
         require: [true, 'El email es requerido']
     },
     logo: {
-        type: Types.string,
+        type: Types.String,
         require: [true, 'El logo es requerido']
     },
     images: [{
-        type: Types.string
+        type: Types.String
     }],
     isActive: {
         type: Types.Boolean,
@@ -56,12 +56,15 @@ const Schema = new mongoose.Schema({
     }]
 })
 
+Schema.index({ location: '2dsphere' })
+
 class Supermarket extends Base {
     constructor() {
         super()
         this.sort = { email: 1 }
         this.model = mongoose.model('Supermarket', Schema)
         this.fields = 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules'
+        this.populate = [{ path: 'idAdmin', model: 'User' }]
     }
 }
 
