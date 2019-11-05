@@ -23,6 +23,11 @@ routes.post('/create/order',token, async(request, response) => {
     response.json(create)
 })
 
+routes.get('/admin', async(request, response) => {
+    const getAdmin = await UserController.getAdmin()
+    response.json(getAdmin)
+})
+
 routes.put('/validate', async(request, response) => {
     const validate = await UserController.validate(request.body)
     response.json(validate)

@@ -47,6 +47,18 @@ class User {
         }
     }
 
+    async getAdmin() {
+        const rol = await UserModel.search({ rol: 'administrator' })
+        let arrayAdmin = []
+        for (const admins of rol) {
+            let admin = {}
+            admin._id = admins._id
+            admin.name = admins.name
+            arrayAdmin.push(admin)
+        }
+        return arrayAdmin
+    }
+
     async updatePassword(_data) {
 
         const codeRandom = GeneralController.createCode()
