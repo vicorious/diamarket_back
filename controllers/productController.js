@@ -15,6 +15,10 @@ class User {
             return { error: 'El producto ya existe' }
         }
     }
+    async detailAll(data) {
+        const products = ProductModel.search(data)
+        return products
+    }
 }
 
 module.exports = new User()
