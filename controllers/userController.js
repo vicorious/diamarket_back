@@ -92,6 +92,14 @@ class User {
             return {error: " El usuario no existe"}
         }
     }
+    async detailAll(data) {
+        const user = await UserModel.search(data)
+        if (user.length>0) {
+            return user
+        } else {
+            return {error: "No se encuentran datos"}
+        }
+    }
 }
 
 module.exports = new User()
