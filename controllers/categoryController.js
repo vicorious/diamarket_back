@@ -5,7 +5,6 @@ class Category {
 
     async create(data) {
         const isExist = await CategoryModel.get({ name: data.name })
-        console.log(isExist);
         if (!isExist._id) {
             const create = await CategoryModel.create(data)
             return create

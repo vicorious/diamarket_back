@@ -18,6 +18,11 @@ routes.put('/update/:id', async(request, response) => {
     response.json(update)
 })
 
+routes.get('/admin', async(request, response) => {
+    const getAdmin = await UserController.getAdmin()
+    response.json(getAdmin)
+})
+
 routes.put('/validate', async(request, response) => {
     const validate = await UserController.validate(request.body)
     response.json(validate)
