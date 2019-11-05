@@ -15,4 +15,14 @@ routes.put('/update/:id', async(request, response) => {
     response.json(update)
 })
 
+routes.get('/all', async(request, response) => {
+    const getAll = await supermarketController.detailAll()
+    response.json(getAll)
+})
+
+routes.get('/detail/:id', async(request, response) => {
+    const getfirst = await supermarketController.detail(request.params.id)
+    response.json(getfirst)
+})
+
 module.exports = routes
