@@ -3,6 +3,7 @@
 const SupermarketModel = require('../models/supermarketSchema')
 
 class Supermarket {
+
     async create(data) {
         const isExist = await SupermarketModel.get({ address: data.address })
         if (!isExist._id) {
@@ -21,6 +22,20 @@ class Supermarket {
         } else {
             return { error: 'No se ha actualizado' }
         }
+    }
+
+    async detail(data) {
+        const supermarket = await SupermarketModel.get({ _id: data })
+        if (supermarket._id) {
+            return supermarket
+        } else {
+            return { error: 'El supermercado no existe' }
+        }
+    }
+
+    async detailAll() {
+        const getAll = await SupermarketModel.search({})
+        return getAll
     }
 
 }
