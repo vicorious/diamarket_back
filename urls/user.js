@@ -18,6 +18,11 @@ routes.put('/update/:id', async(request, response) => {
     response.json(update)
 })
 
+routes.post('/create/order',token, async(request, response) => {
+    const create = await UserController.createOrder(request.body,request.user.id)
+    response.json(create)
+})
+
 routes.put('/validate', async(request, response) => {
     const validate = await UserController.validate(request.body)
     response.json(validate)

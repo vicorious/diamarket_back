@@ -11,6 +11,9 @@ class Funtions {
         return uniqueCode
     }
 
+    detailgeneral(){
+
+    }
 }
 
 module.exports = new Funtions()
