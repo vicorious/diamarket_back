@@ -9,7 +9,7 @@ const makePassword = require('../utils/makePassword')
 class User {
 
     async create(data) {
-        const isExist = await UserModel.get({email: data.email})
+        const isExist = await UserModel.get({ email: data.email })
         if (!isExist._id) {
             data.verifyCode = GeneralController.createCode()
             const user = await UserModel.create(data)
@@ -17,33 +17,33 @@ class User {
                 SmsController.send(data.cellPhone, 'Bienvenido DíaMarket tu código de verificación es ' + data.verifyCode)
                 return user
             } else {
-                return {error: 'Error al almacenar los datos', user}
+                return { error: 'Error al almacenar los datos', user }
             }
 
         } else {
-            return {error: 'El usuario ya existe'}
+            return { error: 'El usuario ya existe' }
         }
     }
 
     async validate(data) {
-        const isExist = await UserModel.get({email: data.email, verifyCode: data.code})
+        const isExist = await UserModel.get({ email: data.email, verifyCode: data.code })
         if (isExist._id) {
             const code = GeneralController.createCode()
-            const update = await UserModel.update(isExist._id, {isActive: true, verifyCode: code})
+            const update = await UserModel.update(isExist._id, { isActive: true, verifyCode: code })
             return update
         } else {
-            return {error: 'El código de autencticación no es valido'}
+            return { error: 'El código de autencticación no es valido' }
         }
     }
 
     async updateVeryfycode(email) {
         const code = GeneralController.createCode()
-        const isExist = await UserModel.get({email})
+        const isExist = await UserModel.get({ email })
         if (isExist._id) {
             await EmailController.send(email, `Su codigo de verificacion es: ${code}`)
-            return UserModel.update(isExist._id, {verifyCode: code})
+            return UserModel.update(isExist._id, { verifyCode: code })
         } else {
-            return {error: 'No se ha actualizado el código de recuperación'}
+            return { error: 'No se ha actualizado el código de recuperación' }
         }
     }
 
@@ -63,24 +63,24 @@ class User {
 
         const codeRandom = GeneralController.createCode()
 
-        const data = await UserModel.get({verifyCode: _data.code, email: _data.email})
+        const data = await UserModel.get({ verifyCode: _data.code, email: _data.email })
         if (data._id) {
             const encriptar = makePassword(_data.password)
-            return await UserModel.update(data._id, {password: encriptar, verifyCode: codeRandom})
+            return await UserModel.update(data._id, { password: encriptar, verifyCode: codeRandom })
         } else {
-            return {error: 'El código u correo no coincide'}
+            return { error: 'El código u correo no coincide' }
         }
     }
 
     async createOrder(data, _id) {
-        const user = await UserModel.get({_id})
+        const user = await UserModel.get({ _id })
 
         const orders = []
-        for(const order of user.order){
+        for (const order of user.order) {
             orders.push(order)
         }
         orders.push(data.order)
-        const update = UserModel.update(user._id,{order:orders})
+        const update = UserModel.update(user._id, { order: orders })
         return update
     }
 
@@ -89,7 +89,7 @@ class User {
         if (user._id) {
             return user
         } else {
-            return {error: " El usuario no existe"}
+            return { error: " El usuario no existe" }
         }
     }
 }

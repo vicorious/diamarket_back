@@ -24,6 +24,23 @@ class Supermarket {
         }
     }
 
+    async updateImage(_id, data) {
+        const isExist = await SupermarketModel.get({ _id })
+        if (isExist._id) {
+            const image = []
+            for (const images of isExist.images) {
+                image.push(images)
+            }
+            for (const images of data.images) {
+                image.push(images)
+            }
+            const updateImage = await SupermarketModel.update(isExist._id, { images: image })
+            return updateImage
+        } else {
+            return { error: 'No existe el supermercado' }
+        }
+    }
+
     async detail(data) {
         const supermarket = await SupermarketModel.get({ _id: data })
         if (supermarket._id) {
