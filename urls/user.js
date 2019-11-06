@@ -23,6 +23,11 @@ routes.post('/create/order',token, async(request, response) => {
     response.json(create)
 })
 
+routes.get('/todo', async  (request, response) => {
+    const users = await  UserController.countGen()
+    response.json(users)
+})
+
 routes.get('/admin', async(request, response) => {
     const getAdmin = await UserController.getAdmin()
     response.json(getAdmin)

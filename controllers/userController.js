@@ -100,6 +100,17 @@ class User {
             return {error: "No se encuentran datos"}
         }
     }
+    async countGen() {
+        let countOrder=0
+        const userCount = await UserModel.count({rol:'client'})
+        const data = await UserModel.search({rol:'client'})
+        for(const user of data){
+            for(const order of user.order){
+                countOrder++
+            }
+        }
+        return {countOrder,userCount}
+    }
 }
 
 module.exports = new User()

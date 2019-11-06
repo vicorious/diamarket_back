@@ -2,13 +2,11 @@
 const express = require('express')
 const asyncify = require('express-asyncify')
 const routes = asyncify(express.Router())
-const SupermarketController = require('../controllers/supermarketController')
-const UserController = require('../controllers/userController')
+const GeneralController = require('../controllers/generalController')
 
-routes.post('/detailgeneral', async(request, response) => {
-    const product = await ProductController.detailAll({name:request.body.name})
-    const user = await UserController.detailAll({name:request.body.name})
-    response.json(search)
+routes.get('/detail/general', async(request, response) => {
+    const general = await GeneralController.detailgeneral()
+    response.json(general)
 })
 
 module.exports = routes

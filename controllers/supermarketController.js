@@ -1,6 +1,7 @@
 'use strict'
 
 const SupermarketModel = require('../models/supermarketSchema')
+const UserModel = require('../models/userSchema')
 
 class Supermarket {
 
@@ -37,7 +38,21 @@ class Supermarket {
         const getAll = await SupermarketModel.search({})
         return getAll
     }
-
+    async count() {
+        const count = await SupermarketModel.count()
+        return count
+    }
+    async countGen() {
+        let countOrder=0
+        const userCount = await UserModel.count({rol:'client'})
+        const data = await UserModel.search({rol:'client'})
+        for(const user of data){
+            for(const order of user.order){
+                countOrder++
+            }
+        }
+        return {countOrder,userCount}
+    }
 }
 
 module.exports = new Supermarket()
