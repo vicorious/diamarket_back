@@ -15,6 +15,12 @@ routes.put('/update/:id', async(request, response) => {
     response.json(update)
 })
 
+routes.put('/updateimage/:id', async(request, response) => {
+    const id = request.params.id
+    const update = await supermarketController.updateImage(id, request.body)
+    response.json(update)
+})
+
 routes.get('/all', async(request, response) => {
     const getAll = await supermarketController.detailAll()
     response.json(getAll)
