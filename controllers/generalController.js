@@ -1,7 +1,10 @@
 'use-strict'
+const SupermarketController = require('./supermarketController')
+const user = require('./userController')
+const PromotionController = require('./promotionController')
 class Funtions {
 
-    createCode() {
+    async createCode() {
         let uniqueCode = ""
         const possible = "0123456789"
         for (var i = 0; i < 6; i++) {
@@ -11,8 +14,11 @@ class Funtions {
         return uniqueCode
     }
 
-    detailgeneral(){
-
+    async detailgeneral(){
+        const supermarket = await SupermarketController.count()
+        const user = await SupermarketController.countGen()
+        const promotion = await PromotionController.count()
+        return {supermarket, promotion,user}
     }
 }
 

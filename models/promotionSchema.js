@@ -1,34 +1,34 @@
 'use strict'
 const mongoose = require('mongoose')
 const Base = require('./baseSchema')
-const Types = mongoose.Shema.Types
+const Types = mongoose.Schema.Types
 
-const Shema = new mongoose.Shema({
+const Schema = new mongoose.Schema({
     name: {
-        types: Types.String,
+        type: Types.String,
         required: [true, 'El nombre es requerido']
     },
     supermarket: {
-        types: Types.ObjectId,
+        type: Types.ObjectId,
         required: [true, 'El supermercado es requerido']
     },
     products: [{
-        types: Types.ObjectId,
+        type: Types.ObjectId,
         required: [true, 'El producto es requerido']
     }],
     value: {
-        types: Types.Number,
+        type: Types.Number,
         required: [true, 'El valor es requerido']
     },
     image: [{
-        types: Types.String
+        type: Types.String
     }]
 })
  class Promotion extends Base{
     constructor(){
         super()
         this.sort = {name:1}
-        this.model =  mongoose.model('Promotion',Shema)
+        this.model =  mongoose.model('Promotion',Schema)
         this.fields = 'name supermarket products value image'
     }
  }

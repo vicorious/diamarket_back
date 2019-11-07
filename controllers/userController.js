@@ -7,21 +7,19 @@ const EmailController = require('../controllers/emailController')
 const makePassword = require('../utils/makePassword')
 
 class User {
-
     async create(data) {
         const isExist = await UserModel.get({ email: data.email })
         if (!isExist._id) {
-            data.verifyCode = GeneralController.createCode()
+            data.verifyCode = await GeneralController.createCode()
             const user = await UserModel.create(data)
             if (user._id) {
                 SmsController.send(data.cellPhone, 'Bienvenido DíaMarket tu código de verificación es ' + data.verifyCode)
-                return user
+                return { estado: true, data: user, mensaje: null }
             } else {
-                return { error: 'Error al almacenar los datos', user }
+                return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
             }
-
         } else {
-            return { error: 'El usuario ya existe' }
+            return { estado: false, data: [], mensaje: 'El usuario ya se encuentra registrado en el sistema' }
         }
     }
 
@@ -69,6 +67,22 @@ class User {
             return await UserModel.update(data._id, { password: encriptar, verifyCode: codeRandom })
         } else {
             return { error: 'El código u correo no coincide' }
+        }
+    }
+    async update(id, data) {
+        const isExist = await UserModel.get({ _id: id })
+        if (data.password) {
+            const encriptar = makePassword(data.password)
+            data.password = encriptar
+        }
+        if (isExist._id) {
+            console.log(id)
+            const update = await UserModel.update(id, data)
+            console.log(data)
+            console.log(update)
+            return { estado: true, data: [], mensaje: null }
+        } else {
+            return { estado: false, data: [], mensaje: 'El usuario no ha sido actualizado' }
         }
     }
 
@@ -123,19 +137,31 @@ class User {
     async detail(data) {
         const user = await UserModel.get(data)
         if (user._id) {
-            return user
+            return { estado: true, data: user, mensaje: null }
         } else {
-            return { error: " El usuario no existe" }
+            return { estado: false, data: [], mensaje: "El usuario no se encuentra registrado" }
         }
     }
 
     async detailAll(data) {
         const user = await UserModel.search(data)
         if (user.length > 0) {
-            return user
+            return { estado: true, data: user, mensaje: null }
         } else {
-            return { error: "No se encuentran datos" }
+            return { estado: false, data: [], mensaje: "No se encuentran datos" }
         }
+    }
+
+    async countGen() {
+        let countOrder = 0
+        const userCount = await UserModel.count({ rol: 'client' })
+        const data = await UserModel.search({ rol: 'client' })
+        for (const user of data) {
+            for (const order of user.order) {
+                countOrder++
+            }
+        }
+        return { countOrder, userCount }
     }
 }
 
