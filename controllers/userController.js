@@ -73,6 +73,7 @@ class User {
     }
 
     async createOrder(data, _id) {
+        data.order.dateCreate = Date.now()
         const user = await UserModel.get({ _id })
 
         const orders = []
@@ -84,6 +85,41 @@ class User {
         return update
     }
 
+    async createListproduct(data, _id) {
+        const user = await UserModel.get({ _id })
+        const listArray = []
+        for (const list of user.userList) {
+            listArray.push(list)
+        }
+        listArray.push(data.userList)
+        const update = UserModel.update(user._id, { userList: listArray })
+        return update
+    }
+
+    async getUserlist(_id) {
+        const isExist = await UserModel.get({ _id })
+        if (isExist) {
+            const listArray = []
+            for (const list of isExist.userList) {
+                listArray.push(list)
+            }
+            return listArray
+        } else {
+            return { error: 'No se ha podido obtener la lista' }
+        }
+    }
+
+    async conuntOrder() {
+        const users = await UserModel.search()
+        let count = 0
+        for (const user of users) {
+            for (const orders of user.order) {
+                count++
+            }
+        }
+        console.log(count);
+    }
+
     async detail(data) {
         const user = await UserModel.get(data)
         if (user._id) {
@@ -92,12 +128,13 @@ class User {
             return { error: " El usuario no existe" }
         }
     }
+
     async detailAll(data) {
         const user = await UserModel.search(data)
-        if (user.length>0) {
+        if (user.length > 0) {
             return user
         } else {
-            return {error: "No se encuentran datos"}
+            return { error: "No se encuentran datos" }
         }
     }
 }

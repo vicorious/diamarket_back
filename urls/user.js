@@ -18,8 +18,13 @@ routes.put('/update/:id', async(request, response) => {
     response.json(update)
 })
 
-routes.post('/create/order',token, async(request, response) => {
-    const create = await UserController.createOrder(request.body,request.user.id)
+routes.post('/create/order', token, async(request, response) => {
+    const create = await UserController.createOrder(request.body, request.user.id)
+    response.json(create)
+})
+
+routes.post('/create/listproduct', token, async(request, response) => {
+    const create = await UserController.createListproduct(request.body, request.user.id)
     response.json(create)
 })
 
@@ -33,6 +38,11 @@ routes.put('/validate', async(request, response) => {
     response.json(validate)
 })
 
+routes.get('/userlist', token, async(request, response) => {
+    const userlist = await UserController.getUserlist(request.user.id)
+    response.json(userlist)
+})
+
 routes.post('/verifycode', async(request, response) => {
     const update = await UserController.updateVeryfycode(request.body["email"])
     response.json(update)
@@ -41,6 +51,11 @@ routes.post('/verifycode', async(request, response) => {
 routes.post('/resetpassword', async(request, response) => {
     const data = await UserController.updatePassword(request.body)
     response.json(data)
+})
+
+routes.get('/countorder', async(request, response) => {
+    const count = await UserController.conuntOrder()
+    response.json(count)
 })
 
 module.exports = routes

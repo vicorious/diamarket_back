@@ -15,6 +15,12 @@ routes.put('/update/:id', async(request, response) => {
     response.json(update)
 })
 
+routes.put('/deleteImage/:id', async(request, response) => {
+    const id = request.params.id
+    const deleteImage = await supermarketController.deleteImage(id, request.body)
+    response.json(deleteImage)
+})
+
 routes.put('/updateimage/:id', async(request, response) => {
     const id = request.params.id
     const update = await supermarketController.updateImage(id, request.body)
