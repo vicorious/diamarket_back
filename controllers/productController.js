@@ -15,8 +15,9 @@ class User {
             return { error: 'El producto ya existe' }
         }
     }
-    async detail() {
-        const isExist = await ProductModel.get({})
+    async detail(data) {
+        const isExist = await ProductModel.get(data)
+        return isExist
     }
     async detailAll(data) {
         const products = ProductModel.search(data)

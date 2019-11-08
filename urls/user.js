@@ -64,10 +64,13 @@ routes.put('/update/:id', async(request, response) => {
     const data = await UserController.update(_id, request.body)
     response.json(data)
 })
-
 routes.get('/countorder', async(request, response) => {
     const count = await UserController.conuntOrder()
     response.json(count)
+})
+routes.get('/orders', async(request, response) => {
+    const order = await UserController.listOrder()
+    response.json(order)
 })
 
 module.exports = routes

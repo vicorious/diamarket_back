@@ -4,6 +4,8 @@ const UserModel = require('../models/userSchema')
 const SmsController = require('../controllers/smsController')
 const GeneralController = require('../controllers/generalController')
 const EmailController = require('../controllers/emailController')
+const SupermarketController = require('../controllers/supermarketController')
+const ProductController = require('../controllers/productController')
 const makePassword = require('../utils/makePassword')
 const uuid = require('node-uuid')
 
@@ -86,7 +88,7 @@ class User {
     }
 
     async createOrder(data, _id) {
-        data.dateCreate = Date.now()
+        data.dateCreate = new Date()
         data.uid = uuid.v4()
         const user = await UserModel.get({ _id })
         const orders = []
@@ -161,6 +163,23 @@ class User {
             }
         }
         return { countOrder, userCount }
+    }
+    async listOrder(){
+        const data = await UserModel.search({rol:'client'})
+        const orders = []
+        for (const user of data) {
+            for (const order of user.order) {
+                order.idSupermarket = await SupermarketController.detail({_id:order.idSupermarket})
+                let products=[]
+                for (const product of order.products) {
+                    const productData = await ProductController.detail({_id:product})
+                    products.push(productData)
+                }
+                order.products=products
+                orders.push(order)
+            }
+        }
+        return orders
     }
 }
 
