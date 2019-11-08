@@ -5,6 +5,9 @@ const SmsController = require('../controllers/smsController')
 const GeneralController = require('../controllers/generalController')
 const EmailController = require('../controllers/emailController')
 const makePassword = require('../utils/makePassword')
+const ProductController = require('./productController')
+const SupermarketController = require('./supermarketController')
+const uuid = require('node-uuid')
 
 class User {
     async create(data) {
@@ -87,7 +90,9 @@ class User {
     }
 
     async createOrder(data, _id) {
-        data.order.dateCreate = Date.now()
+        const date = new Date()
+        data.order.dateCreate = date
+        data.order.uid = uuid.v4()
         const user = await UserModel.get({ _id })
 
         const orders = []
@@ -101,6 +106,7 @@ class User {
 
     async createListproduct(data, _id) {
         const user = await UserModel.get({ _id })
+        data.userList.uid = uuid.v4()
         const listArray = []
         for (const list of user.userList) {
             listArray.push(list)
@@ -113,9 +119,19 @@ class User {
     async getUserlist(_id) {
         const isExist = await UserModel.get({ _id })
         if (isExist) {
-            const listArray = []
-            for (const list of isExist.userList) {
-                listArray.push(list)
+            let positionProduct = 0
+            let positionList = 0
+            let listArray = []
+            let productArray = []
+            for (const lists of isExist.userList) {
+                for (const productId of lists.products) {
+                    const product = await ProductController.detail({ _id: productId })
+                    productArray.push(product)
+                    positionProduct++
+                }
+                listArray.push({ name: lists.name, superMarket: await SupermarketController.detail({ _id: lists.superMarket }), product: productArray })
+                productArray = []
+                positionList++
             }
             return listArray
         } else {
