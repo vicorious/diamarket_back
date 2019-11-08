@@ -7,6 +7,11 @@ const EmailController = require('../controllers/emailController')
 const SupermarketController = require('../controllers/supermarketController')
 const ProductController = require('../controllers/productController')
 const makePassword = require('../utils/makePassword')
+<<<<<<< HEAD
+const ProductController = require('./productController')
+const SupermarketController = require('./supermarketController')
+=======
+>>>>>>> 2345e418034efa2237f316e371e3eb75e0ada653
 const uuid = require('node-uuid')
 
 class User {
@@ -88,8 +93,18 @@ class User {
     }
 
     async createOrder(data, _id) {
+<<<<<<< HEAD
+<<<<<<< HEAD
+        const date = new Date()
+        data.order.dateCreate = date
+        data.order.uid = uuid.v4()
+=======
+        data.dateCreate = Date.now()
+=======
         data.dateCreate = new Date()
+>>>>>>> f4849eb1ae7bc012c05c99deb3f5df90f16e20da
         data.uid = uuid.v4()
+>>>>>>> 2345e418034efa2237f316e371e3eb75e0ada653
         const user = await UserModel.get({ _id })
         const orders = []
         for (const order of user.order) {
@@ -102,6 +117,7 @@ class User {
 
     async createListproduct(data, _id) {
         const user = await UserModel.get({ _id })
+        data.userList.uid = uuid.v4()
         const listArray = []
         for (const list of user.userList) {
             listArray.push(list)
@@ -114,9 +130,19 @@ class User {
     async getUserlist(_id) {
         const isExist = await UserModel.get({ _id })
         if (isExist) {
-            const listArray = []
-            for (const list of isExist.userList) {
-                listArray.push(list)
+            let positionProduct = 0
+            let positionList = 0
+            let listArray = []
+            let productArray = []
+            for (const lists of isExist.userList) {
+                for (const productId of lists.products) {
+                    const product = await ProductController.detail({ _id: productId })
+                    productArray.push(product)
+                    positionProduct++
+                }
+                listArray.push({ name: lists.name, superMarket: await SupermarketController.detail({ _id: lists.superMarket }), product: productArray })
+                productArray = []
+                positionList++
             }
             return listArray
         } else {

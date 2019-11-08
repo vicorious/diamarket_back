@@ -34,7 +34,7 @@ class Pqr extends Base {
         this.sort = { description: 1 }
         this.model = mongoose.model('Pqr', Schema)
         this.fields = 'userId description createDate response isResponse createUpdate'
-        this.populate = [{ path: 'userId', select: '', model: 'User' }]
+        this.populate = [{ path: 'userId', select: 'name', model: 'User' }]
     }
 }
 
