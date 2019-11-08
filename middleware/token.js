@@ -11,15 +11,16 @@ async function token(request, response, next) {
             const verify = await jwt.verify(token, SECRET)
             const id = verify._id
             const dataUser = await userController.detail({ _id: id })
-            if (dataUser._id) {
+            console.log(dataUser.data._id)
+            if (dataUser.data._id) {
                 request.user = { id, rol: dataUser.rol }
                 return next()
             } else {
-                response.send({ error: 'Las credenciales de autenticación no se proveyeron.' })
+                response.send({ estado: false, data: [], mensaje: 'Las credenciales de autenticación no se proveyeron.' })
             }
         } catch (TokenExpiredError) {}
     }
-    response.send({ error: 'Las credenciales de autenticación no se proveyeron.' })
+    response.send({ estado: false, data: [], mensaje: 'Las credenciales de autenticación no se proveyeron.' })
 }
 
 module.exports = token

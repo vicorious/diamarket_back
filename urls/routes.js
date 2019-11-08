@@ -11,6 +11,7 @@ const product = require('./product')
 const category = require('./category')
 const general = require('./general')
 const promotion = require('./promotion')
+const pqr = require('./pqr')
 
 routes.use('/user', user)
 routes.use('/auth', auth)
@@ -19,6 +20,7 @@ routes.use('/supermarket', supermarket)
 routes.use('/product', product)
 routes.use('/category', category)
 routes.use('/promotion', promotion)
+routes.use('/pqr', pqr)
 routes.use('/', general)
 
 module.exports = routes
