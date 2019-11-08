@@ -5,6 +5,7 @@ const SmsController = require('../controllers/smsController')
 const GeneralController = require('../controllers/generalController')
 const EmailController = require('../controllers/emailController')
 const makePassword = require('../utils/makePassword')
+const uuid = require('node-uuid')
 
 class User {
     async create(data) {
@@ -78,8 +79,6 @@ class User {
         if (isExist._id) {
             console.log(id)
             const update = await UserModel.update(id, data)
-            console.log(data)
-            console.log(update)
             return { estado: true, data: [], mensaje: null }
         } else {
             return { estado: false, data: [], mensaje: 'El usuario no ha sido actualizado' }
@@ -87,14 +86,14 @@ class User {
     }
 
     async createOrder(data, _id) {
-        data.order.dateCreate = Date.now()
+        data.dateCreate = Date.now()
+        data.uid = uuid.v4()
         const user = await UserModel.get({ _id })
-
         const orders = []
         for (const order of user.order) {
             orders.push(order)
         }
-        orders.push(data.order)
+        orders.push(data)
         const update = UserModel.update(user._id, { order: orders })
         return update
     }
