@@ -73,9 +73,9 @@ class Base {
     async update(_id, data) {
         try {
             await this.model.findByIdAndUpdate(_id, data, { runValidators: true })
-            return { updated: true }
+            return {estado:true,data:[], mesanje:null }
         } catch (error) {
-            return { error: "Datos no actualizados" }
+            return {estado:false,data:[], mesanje:'Error almacenando los datos' }
         }
     }
 

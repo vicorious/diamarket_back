@@ -9,7 +9,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const routeUser = require('./urls/routes')
 
-const port = 4002
+const port = 5002
 const app = asyncify(express())
 const server = http.createServer(app)
 

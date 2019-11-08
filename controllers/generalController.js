@@ -2,6 +2,7 @@
 const SupermarketController = require('./supermarketController')
 const user = require('./userController')
 const PromotionController = require('./promotionController')
+
 class Funtions {
 
     async createCode() {
@@ -14,11 +15,20 @@ class Funtions {
         return uniqueCode
     }
 
-    async detailgeneral(){
-        const supermarket = await SupermarketController.count()
+    async detailgeneral() {
+        const supermarketAll = await SupermarketController.count()
+        const supermarketNew = await SupermarketController.forMonth()
         const user = await SupermarketController.countGen()
-        const promotion = await PromotionController.count()
-        return {supermarket, promotion,user}
+        const promotionAll = await PromotionController.count()
+        return {
+            supermarketAll,
+            clientAll: user.userCount,
+            serviceAll: user.countOrder,
+            promotionAll,
+            supermarketNew,
+            serviceFinish: user.countOrderFinish,
+            serviceWait: user.countOrderWait
+        }
     }
 }
 

@@ -53,7 +53,11 @@ const Schema = new mongoose.Schema({
     schedules: [{
         type: Types.Mixed,
         require: [true, 'El horario es requerido']
-    }]
+    }],
+    dateCreate: {
+        type: Types.Date,
+        default: Date.now()
+    }
 })
 
 Schema.index({ location: '2dsphere' })
@@ -63,7 +67,7 @@ class Supermarket extends Base {
         super()
         this.sort = { email: 1 }
         this.model = mongoose.model('Supermarket', Schema)
-        this.fields = 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules'
+        this.fields = 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules dateCreate'
         this.populate = [{ path: 'idAdmin', model: 'User' }]
     }
 }
