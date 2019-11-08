@@ -18,7 +18,7 @@ class Funtions {
         const supermarket = await SupermarketController.count()
         const user = await SupermarketController.countGen()
         const promotion = await PromotionController.count()
-        return {supermarket, promotion,user}
+        return {supermarket, promotion,countOrder:user.countOrder,userCount:user.userCount}
     }
 }
 
