@@ -20,15 +20,14 @@ class Funtions {
         const supermarketNew = await SupermarketController.forMonth()
         const user = await SupermarketController.countGen()
         const promotionAll = await PromotionController.count()
-        return {
-            supermarketAll,
-            clientAll: user.userCount,
-            serviceAll: user.countOrder,
-            promotionAll,
-            supermarketNew,
-            serviceFinish: user.countOrderFinish,
-            serviceWait: user.countOrderWait
-        }
+
+        return {estado:true,data:[{ supermarketAll,
+                clientAll: user.userCount,
+                serviceAll: user.countOrder,
+                promotionAll,
+                supermarketNew,
+                serviceFinish: user.countOrderFinish,
+                serviceWait: user.countOrderWait}],mensaje:null}
     }
 }
 

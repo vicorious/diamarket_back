@@ -9,9 +9,9 @@ class Supermarket {
         const isExist = await SupermarketModel.get({address: data.address})
         if (!isExist._id) {
             const create = await SupermarketModel.create(data)
-            return create
+            return {estado:true,data:[],mensaje:null}
         } else {
-            return {error: 'Ya se encuentra registrado un supermercado con esa dirección'}
+            return {estado:false,data:[],mensaje:"Ya se encuentra registrado un supermercado con esa dirección"}
         }
     }
 
@@ -19,9 +19,9 @@ class Supermarket {
         const isExist = await SupermarketModel.get({_id: id})
         if (isExist) {
             const update = await SupermarketModel.update(isExist._id, data)
-            return update
+            return {estado:true,data:[],mensaje:null}
         } else {
-            return {error: 'No se ha actualizado'}
+            return {estado:false,data:[],mensaje:"Datos no actualizados"}
         }
     }
 
@@ -37,9 +37,9 @@ class Supermarket {
                 image.push(images)
             }
             const updateImage = await SupermarketModel.update(isExist._id, {images: image})
-            return updateImage
+            return {estado:true,data:[],mensaje:null}
         } else {
-            return {error: 'No existe el supermercado'}
+            return {estado:false,data:[],mensaje:"No existe el supermercado"}
         }
     }
 
@@ -54,24 +54,24 @@ class Supermarket {
                 }
             }
             const update = await SupermarketModel.update(_id, {images: newImage})
-            return update
+            return {estado:true,data:[],mensaje:null}
         } else {
-            return {error: 'No existe el supermercado'}
+            return {estado:false,data:[],mensaje:"No existe el supermercado"}
         }
     }
 
     async detail(data) {
         const supermarket = await SupermarketModel.get({_id: data})
         if (supermarket._id) {
-            return supermarket
+            return {estado:true,data:[supermarket],mensaje:null}
         } else {
-            return {error: 'El supermercado no existe'}
+            return {estado:false,data:[],mensaje:"El supermercado no existe"}
         }
     }
 
     async detailAll() {
         const getAll = await SupermarketModel.search({})
-        return getAll
+        return {estado:true,data:[getAll],mensaje:null}
     }
 
     async count() {
