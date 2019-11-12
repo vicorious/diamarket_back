@@ -37,4 +37,9 @@ routes.get('/detail/:id', async(request, response) => {
     response.json(getfirst)
 })
 
+routes.put('/rate/:id', async(request, response) => {
+    const rate = await supermarketController.rateSupermarket(request.params.id, request.body)
+    response.json(rate)
+})
+
 module.exports = routes
