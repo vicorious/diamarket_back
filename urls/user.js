@@ -52,7 +52,7 @@ routes.post('/resetpassword', async(request, response) => {
 })
 routes.get('/detail/client/:id', async(request, response) => {
     const _id = request.params.id
-    const data = await UserController.detail({ _id, rol: "client" })
+    const data = await UserController.detailClient({ _id, rol: "client" })
     response.json(data)
 })
 routes.get('/detail/clients', async(request, response) => {

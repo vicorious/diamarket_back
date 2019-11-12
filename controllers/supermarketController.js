@@ -86,7 +86,7 @@ class Supermarket {
 
     async detailAll() {
         const getAll = await SupermarketModel.search({})
-        return { estado: true, data: [getAll], mensaje: null }
+        return { estado: true, data: getAll, mensaje: null }
     }
 
     async count() {

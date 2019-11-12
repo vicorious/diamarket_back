@@ -156,6 +156,27 @@ class User {
         }
     }
 
+    async detailClient(data) {
+        const user = await UserModel.get(data)
+        if (user._id) {
+            const users = await UserModel.search(data)
+            let userArray = []
+            for (const dataUser of users) {
+                let userObjc = {
+                    name: dataUser.name,
+                    directions: dataUser.directions,
+                    cellPhone: dataUser.cellPhone,
+                    email: dataUser.email,
+                    userList: dataUser.userList
+                }
+                userArray.push(userObjc)
+            }
+            return { estado: true, data: userArray, mensaje: null }
+        } else {
+            return { estado: false, data: [], mensaje: "El usuario no se encuentra registrado" }
+        }
+    }
+
     async detailAll(data) {
         const user = await UserModel.search(data)
         if (user.length > 0) {
