@@ -4,14 +4,10 @@ const UserModel = require('../models/userSchema')
 const SmsController = require('../controllers/smsController')
 const GeneralController = require('../controllers/generalController')
 const EmailController = require('../controllers/emailController')
-const SupermarketController = require('../controllers/supermarketController')
-const ProductController = require('../controllers/productController')
 const makePassword = require('../utils/makePassword')
-<<<<<<< HEAD
 const ProductController = require('./productController')
 const SupermarketController = require('./supermarketController')
-=======
->>>>>>> 2345e418034efa2237f316e371e3eb75e0ada653
+
 const uuid = require('node-uuid')
 
 class User {
@@ -93,18 +89,11 @@ class User {
     }
 
     async createOrder(data, _id) {
-<<<<<<< HEAD
-<<<<<<< HEAD
+
         const date = new Date()
         data.order.dateCreate = date
         data.order.uid = uuid.v4()
-=======
-        data.dateCreate = Date.now()
-=======
-        data.dateCreate = new Date()
->>>>>>> f4849eb1ae7bc012c05c99deb3f5df90f16e20da
-        data.uid = uuid.v4()
->>>>>>> 2345e418034efa2237f316e371e3eb75e0ada653
+
         const user = await UserModel.get({ _id })
         const orders = []
         for (const order of user.order) {
