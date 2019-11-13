@@ -8,6 +8,7 @@ const makePassword = require('../utils/makePassword')
 const ProductController = require('./productController')
 const SupermarketController = require('./supermarketController')
 
+
 const uuid = require('node-uuid')
 
 class User {
@@ -159,6 +160,27 @@ class User {
         }
     }
 
+    async detailClient(data) {
+        const user = await UserModel.get(data)
+        if (user._id) {
+            const users = await UserModel.search(data)
+            let userArray = []
+            for (const dataUser of users) {
+                let userObjc = {
+                    name: dataUser.name,
+                    directions: dataUser.directions,
+                    cellPhone: dataUser.cellPhone,
+                    email: dataUser.email,
+                    userList: dataUser.userList
+                }
+                userArray.push(userObjc)
+            }
+            return { estado: true, data: userArray, mensaje: null }
+        } else {
+            return { estado: false, data: [], mensaje: "El usuario no se encuentra registrado" }
+        }
+    }
+
     async detailAll(data) {
         const user = await UserModel.search(data)
         if (user.length > 0) {
@@ -179,18 +201,18 @@ class User {
         }
         return { countOrder, userCount }
     }
-    async listOrder(){
-        const data = await UserModel.search({rol:'client'})
+    async listOrder() {
+        const data = await UserModel.search({ rol: 'client' })
         const orders = []
         for (const user of data) {
             for (const order of user.order) {
-                order.idSupermarket = await SupermarketController.detail({_id:order.idSupermarket})
-                let products=[]
+                order.idSupermarket = await SupermarketController.detail({ _id: order.idSupermarket })
+                let products = []
                 for (const product of order.products) {
-                    const productData = await ProductController.detail({_id:product})
+                    const productData = await ProductController.detail({ _id: product })
                     products.push(productData)
                 }
-                order.products=products
+                order.products = products
                 orders.push(order)
             }
         }
