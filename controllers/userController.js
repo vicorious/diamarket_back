@@ -4,7 +4,10 @@ const UserModel = require('../models/userSchema')
 const SmsController = require('../controllers/smsController')
 const GeneralController = require('../controllers/generalController')
 const EmailController = require('../controllers/emailController')
+const SupermarketController = require('../controllers/supermarketController')
+const ProductController = require('../controllers/productController')
 const makePassword = require('../utils/makePassword')
+const uuid = require('node-uuid')
 
 class User {
     async create(data) {
@@ -78,8 +81,6 @@ class User {
         if (isExist._id) {
             console.log(id)
             const update = await UserModel.update(id, data)
-            console.log(data)
-            console.log(update)
             return { estado: true, data: [], mensaje: null }
         } else {
             return { estado: false, data: [], mensaje: 'El usuario no ha sido actualizado' }
@@ -87,20 +88,22 @@ class User {
     }
 
     async createOrder(data, _id) {
-        data.order.dateCreate = Date.now()
+        const date = new Date()
+        data.order.dateCreate = date
+        data.order.uid = uuid.v4()
         const user = await UserModel.get({ _id })
-
         const orders = []
         for (const order of user.order) {
             orders.push(order)
         }
-        orders.push(data.order)
+        orders.push(data)
         const update = UserModel.update(user._id, { order: orders })
         return update
     }
 
     async createListproduct(data, _id) {
         const user = await UserModel.get({ _id })
+        data.userList.uid = uuid.v4()
         const listArray = []
         for (const list of user.userList) {
             listArray.push(list)
@@ -113,9 +116,19 @@ class User {
     async getUserlist(_id) {
         const isExist = await UserModel.get({ _id })
         if (isExist) {
-            const listArray = []
-            for (const list of isExist.userList) {
-                listArray.push(list)
+            let positionProduct = 0
+            let positionList = 0
+            let listArray = []
+            let productArray = []
+            for (const lists of isExist.userList) {
+                for (const productId of lists.products) {
+                    const product = await ProductController.detail({ _id: productId })
+                    productArray.push(product)
+                    positionProduct++
+                }
+                listArray.push({ name: lists.name, superMarket: await SupermarketController.detail({ _id: lists.superMarket }), product: productArray })
+                productArray = []
+                positionList++
             }
             return listArray
         } else {
@@ -143,6 +156,27 @@ class User {
         }
     }
 
+    async detailClient(data) {
+        const user = await UserModel.get(data)
+        if (user._id) {
+            const users = await UserModel.search(data)
+            let userArray = []
+            for (const dataUser of users) {
+                let userObjc = {
+                    name: dataUser.name,
+                    directions: dataUser.directions,
+                    cellPhone: dataUser.cellPhone,
+                    email: dataUser.email,
+                    userList: dataUser.userList
+                }
+                userArray.push(userObjc)
+            }
+            return { estado: true, data: userArray, mensaje: null }
+        } else {
+            return { estado: false, data: [], mensaje: "El usuario no se encuentra registrado" }
+        }
+    }
+
     async detailAll(data) {
         const user = await UserModel.search(data)
         if (user.length > 0) {
@@ -162,6 +196,23 @@ class User {
             }
         }
         return { countOrder, userCount }
+    }
+    async listOrder() {
+        const data = await UserModel.search({ rol: 'client' })
+        const orders = []
+        for (const user of data) {
+            for (const order of user.order) {
+                order.idSupermarket = await SupermarketController.detail({ _id: order.idSupermarket })
+                let products = []
+                for (const product of order.products) {
+                    const productData = await ProductController.detail({ _id: product })
+                    products.push(productData)
+                }
+                order.products = products
+                orders.push(order)
+            }
+        }
+        return orders
     }
 }
 

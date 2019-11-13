@@ -11,7 +11,6 @@ async function token(request, response, next) {
             const verify = await jwt.verify(token, SECRET)
             const id = verify._id
             const dataUser = await userController.detail({ _id: id })
-            console.log(dataUser.data._id)
             if (dataUser.data._id) {
                 request.user = { id, rol: dataUser.rol }
                 return next()
