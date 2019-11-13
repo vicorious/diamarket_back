@@ -72,5 +72,9 @@ routes.get('/orders', async(request, response) => {
     const order = await UserController.listOrder()
     response.json(order)
 })
+routes.post('/create/direction', token, async(request, response) => {
+    const createDirection = await UserController.createDirection(request.user.id, request.body)
+    response.json(createDirection)
+})
 
 module.exports = routes

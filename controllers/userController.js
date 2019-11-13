@@ -61,9 +61,7 @@ class User {
     }
 
     async updatePassword(_data) {
-
         const codeRandom = GeneralController.createCode()
-
         const data = await UserModel.get({ verifyCode: _data.code, email: _data.email })
         if (data._id) {
             const encriptar = makePassword(_data.password)
@@ -72,6 +70,7 @@ class User {
             return { error: 'El código u correo no coincide' }
         }
     }
+
     async update(id, data) {
         const isExist = await UserModel.get({ _id: id })
         if (data.password) {
@@ -147,6 +146,22 @@ class User {
         console.log(count);
     }
 
+    async createDirection(_id, data) {
+        const isExist = await UserModel.get({ _id })
+        data.directions.uid = uuid.v4()
+        if (isExist) {
+            const directionArray = []
+            for (const directions of isExist.directions) {
+                directionArray.push(directions)
+            }
+            directionArray.push(data.directions)
+            const update = await UserModel.update(_id, { directions: directionArray })
+            return { estado: true, data: [], mensaje: null }
+        } else {
+            return { estado: false, data: [], mensaje: 'La dirección no se ha creado' }
+        }
+    }
+
     async detail(data) {
         const user = await UserModel.get(data)
         if (user._id) {
@@ -159,19 +174,14 @@ class User {
     async detailClient(data) {
         const user = await UserModel.get(data)
         if (user._id) {
-            const users = await UserModel.search(data)
-            let userArray = []
-            for (const dataUser of users) {
-                let userObjc = {
-                    name: dataUser.name,
-                    directions: dataUser.directions,
-                    cellPhone: dataUser.cellPhone,
-                    email: dataUser.email,
-                    userList: dataUser.userList
-                }
-                userArray.push(userObjc)
+            let userObjc = {
+                name: user.name,
+                directions: user.directions,
+                cellPhone: user.cellPhone,
+                email: user.email,
+                userList: user.userList
             }
-            return { estado: true, data: userArray, mensaje: null }
+            return { estado: true, data: userObjc, mensaje: null }
         } else {
             return { estado: false, data: [], mensaje: "El usuario no se encuentra registrado" }
         }
@@ -197,6 +207,7 @@ class User {
         }
         return { countOrder, userCount }
     }
+
     async listOrder() {
         const data = await UserModel.search({ rol: 'client' })
         const orders = []
