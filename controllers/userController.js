@@ -4,9 +4,11 @@ const UserModel = require('../models/userSchema')
 const SmsController = require('../controllers/smsController')
 const GeneralController = require('../controllers/generalController')
 const EmailController = require('../controllers/emailController')
-const SupermarketController = require('../controllers/supermarketController')
-const ProductController = require('../controllers/productController')
 const makePassword = require('../utils/makePassword')
+const ProductController = require('./productController')
+const SupermarketController = require('./supermarketController')
+
+
 const uuid = require('node-uuid')
 
 class User {
@@ -87,9 +89,11 @@ class User {
     }
 
     async createOrder(data, _id) {
+
         const date = new Date()
         data.order.dateCreate = date
         data.order.uid = uuid.v4()
+
         const user = await UserModel.get({ _id })
         const orders = []
         for (const order of user.order) {
