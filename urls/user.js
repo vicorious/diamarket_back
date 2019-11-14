@@ -11,7 +11,7 @@ routes.post('/create', async(request, response) => {
     response.json(create)
 })
 
-routes.put('/update/:id', async(request, response) => {
+routes.put('/update/:id', token, async(request, response) => {
     const _id = request.params.id
     const data = request.body
     const update = await UserController.update({ _id }, data)
@@ -28,7 +28,7 @@ routes.post('/create/listproduct', token, async(request, response) => {
     response.json(create)
 })
 
-routes.get('/admin', async(request, response) => {
+routes.get('/admin', token, async(request, response) => {
     const getAdmin = await UserController.getAdmin()
     response.json(getAdmin)
 })
@@ -50,25 +50,25 @@ routes.post('/resetpassword', async(request, response) => {
     const data = await UserController.updatePassword(request.body)
     response.json(data)
 })
-routes.get('/detail/client/:id', async(request, response) => {
+routes.get('/detail/client/:id', token, async(request, response) => {
     const _id = request.params.id
     const data = await UserController.detailClient({ _id, rol: "client" })
     response.json(data)
 })
-routes.get('/detail/clients', async(request, response) => {
+routes.get('/detail/clients', token, async(request, response) => {
     const data = await UserController.detailAll({ rol: "client" })
     response.json(data)
 })
-routes.put('/update/:id', async(request, response) => {
+routes.put('/update/:id', token, async(request, response) => {
     const _id = request.params.id
     const data = await UserController.update(_id, request.body)
     response.json(data)
 })
-routes.get('/countorder', async(request, response) => {
+routes.get('/countorder', token, async(request, response) => {
     const count = await UserController.conuntOrder()
     response.json(count)
 })
-routes.get('/orders', async(request, response) => {
+routes.get('/orders', token, async(request, response) => {
     const order = await UserController.listOrder()
     response.json(order)
 })
