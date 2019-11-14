@@ -140,11 +140,13 @@ class User {
     }
 
     async conuntOrder() {
+        const date = new Date()
+        const currentMonth = date.getMonth() + 1
         const users = await UserModel.search()
         let count = 0
         for (const user of users) {
             for (const orders of user.order) {
-                count++
+                const month = date.getMonth(orders.dateCreate) + 1
             }
         }
         console.log(count);
