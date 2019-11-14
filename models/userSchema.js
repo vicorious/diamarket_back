@@ -21,6 +21,9 @@ const Schema = new mongoose.Schema({
         type: Types.String,
         require: [true, 'El numero de telefono es requerido']
     },
+    supermarketFavorite: {
+        type: Types.ObjectId
+    },
     password: {
         type: Types.String,
         required: [true, 'La contraseña es requerida']
@@ -66,19 +69,26 @@ const Schema = new mongoose.Schema({
     }]
 })
 
-Schema.pre('save', function(next) {
+Schema.pre('save', function (next) {
     this.password = makePassword(this.password)
     next()
 })
 
-Schema.index({ location: '2dsphere' })
+Schema.index({location: '2dsphere'})
 
 class User extends Base {
     constructor() {
         super()
-        this.sort = { email: 1 }
+        this.sort = {email: 1}
         this.model = mongoose.model('User', Schema)
-        this.fields = ''
+        this.fields = '_id isActive dateCreate logs cards directions userList order name identification email cellPhone rol supermarketFavorite',
+            this.populate = [{
+                path: 'supermarketFavorite',
+                select: 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules dateCreate',
+                model: 'Supermarket'
+            }
+            ]
+
     }
 }
 
