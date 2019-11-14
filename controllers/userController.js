@@ -91,8 +91,8 @@ class User {
     async createOrder(data, _id) {
 
         const date = new Date()
-        data.order.dateCreate = date
-        data.order.uid = uuid.v4()
+        data.dateCreate = date
+        data.uid = uuid.v4()
 
         const user = await UserModel.get({ _id })
         const orders = []
