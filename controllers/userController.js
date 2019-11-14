@@ -7,8 +7,6 @@ const EmailController = require('../controllers/emailController')
 const makePassword = require('../utils/makePassword')
 const ProductController = require('./productController')
 const SupermarketController = require('./supermarketController')
-
-
 const uuid = require('node-uuid')
 
 class User {
@@ -33,9 +31,9 @@ class User {
         if (isExist._id) {
             const code = GeneralController.createCode()
             const update = await UserModel.update(isExist._id, { isActive: true, verifyCode: code })
-            return update
+            return { estado: true, data: [], mensaje: null }
         } else {
-            return { error: 'El código de autencticación no es valido' }
+            return { estado: false, data: [], mensaje: 'El código de autencticación no es valido' }
         }
     }
 
@@ -44,9 +42,10 @@ class User {
         const isExist = await UserModel.get({ email })
         if (isExist._id) {
             await EmailController.send(email, `Su codigo de verificacion es: ${code}`)
-            return UserModel.update(isExist._id, { verifyCode: code })
+            await UserModel.update(isExist._id, { verifyCode: code })
+            return { estado: true, data: [], mensaje: null }
         } else {
-            return { error: 'No se ha actualizado el código de recuperación' }
+            return { estado: false, data: [], mensaje: 'No se ha actualizado el código de recuperación' }
         }
     }
 
@@ -59,21 +58,21 @@ class User {
             admin.name = admins.name
             arrayAdmin.push(admin)
         }
-        return arrayAdmin
+        return { estado: true, data: arrayAdmin, mensaje: null }
     }
 
     async updatePassword(_data) {
-
         const codeRandom = GeneralController.createCode()
-
         const data = await UserModel.get({ verifyCode: _data.code, email: _data.email })
         if (data._id) {
             const encriptar = makePassword(_data.password)
-            return await UserModel.update(data._id, { password: encriptar, verifyCode: codeRandom })
+            const update = await UserModel.update(data._id, { password: encriptar, verifyCode: codeRandom })
+            return { estado: true, data: [], mensaje: null }
         } else {
-            return { error: 'El código u correo no coincide' }
+            return { estado: false, data: [], mensaje: 'El código u correo no coincide' }
         }
     }
+
     async update(id, data) {
         const isExist = await UserModel.get({ _id: id })
         if (data.password) {
@@ -102,7 +101,7 @@ class User {
         }
         orders.push(data)
         const update = UserModel.update(user._id, { order: orders })
-        return update
+        return { estado: true, data: [], mensaje: null }
     }
 
     async createListproduct(data, _id) {
@@ -114,7 +113,7 @@ class User {
         }
         listArray.push(data.userList)
         const update = UserModel.update(user._id, { userList: listArray })
-        return update
+        return { estado: true, data: [], mensaje: null }
     }
 
     async getUserlist(_id) {
@@ -134,9 +133,9 @@ class User {
                 productArray = []
                 positionList++
             }
-            return listArray
+            return { estado: true, data: listArray, mensaje: null }
         } else {
-            return { error: 'No se ha podido obtener la lista' }
+            return { estado: false, data: [], mensaje: 'Error al obtener la lista' }
         }
     }
 
@@ -151,33 +150,44 @@ class User {
         console.log(count);
     }
 
+    async createDirection(_id, data) {
+        const isExist = await UserModel.get({ _id })
+        data.directions.uid = uuid.v4()
+        if (isExist) {
+            const directionArray = []
+            for (const directions of isExist.directions) {
+                directionArray.push(directions)
+            }
+            directionArray.push(data.directions)
+            const update = await UserModel.update(_id, { directions: directionArray })
+            return { estado: true, data: [], mensaje: null }
+        } else {
+            return { estado: false, data: [], mensaje: 'La dirección no se ha creado' }
+        }
+    }
+
     async detail(data) {
         const user = await UserModel.get(data)
         if (user._id) {
             return { estado: true, data: user, mensaje: null }
         } else {
-            return { estado: false, data: [], mensaje: "El usuario no se encuentra registrado" }
+            return { estado: false, data: [], mensaje: 'El usuario no se encuentra registrado' }
         }
     }
 
     async detailClient(data) {
         const user = await UserModel.get(data)
         if (user._id) {
-            const users = await UserModel.search(data)
-            let userArray = []
-            for (const dataUser of users) {
-                let userObjc = {
-                    name: dataUser.name,
-                    directions: dataUser.directions,
-                    cellPhone: dataUser.cellPhone,
-                    email: dataUser.email,
-                    userList: dataUser.userList
-                }
-                userArray.push(userObjc)
+            let userObjc = {
+                name: user.name,
+                directions: user.directions,
+                cellPhone: user.cellPhone,
+                email: user.email,
+                userList: user.userList
             }
-            return { estado: true, data: userArray, mensaje: null }
+            return { estado: true, data: userObjc, mensaje: null }
         } else {
-            return { estado: false, data: [], mensaje: "El usuario no se encuentra registrado" }
+            return { estado: false, data: [], mensaje: 'El usuario no se encuentra registrado' }
         }
     }
 
@@ -186,7 +196,7 @@ class User {
         if (user.length > 0) {
             return { estado: true, data: user, mensaje: null }
         } else {
-            return { estado: false, data: [], mensaje: "No se encuentran datos" }
+            return { estado: false, data: [], mensaje: 'No se encuentran datos' }
         }
     }
 
@@ -201,6 +211,7 @@ class User {
         }
         return { countOrder, userCount }
     }
+
     async listOrder() {
         const data = await UserModel.search({ rol: 'client' })
         const orders = []
@@ -216,7 +227,7 @@ class User {
                 orders.push(order)
             }
         }
-        return orders
+        return { estado: true, data: orders, mensaje: null }
     }
 }
 

@@ -6,22 +6,22 @@ class User {
         if (!isExist._id) {
             const product = await ProductModel.create(data)
             if (product._id) {
-                return product
+                return { estado: true, data: [], mensaje: null }
             } else {
-                return { error: 'Error al almacenar los datos', product }
+                return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
             }
 
         } else {
-            return { error: 'El producto ya existe' }
+            return { estado: false, data: [], mensaje: 'El producto ya existe' }
         }
     }
     async detail(data) {
         const isExist = await ProductModel.get(data)
-        return isExist
+        return { estado: true, data: isExist, mensaje: null }
     }
     async detailAll(data) {
         const products = ProductModel.search(data)
-        return products
+        return { estado: true, data: products, mensaje: null }
     }
 }
 
