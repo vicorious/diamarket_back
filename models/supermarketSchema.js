@@ -8,6 +8,9 @@ const Schema = new mongoose.Schema({
         type: Types.Boolean,
         default: true
     },
+    cellPhone:{
+      type: Types.String
+    },
     name: {
         type: Types.String,
         require: [true, 'El nombre es requerido']
@@ -67,7 +70,7 @@ class Supermarket extends Base {
         super()
         this.sort = { email: 1 }
         this.model = mongoose.model('Supermarket', Schema)
-        this.fields = 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules dateCreate'
+        this.fields = 'status name address calification location neigborhood cellPhone locality email logo images isActive idAdmin schedules dateCreate'
         this.populate = [{ path: 'idAdmin', model: 'User' }]
     }
 }

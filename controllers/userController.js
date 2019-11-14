@@ -91,8 +91,8 @@ class User {
     async createOrder(data, _id) {
 
         const date = new Date()
-        data.order.dateCreate = date
-        data.order.uid = uuid.v4()
+        data.dateCreate = date
+        data.uid = uuid.v4()
 
         const user = await UserModel.get({ _id })
         const orders = []
@@ -106,12 +106,12 @@ class User {
 
     async createListproduct(data, _id) {
         const user = await UserModel.get({ _id })
-        data.userList.uid = uuid.v4()
+        data.uid = uuid.v4()
         const listArray = []
         for (const list of user.userList) {
             listArray.push(list)
         }
-        listArray.push(data.userList)
+        listArray.push(data)
         const update = UserModel.update(user._id, { userList: listArray })
         return { estado: true, data: [], mensaje: null }
     }
@@ -140,11 +140,13 @@ class User {
     }
 
     async conuntOrder() {
+        const date = new Date()
+        const currentMonth = date.getMonth() + 1
         const users = await UserModel.search()
         let count = 0
         for (const user of users) {
             for (const orders of user.order) {
-                count++
+                const month = date.getMonth(orders.dateCreate) + 1
             }
         }
         console.log(count);
@@ -152,13 +154,13 @@ class User {
 
     async createDirection(_id, data) {
         const isExist = await UserModel.get({ _id })
-        data.directions.uid = uuid.v4()
+        data.uid = uuid.v4()
         if (isExist) {
             const directionArray = []
             for (const directions of isExist.directions) {
                 directionArray.push(directions)
             }
-            directionArray.push(data.directions)
+            directionArray.push(data)
             const update = await UserModel.update(_id, { directions: directionArray })
             return { estado: true, data: [], mensaje: null }
         } else {
