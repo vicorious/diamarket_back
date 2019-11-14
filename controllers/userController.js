@@ -8,6 +8,7 @@ const makePassword = require('../utils/makePassword')
 const ProductController = require('./productController')
 const SupermarketController = require('./supermarketController')
 const uuid = require('node-uuid')
+const moment = require('moment')
 
 class User {
     async create(data) {
@@ -142,14 +143,32 @@ class User {
     async conuntOrder() {
         const date = new Date()
         const currentMonth = date.getMonth() + 1
-        const users = await UserModel.search()
+
+        const users = await UserModel.search({ rol: "client" })
         let count = 0
         for (const user of users) {
             for (const orders of user.order) {
-                const month = date.getMonth(orders.dateCreate) + 1
+
+                var now = moment();
+
+                // Create a moment in the past, using a string date
+                var m = moment(orders.dateCreate, "MMM-DD-YYYY");
+
+
+                let month = date.getMonth() + 1
+
+                console.log(m._i)
+                for (let i = 7; i >= 1; i--) {
+                    const resta = moment().subtract(i, 'months').format('M')
+                    const restanew = parseInt(resta)
+                        //console.log(month, restanew)
+                    if (month === restanew) {
+                        console.log('en el if', month)
+                    }
+                }
             }
         }
-        console.log(count);
+        // console.log(count);
     }
 
     async createDirection(_id, data) {
@@ -185,7 +204,9 @@ class User {
                 directions: user.directions,
                 cellPhone: user.cellPhone,
                 email: user.email,
-                userList: user.userList
+                userList: user.userList,
+                supermarketFavorite: user.supermarketFavorite,
+                imageProfile: user.imageProfile
             }
             return { estado: true, data: userObjc, mensaje: null }
         } else {
