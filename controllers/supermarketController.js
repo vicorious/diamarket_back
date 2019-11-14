@@ -78,9 +78,9 @@ class Supermarket {
             }
             rateArray.push(data.calification)
             const update = await SupermarketModel.update(_id, { calification: rateArray })
-            return update
+            return { estado: true, data: [], mensaje: null }
         } else {
-            return { error: 'El supermercado no existe' }
+            return { estado: false, data: [], mensaje: "El supermercado no existe" }
         }
     }
 
