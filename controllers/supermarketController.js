@@ -63,7 +63,7 @@ class Supermarket {
     async detail(data) {
         const supermarket = await SupermarketModel.get({ _id: data })
         if (supermarket._id) {
-            return { estado: true, data: [supermarket], mensaje: null }
+            return { estado: true, data: supermarket, mensaje: null }
         } else {
             return { estado: false, data: [], mensaje: "El supermercado no existe" }
         }
@@ -78,9 +78,9 @@ class Supermarket {
             }
             rateArray.push(data.calification)
             const update = await SupermarketModel.update(_id, { calification: rateArray })
-            return update
+            return { estado: true, data: [], mensaje: null }
         } else {
-            return { error: 'El supermercado no existe' }
+            return { estado: false, data: [], mensaje: "El supermercado no existe" }
         }
     }
 
