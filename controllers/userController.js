@@ -140,7 +140,8 @@ class User {
         }
     }
 
-    async conuntOrder() {
+    async conuntOrder(meses) {
+        let mes = meses-1
         const date = new Date()
         const currentMonth = date.getMonth() + 1
         const users = await UserModel.search({ rol: "client" })
@@ -150,7 +151,7 @@ class User {
                 let count = 1
                 const date = new Date(orders.dateCreate);
                 const newMonth = date.getMonth()+1;
-                for (let i = 6; i >= 0; i--) {
+                for (let i = mes; i >= 0; i--) {
                     const resta = moment().subtract(i, 'months').format('M')
                     const restanew = parseInt(resta)
                     if (newMonth === restanew) {
