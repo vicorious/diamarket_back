@@ -143,32 +143,40 @@ class User {
     async conuntOrder() {
         const date = new Date()
         const currentMonth = date.getMonth() + 1
-
         const users = await UserModel.search({ rol: "client" })
-        let count = 0
+        const arrayCount = []
         for (const user of users) {
             for (const orders of user.order) {
-
-                var now = moment();
-
-                // Create a moment in the past, using a string date
-                var m = moment(orders.dateCreate, "MMM-DD-YYYY");
-
-
-                let month = date.getMonth() + 1
-
-                console.log(m._i)
-                for (let i = 7; i >= 1; i--) {
+                let count = 1
+                const date = new Date(orders.dateCreate);
+                const newMonth = date.getMonth()+1;
+                for (let i = 6; i >= 0; i--) {
                     const resta = moment().subtract(i, 'months').format('M')
                     const restanew = parseInt(resta)
-                        //console.log(month, restanew)
-                    if (month === restanew) {
-                        console.log('en el if', month)
+                    if (newMonth === restanew) {
+                        if (arrayCount.length>0){
+                            let integer = 0
+                            for(let dataArray of arrayCount){
+                                if(dataArray.mes===newMonth){
+                                    count = arrayCount[integer].total + 1
+                                    arrayCount[integer]=0
+                                }
+                                integer++
+                            }
+                        }
+                        arrayCount.push({mes:newMonth,total:count})
+                        count++
                     }
                 }
             }
         }
-        // console.log(count);
+        let newArray=[]
+        for (const data of arrayCount){
+            if(data!=0){
+                newArray.push(data)
+            }
+        }
+        return {estado:true,data: newArray , mensaje:null}
     }
 
     async createDirection(_id, data) {
