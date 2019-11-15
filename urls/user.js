@@ -64,8 +64,8 @@ routes.put('/update/:id', token, async(request, response) => {
     const data = await UserController.update(_id, request.body)
     response.json(data)
 })
-routes.get('/countorder', token, async(request, response) => {
-    const count = await UserController.conuntOrder()
+routes.post('/countorder', async(request, response) => {
+    const count = await UserController.conuntOrder(request.body.meses)
     response.json(count)
 })
 routes.get('/orders', token, async(request, response) => {

@@ -8,6 +8,7 @@ const makePassword = require('../utils/makePassword')
 const ProductController = require('./productController')
 const SupermarketController = require('./supermarketController')
 const uuid = require('node-uuid')
+const moment = require('moment')
 
 class User {
     async create(data) {
@@ -139,17 +140,44 @@ class User {
         }
     }
 
-    async conuntOrder() {
+    async conuntOrder(meses) {
+        let mes = meses-1
         const date = new Date()
         const currentMonth = date.getMonth() + 1
-        const users = await UserModel.search()
-        let count = 0
+        const users = await UserModel.search({ rol: "client" })
+        const arrayCount = []
         for (const user of users) {
             for (const orders of user.order) {
-                const month = date.getMonth(orders.dateCreate) + 1
+                let count = 1
+                const date = new Date(orders.dateCreate);
+                const newMonth = date.getMonth()+1;
+                for (let i = mes; i >= 0; i--) {
+                    const resta = moment().subtract(i, 'months').format('M')
+                    const restanew = parseInt(resta)
+                    if (newMonth === restanew) {
+                        if (arrayCount.length>0){
+                            let integer = 0
+                            for(let dataArray of arrayCount){
+                                if(dataArray.mes===newMonth){
+                                    count = arrayCount[integer].total + 1
+                                    arrayCount[integer]=0
+                                }
+                                integer++
+                            }
+                        }
+                        arrayCount.push({mes:newMonth,total:count})
+                        count++
+                    }
+                }
             }
         }
-        console.log(count);
+        let newArray=[]
+        for (const data of arrayCount){
+            if(data!=0){
+                newArray.push(data)
+            }
+        }
+        return {estado:true,data: newArray , mensaje:null}
     }
 
     async createDirection(_id, data) {
@@ -185,7 +213,9 @@ class User {
                 directions: user.directions,
                 cellPhone: user.cellPhone,
                 email: user.email,
-                userList: user.userList
+                userList: user.userList,
+                supermarketFavorite: user.supermarketFavorite,
+                imageProfile: user.imageProfile
             }
             return { estado: true, data: userObjc, mensaje: null }
         } else {
