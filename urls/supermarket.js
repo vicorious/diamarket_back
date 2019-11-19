@@ -29,7 +29,7 @@ routes.put('/updateimage/:id', token, async(request, response) => {
 })
 
 routes.get('/all', token, async(request, response) => {
-    const getAll = await supermarketController.detailAll()
+    const getAll = await supermarketController.detailAll({})
     response.json(getAll)
 })
 

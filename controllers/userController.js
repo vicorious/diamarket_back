@@ -53,10 +53,36 @@ class User {
     async getAdmin() {
         const rol = await UserModel.search({ rol: 'administrator' })
         let arrayAdmin = []
+        let arraySupermarket=[]
         for (const admins of rol) {
+            let supermarketObject={}
+            const supermarkets = await SupermarketController.detailAll({ idAdmin:  admins._id })
+
+            for(const supermarket of supermarkets.data){
+                supermarketObject.name=supermarket.name
+                supermarketObject.status=supermarket.status
+                supermarketObject.images=supermarket.images
+                supermarketObject.schedules=supermarket.schedules
+                supermarketObject.dateCreate=supermarket.dateCreate
+                supermarketObject._id=supermarket._id
+                supermarketObject.address=supermarket.address
+                supermarketObject.location=supermarket.location
+                supermarketObject.neigborhood=supermarket.neigborhood
+                supermarketObject.locality=supermarket.locality
+                supermarketObject.email=supermarket.email
+                supermarketObject.logo=supermarket.logo
+                supermarketObject.calification=supermarket.calification
+                arraySupermarket.push(supermarketObject)
+            }
+
             let admin = {}
             admin._id = admins._id
+            admin.supermarket = arraySupermarket
             admin.name = admins.name
+            admin.rol = admins.rol
+            admin.directions = admins.directions
+            admin.identification = admins.identification
+            admin.email = admins.email
             arrayAdmin.push(admin)
         }
         return { estado: true, data: arrayAdmin, mensaje: null }

@@ -28,7 +28,7 @@ routes.post('/create/listproduct', token, async(request, response) => {
     response.json(create)
 })
 
-routes.get('/admin', token, async(request, response) => {
+routes.get('/admin', async(request, response) => {
     const getAdmin = await UserController.getAdmin()
     response.json(getAdmin)
 })
