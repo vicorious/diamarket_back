@@ -20,7 +20,7 @@ class User {
         return { estado: true, data: isExist, mensaje: null }
     }
     async detailAll(data) {
-        const products = ProductModel.search(data)
+        const products = await ProductModel.search(data)
         return { estado: true, data: products, mensaje: null }
     }
 }

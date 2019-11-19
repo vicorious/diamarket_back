@@ -27,6 +27,8 @@ class Availability extends Base {
         this.sort = { quantity: 1 }
         this.model = mongoose.model('Availability', Schema)
         this.fields = 'idSupermarket idProduct quantity price'
+        this.populate = [{ path: 'idSupermarket', model: 'Supermarket' }]
+        this.populate = [{ path: 'idProduct', model: 'Product' }]
     }
 }
 
