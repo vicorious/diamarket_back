@@ -9,7 +9,7 @@ class Promotion {
             if (promotion._id) {
                 return { estado: true, data: promotion, mensaje: null }
             } else {
-                return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
+                return { estado: false, data: [], mensaje: promotion }
             }
         } else {
             return { estado: false, data: [], mensaje: 'La promocion ya se encuentra resgitrada' }
