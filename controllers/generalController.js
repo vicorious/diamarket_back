@@ -15,25 +15,6 @@ class Funtions {
         return uniqueCode
     }
 
-    async createRandomid() {
-        let uniqueCode = ""
-        const possible = "0123456789"
-        for (var i = 0; i < 9; i++) {
-            uniqueCode += possible.charAt(Math.floor(Math.random() * possible.length))
-        }
-
-        return uniqueCode
-    }
-    async createRandomquantity() {
-        let uniqueCode = ""
-        const possible = "0123456789"
-        for (var i = 0; i < 3; i++) {
-            uniqueCode += possible.charAt(Math.floor(Math.random() * possible.length))
-        }
-
-        return uniqueCode
-    }
-
     async detailgeneral() {
         const supermarketAll = await SupermarketController.count()
         const supermarketNew = await SupermarketController.forMonth()

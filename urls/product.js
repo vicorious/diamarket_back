@@ -22,9 +22,4 @@ routes.post('/name', token, async(request, response) => {
     response.json(search)
 })
 
-routes.post('/createproducts', async(request, response) => {
-    const create = await ProductController.createData()
-    response.json(create)
-})
-
 module.exports = routes

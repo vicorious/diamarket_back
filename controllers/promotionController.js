@@ -9,13 +9,12 @@ class Promotion {
             if (promotion._id) {
                 return { estado: true, data: promotion, mensaje: null }
             } else {
-                return { estado: false, data: [], mensaje: promotion }
+                return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
             }
         } else {
             return { estado: false, data: [], mensaje: 'La promocion ya se encuentra resgitrada' }
         }
     }
-
 
     async count() {
         const count = await PromotionModel.count()
