@@ -30,7 +30,7 @@ routes.post('/create/listproduct', token, async(request, response) => {
 
 routes.get('/admin', async(request, response) => {
     const getAdmin = await UserController.getAdmin()
-    response.json(getAdmin,getAdmin.code)
+    response.json(getAdmin, getAdmin.code)
 })
 routes.put('/validate', async(request, response) => {
     const validate = await UserController.validate(request.body)
@@ -75,6 +75,10 @@ routes.get('/orders', token, async(request, response) => {
 routes.post('/create/direction', token, async(request, response) => {
     const createDirection = await UserController.createDirection(request.user.id, request.body)
     response.json(createDirection)
+})
+routes.post('/createrandomuser', async(request, response) => {
+    const create = await UserController.createData()
+    response.json(create)
 })
 
 module.exports = routes
