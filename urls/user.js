@@ -30,7 +30,7 @@ routes.post('/create/listproduct', token, async(request, response) => {
 
 routes.get('/admin', async(request, response) => {
     const getAdmin = await UserController.getAdmin()
-    response.json(getAdmin)
+    response.json(getAdmin,getAdmin.code)
 })
 routes.put('/validate', async(request, response) => {
     const validate = await UserController.validate(request.body)

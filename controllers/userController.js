@@ -85,7 +85,7 @@ class User {
             admin.email = admins.email
             arrayAdmin.push(admin)
         }
-        return { estado: true, data: arrayAdmin, mensaje: null }
+        return { estado: true, data: arrayAdmin, mensaje: null, code:200 }
     }
 
     async updatePassword(_data) {
