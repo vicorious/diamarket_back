@@ -17,5 +17,27 @@ class Auth {
         }
         return {estado:false, data:[], mensaje: 'Usuario no validado o usuario y/o contraseña incorrectos' }
     }
+    async createTokenBackoffice(data) {
+        if (data.email && data.password) {
+            const password = makePassword(data.password)
+            const administrator = await UserModel.get({ "email": data.email, "password": password, "isActive": true, "rol": "administrator" })
+            const superAdministrator = await UserModel.get({ "email": data.email, "password": password, "isActive": true, "rol": "superadministrator" })
+
+
+            if (administrator._id) {
+                const token = jwt.sign({ _id: administrator._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
+                return {estado:true, data:{ token: token}, mensaje: null }
+            } else if (superAdministrator._id) {
+                const token = jwt.sign({ _id: superAdministrator._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
+                return {
+                    token: token,
+                    user: superAdministrator
+                }
+            }
+
+            return {estado:false, data:[], mensaje: 'Usuario no validado o usuario y/o contraseña incorrectos' }
+        }
+        return {estado:false, data:[], mensaje: 'Usuario no validado o usuario y/o contraseña incorrectos' }
+    }
 }
 module.exports = new Auth()
