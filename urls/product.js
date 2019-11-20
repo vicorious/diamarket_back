@@ -4,6 +4,7 @@ const express = require('express')
 const asyncify = require('express-asyncify')
 const routes = asyncify(express.Router())
 const ProductController = require('../controllers/productController')
+const AvailabilityController = require('../controllers/availabilityController')
 const token = require('../middleware/token')
 
 routes.post('/create', token, async(request, response) => {
@@ -11,8 +12,8 @@ routes.post('/create', token, async(request, response) => {
     response.json(create)
 })
 
-routes.get('/category/:category', token, async(request, response) => {
-    const search = await ProductController.detailAll({ category: request.params.category })
+routes.post('/category', token, async(request, response) => {
+    const search = await AvailabilityController.detail(request.body)
     response.json(search)
 })
 

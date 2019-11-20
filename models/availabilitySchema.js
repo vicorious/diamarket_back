@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const Base = require('./baseSchema')
 const Types = mongoose.Schema.Types
 
-const Schema = mongoose.Schema({
+const Schema = new mongoose.Schema({
     idSupermarket: {
         type: Types.ObjectId,
         require: [true, 'El supermercado es requerido']
@@ -27,8 +27,7 @@ class Availability extends Base {
         this.sort = { quantity: 1 }
         this.model = mongoose.model('Availability', Schema)
         this.fields = 'idSupermarket idProduct quantity price'
-        this.populate = [{ path: 'idSupermarket', model: 'Supermarket' }]
-        this.populate = [{ path: 'idProduct', model: 'Product' }]
+        this.populate = [{ path: 'idProduct', select: '', model: 'Product' }, { path: 'idSupermarket', select: '', model: 'Supermarket' }]
     }
 }
 
