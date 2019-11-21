@@ -11,7 +11,7 @@ class Auth {
             if (dataUser._id) {
                 const token = jwt.sign({ _id: dataUser._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
 
-                return {estado:true, data:{ token: token}, mensaje: null, user : dataUser }
+                return {estado:true, data:{ token: token,user : dataUser }, mensaje: null}
             }
             return {estado:false, data:[], mensaje: 'Usuario no validado o usuario y/o contraseña incorrectos' }
         }
@@ -26,13 +26,11 @@ class Auth {
 
             if (administrator._id) {
                 const token = jwt.sign({ _id: administrator._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
-                return {estado:true, data:{ token: token}, mensaje: null user : administrator }
+                return {estado:true, data:{ token: token,user:administrator}, mensaje: null}
             } else if (superAdministrator._id) {
                 const token = jwt.sign({ _id: superAdministrator._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
-                return {
-                    token: token,
-                    user: superAdministrator
-                }
+                return {estado:true, data:{ token: token,user:superAdministrator}, mensaje: null }
+
             }
 
             return {estado:false, data:[], mensaje: 'Usuario no validado o usuario y/o contraseña incorrectos' }
