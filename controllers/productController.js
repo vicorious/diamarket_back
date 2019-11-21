@@ -1,5 +1,8 @@
 'use strict'
 const ProductModel = require('../models/productSchema')
+const generalController = require('../controllers/generalController')
+const availabilityController = require('../controllers/availabilityController')
+const promotionController = require('../controllers/promotionController')
 class User {
     async create(data) {
         const isExist = await ProductModel.get({ idPos: data.idPos })
@@ -15,6 +18,7 @@ class User {
             return { estado: false, data: [], mensaje: 'El producto ya existe' }
         }
     }
+
     async detail(data) {
         const isExist = await ProductModel.get(data)
         return { estado: true, data: isExist, mensaje: null }

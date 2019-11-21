@@ -16,7 +16,6 @@ class Promotion {
         }
     }
 
-
     async count() {
         const count = await PromotionModel.count()
         return count

@@ -53,25 +53,25 @@ class User {
     async getAdmin() {
         const rol = await UserModel.search({ rol: 'administrator' })
         let arrayAdmin = []
-        let arraySupermarket=[]
+        let arraySupermarket = []
         for (const admins of rol) {
-            let supermarketObject={}
-            const supermarkets = await SupermarketController.detailAll({ idAdmin:  admins._id })
+            let supermarketObject = {}
+            const supermarkets = await SupermarketController.detailAll({ idAdmin: admins._id })
 
-            for(const supermarket of supermarkets.data){
-                supermarketObject.name=supermarket.name
-                supermarketObject.status=supermarket.status
-                supermarketObject.images=supermarket.images
-                supermarketObject.schedules=supermarket.schedules
-                supermarketObject.dateCreate=supermarket.dateCreate
-                supermarketObject._id=supermarket._id
-                supermarketObject.address=supermarket.address
-                supermarketObject.location=supermarket.location
-                supermarketObject.neigborhood=supermarket.neigborhood
-                supermarketObject.locality=supermarket.locality
-                supermarketObject.email=supermarket.email
-                supermarketObject.logo=supermarket.logo
-                supermarketObject.calification=supermarket.calification
+            for (const supermarket of supermarkets.data) {
+                supermarketObject.name = supermarket.name
+                supermarketObject.status = supermarket.status
+                supermarketObject.images = supermarket.images
+                supermarketObject.schedules = supermarket.schedules
+                supermarketObject.dateCreate = supermarket.dateCreate
+                supermarketObject._id = supermarket._id
+                supermarketObject.address = supermarket.address
+                supermarketObject.location = supermarket.location
+                supermarketObject.neigborhood = supermarket.neigborhood
+                supermarketObject.locality = supermarket.locality
+                supermarketObject.email = supermarket.email
+                supermarketObject.logo = supermarket.logo
+                supermarketObject.calification = supermarket.calification
                 arraySupermarket.push(supermarketObject)
             }
 
@@ -85,7 +85,7 @@ class User {
             admin.email = admins.email
             arrayAdmin.push(admin)
         }
-        return { estado: true, data: arrayAdmin, mensaje: null, code:200 }
+        return { estado: true, data: arrayAdmin, mensaje: null, code: 200 }
     }
 
     async updatePassword(_data) {
@@ -167,7 +167,7 @@ class User {
     }
 
     async conuntOrder(meses) {
-        let mes = meses-1
+        let mes = meses - 1
         const date = new Date()
         const currentMonth = date.getMonth() + 1
         const users = await UserModel.search({ rol: "client" })
@@ -176,34 +176,34 @@ class User {
             for (const orders of user.order) {
                 let count = 1
                 const date = new Date(orders.dateCreate);
-                const newMonth = date.getMonth()+1;
+                const newMonth = date.getMonth() + 1;
                 for (let i = mes; i >= 0; i--) {
                     const resta = moment().subtract(i, 'months').format('M')
                     const restanew = parseInt(resta)
                     if (newMonth === restanew) {
-                        if (arrayCount.length>0){
+                        if (arrayCount.length > 0) {
                             let integer = 0
-                            for(let dataArray of arrayCount){
-                                if(dataArray.mes===newMonth){
+                            for (let dataArray of arrayCount) {
+                                if (dataArray.mes === newMonth) {
                                     count = arrayCount[integer].total + 1
-                                    arrayCount[integer]=0
+                                    arrayCount[integer] = 0
                                 }
                                 integer++
                             }
                         }
-                        arrayCount.push({mes:newMonth,total:count})
+                        arrayCount.push({ mes: newMonth, total: count })
                         count++
                     }
                 }
             }
         }
-        let newArray=[]
-        for (const data of arrayCount){
-            if(data!=0){
+        let newArray = []
+        for (const data of arrayCount) {
+            if (data != 0) {
                 newArray.push(data)
             }
         }
-        return {estado:true,data: newArray , mensaje:null}
+        return { estado: true, data: newArray, mensaje: null }
     }
 
     async createDirection(_id, data) {

@@ -21,13 +21,19 @@ class Funtions {
         const user = await SupermarketController.countGen()
         const promotionAll = await PromotionController.count()
 
-        return {estado:true,data:[{ supermarketAll,
+        return {
+            estado: true,
+            data: [{
+                supermarketAll,
                 clientAll: user.userCount,
                 serviceAll: user.countOrder,
                 promotionAll,
                 supermarketNew,
                 serviceFinish: user.countOrderFinish,
-                serviceWait: user.countOrderWait}],mensaje:null}
+                serviceWait: user.countOrderWait
+            }],
+            mensaje: null
+        }
     }
 }
 
