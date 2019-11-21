@@ -26,7 +26,7 @@ class Auth {
 
             if (administrator._id) {
                 const token = jwt.sign({ _id: administrator._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
-                return {estado:true, data:{ token: token}, mensaje: null user : administrator }
+                return {estado:true, data:{ token: token}, mensaje: null, user : administrator }
             } else if (superAdministrator._id) {
                 const token = jwt.sign({ _id: superAdministrator._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
                 return {
