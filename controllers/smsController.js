@@ -13,7 +13,7 @@ class Sms {
 
         client.messages.create({
             body: body,
-            to: `+57${cellphone}`,
+            to: `+${cellphone}`,
             from: numberTwilio
         }).then((message) => console.log(message.sid))
     }
