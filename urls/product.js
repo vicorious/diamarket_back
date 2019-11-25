@@ -11,7 +11,6 @@ routes.post('/create', token, async(request, response) => {
     const create = await ProductController.create(request.body)
     response.json(create)
 })
-
 routes.post('/category', token, async(request, response) => {
     const search = await AvailabilityController.detail(request.body)
     response.json(search)

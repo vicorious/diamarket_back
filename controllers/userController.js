@@ -30,7 +30,7 @@ class User {
     async validate(data) {
         const isExist = await UserModel.get({ email: data.email, verifyCode: data.code })
         if (isExist._id) {
-            const code = GeneralController.createCode()
+            const code = await GeneralController.createCode()
             const update = await UserModel.update(isExist._id, { isActive: true, verifyCode: code })
             return { estado: true, data: [], mensaje: null }
         } else {
