@@ -17,7 +17,7 @@ class Supermarket {
 
     async update(id, data) {
         const isExist = await SupermarketModel.get({ _id: id })
-        if (isExist) {
+        if (isExist._id) {
             const update = await SupermarketModel.update(isExist._id, data)
             return { estado: true, data: [], mensaje: null }
         } else {
@@ -64,6 +64,19 @@ class Supermarket {
         const supermarket = await SupermarketModel.get({ _id: data })
         if (supermarket._id) {
             return { estado: true, data: supermarket, mensaje: null }
+        } else {
+            return { estado: false, data: [], mensaje: "El supermercado no existe" }
+        }
+    }
+
+    async detailImage(data) {
+        const supermarket = await SupermarketModel.get({ _id: data })
+        if (supermarket._id) {
+            const imageandlogo = {
+                images: supermarket.images,
+                logo: supermarket.logo
+            }
+            return { estado: true, data: imageandlogo, mensaje: null }
         } else {
             return { estado: false, data: [], mensaje: "El supermercado no existe" }
         }

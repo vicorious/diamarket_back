@@ -38,6 +38,11 @@ routes.get('/detail/:id', token, async(request, response) => {
     response.json(getfirst)
 })
 
+routes.get('/detailimage/:id', token, async(request, response) => {
+    const getfirst = await supermarketController.detailImage(request.params.id)
+    response.json(getfirst)
+})
+
 routes.put('/rate/:id', token, async(request, response) => {
     const rate = await supermarketController.rateSupermarket(request.params.id, request.body)
     response.json(rate)
