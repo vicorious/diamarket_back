@@ -83,9 +83,19 @@ class User extends Base {
         this.model = mongoose.model('User', Schema)
         this.fields = '_id isActive dateCreate logs cards directions userList order name identification email cellPhone rol supermarketFavorite imageProfile birthday credits',
             this.populate = [{
-                path: 'supermarketFavorite',
+                path: 'supermarketFavorite order.idSupermarket ',
                 select: 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules dateCreate',
                 model: 'Supermarket'
+            },
+            {
+                path: 'userList.superMarket ',
+                select: 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules dateCreate',
+                model: 'Supermarket'
+            },
+            {
+                path: 'userList.products order.products',
+                select: 'idPos name description category defaultprice image',
+                model: 'Product'
             }
             ]
 

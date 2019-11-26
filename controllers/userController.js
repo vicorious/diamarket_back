@@ -1,6 +1,7 @@
 'use strict'
 
 const UserModel = require('../models/userSchema')
+const SuperMarketModel = require('../models/supermarketSchema')
 const SmsController = require('../controllers/smsController')
 const GeneralController = require('../controllers/generalController')
 const EmailController = require('../controllers/emailController')
@@ -9,6 +10,7 @@ const ProductController = require('./productController')
 const SupermarketController = require('./supermarketController')
 const uuid = require('node-uuid')
 const moment = require('moment')
+const mongoose = require('mongoose')
 
 class User {
     async create(data) {
@@ -32,19 +34,19 @@ class User {
         if (isExist._id) {
             const code = await GeneralController.createCode()
             const update = await UserModel.update(isExist._id, { isActive: true, verifyCode: code })
-            return { estado: true, data: [], mensaje: null }
+            return update
         } else {
             return { estado: false, data: [], mensaje: 'El código de autencticación no es valido' }
         }
     }
 
     async updateVeryfycode(email) {
-        const code = GeneralController.createCode()
+        const code = await GeneralController.createCode()
         const isExist = await UserModel.get({ email })
         if (isExist._id) {
             await EmailController.send(email, `Su codigo de verificacion es: ${code}`)
-            await UserModel.update(isExist._id, { verifyCode: code })
-            return { estado: true, data: [], mensaje: null }
+            const update = await UserModel.update(isExist._id, { verifyCode: code })
+            return update
         } else {
             return { estado: false, data: [], mensaje: 'No se ha actualizado el código de recuperación' }
         }
@@ -85,16 +87,20 @@ class User {
             admin.email = admins.email
             arrayAdmin.push(admin)
         }
-        return { estado: true, data: arrayAdmin, mensaje: null, code: 200 }
+        if(arrayAdmin.length > 0){
+            return { estado: true, data: arrayAdmin, mensaje: null, code: 200 }
+        }else {
+            return { estado: true, data: [], mensaje: 'No hay datos', code: 200 }
+        }
     }
 
-    async updatePassword(_data) {
-        const codeRandom = GeneralController.createCode()
-        const data = await UserModel.get({ verifyCode: _data.code, email: _data.email })
-        if (data._id) {
-            const encriptar = makePassword(_data.password)
-            const update = await UserModel.update(data._id, { password: encriptar, verifyCode: codeRandom })
-            return { estado: true, data: [], mensaje: null }
+    async updatePassword(data) {
+        const codeRandom = await GeneralController.createCode()
+        const user = await UserModel.get({ verifyCode: data.code, email: data.email })
+        if (user._id) {
+            const encriptar = await makePassword(data.password)
+            const update = await UserModel.update(user._id, { password: encriptar, verifyCode: codeRandom })
+            return update
         } else {
             return { estado: false, data: [], mensaje: 'El código u correo no coincide' }
         }
@@ -109,58 +115,64 @@ class User {
         if (isExist._id) {
             console.log(id)
             const update = await UserModel.update(id, data)
-            return { estado: true, data: [], mensaje: null }
+            return update
         } else {
             return { estado: false, data: [], mensaje: 'El usuario no ha sido actualizado' }
         }
     }
 
     async createOrder(data, _id) {
-
         const date = new Date()
-        data.dateCreate = date
-        data.uid = uuid.v4()
-
-        const user = await UserModel.get({ _id })
-        const orders = []
-        for (const order of user.order) {
-            orders.push(order)
+        let products = []
+        let promos = []
+        for (const product of data.products) {
+            let idProduct = mongoose.Types.ObjectId(product)
+            products.push(idProduct)
         }
-        orders.push(data)
-        const update = UserModel.update(user._id, { order: orders })
-        return { estado: true, data: [], mensaje: null }
+        for (const promo of data.promos) {
+            let idPromo = mongoose.Types.ObjectId(promo)
+            promos.push(idPromo)
+        }
+        let idMarket = mongoose.Types.ObjectId(data.idSuperMarket)
+        data.idSuperMarket = idMarket
+        data.dateCreate = date
+        data.products = products
+        data.promos = promos
+        data.uid = uuid.v4()
+        const user = await UserModel.get({ _id })
+        if(user.order.length > 0){
+            const update = await UserModel.update(user._id, {$push: {order : data }})
+            return update
+        }else {
+            const update = await UserModel.update(user._id, { order: data })
+            return update
+        }
     }
 
     async createListproduct(data, _id) {
         const user = await UserModel.get({ _id })
-        data.uid = uuid.v4()
-        const listArray = []
-        for (const list of user.userList) {
-            listArray.push(list)
+        let idMarket = mongoose.Types.ObjectId(data.superMarket)
+        let products = []
+        for (const product of data.products) {
+            let idProduct = mongoose.Types.ObjectId(product)
+            products.push(idProduct)
         }
-        listArray.push(data)
-        const update = UserModel.update(user._id, { userList: listArray })
-        return { estado: true, data: [], mensaje: null }
+        data.superMarket = idMarket
+        data.products = products
+        data.uid = uuid.v4()
+        if(user.userList.length > 0) {
+            const update = UserModel.update(user._id, {$push: {userList: data}})
+            return update
+        }else {
+            const update = UserModel.update(user._id, { userList: data })
+            return update
+        }
     }
 
     async getUserlist(_id) {
         const isExist = await UserModel.get({ _id })
         if (isExist) {
-            let positionProduct = 0
-            let positionList = 0
-            let listArray = []
-            let productArray = []
-            for (const lists of isExist.userList) {
-                for (const productId of lists.products) {
-                    const product = await ProductController.detail({ _id: productId })
-                    productArray.push(product)
-                    positionProduct++
-                }
-                listArray.push({ name: lists.name, superMarket: await SupermarketController.detail({ _id: lists.superMarket }), product: productArray })
-                productArray = []
-                positionList++
-            }
-            return { estado: true, data: listArray, mensaje: null }
+            return { estado: true, data: isExist.userList, mensaje: null }
         } else {
             return { estado: false, data: [], mensaje: 'Error al obtener la lista' }
         }
@@ -232,24 +244,16 @@ class User {
     }
 
     async detailClient(data) {
+        UserModel.fields= 'name directions cellPhone email userList supermarketFavorite imageProfile'
         const user = await UserModel.get(data)
         if (user._id) {
-            let userObjc = {
-                name: user.name,
-                directions: user.directions,
-                cellPhone: user.cellPhone,
-                email: user.email,
-                userList: user.userList,
-                supermarketFavorite: user.supermarketFavorite,
-                imageProfile: user.imageProfile
-            }
-            return { estado: true, data: userObjc, mensaje: null }
+            return { estado: true, data: user, mensaje: null }
         } else {
             return { estado: false, data: [], mensaje: 'El usuario no se encuentra registrado' }
         }
     }
 
-    async detailAll(data) {
+    async all(data) {
         const user = await UserModel.search(data)
         if (user.length > 0) {
             return { estado: true, data: user, mensaje: null }
@@ -271,21 +275,13 @@ class User {
     }
 
     async listOrder() {
-        const data = await UserModel.search({ rol: 'client' })
-        const orders = []
-        for (const user of data) {
-            for (const order of user.order) {
-                order.idSupermarket = await SupermarketController.detail({ _id: order.idSupermarket })
-                let products = []
-                for (const product of order.products) {
-                    const productData = await ProductController.detail({ _id: product })
-                    products.push(productData)
-                }
-                order.products = products
-                orders.push(order)
-            }
+        UserModel.fields = 'order'
+        const orders = await UserModel.search({ rol: 'client'})
+        if(orders.length > 0) {
+            return{estado: true, data: orders, mensaje: null}
+        }else {
+            return{estado: false, data: [], mensaje: 'No existen ordenes'}
         }
-        return { estado: true, data: orders, mensaje: null }
     }
 }
 
