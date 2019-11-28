@@ -109,7 +109,7 @@ class User {
     async update(id, data) {
         const isExist = await UserModel.get({ _id: id })
         if (data.password) {
-            const encriptar = makePassword(data.password)
+            const encriptar = await makePassword(data.password)
             data.password = encriptar
         }
         if (isExist._id) {

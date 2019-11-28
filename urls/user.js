@@ -84,9 +84,5 @@ routes.post('/create/direction', token, async(request, response) => {
     const createDirection = await UserController.createDirection(request.user.id, request.body)
     response.json(createDirection)
 })
-routes.post('/createrandomuser', async(request, response) => {
-    const create = await UserController.createData()
-    response.json(create)
-})
 
 module.exports = routes

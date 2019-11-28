@@ -6,7 +6,7 @@ class Availability {
         const isExist = await availabilityModel.get({ idSupermarket: data.idSupermarket })
         if (isExist) {
             const create = await availabilityModel.create(data)
-            return { estado: true, data: [], mensaje: null }
+            return { estado: true, data: create, mensaje: null }
         } else {
             return { estado: false, data: [], mensaje: 'Error en la creación' }
         }
