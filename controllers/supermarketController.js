@@ -23,7 +23,11 @@ class Supermarket {
     if (isExist) {
       if (data.images) {
         if (isExist.images.length > 0) {
-            console.log("Hola HOla")
+          let images = data.images
+          delete data.images
+          await SupermarketModel.update(isExist._id, data)
+          const update = SupermarketModel.update(isExist._id, {$push: {images: images}})
+          return update
         } else {
           const update = await SupermarketModel.update(isExist._id, data)
           return update
@@ -56,18 +60,18 @@ class Supermarket {
     }
   }
 
-  async deleteImage(_id, data) {
+  async  deleteImage(_id, data) {
     const isExist = await SupermarketModel.get({ _id })
     if (isExist._id) {
       const newImage = []
       for (const images of isExist.images) {
-        let saneImages = data.images.includes(images)
-        if (!saneImages) {
+        let repeatedImages = data.images.includes(images)
+        if (!repeatedImages) {
           newImage.push(images)
         }
       }
       const update = await SupermarketModel.update(_id, { images: newImage })
-      return { estado: true, data: [], mensaje: null }
+      return update
     } else {
       return { estado: false, data: [], mensaje: "No existe el supermercado" }
     }
@@ -85,23 +89,21 @@ class Supermarket {
   async rateSupermarket(_id, data) {
     const isExist = await SupermarketModel.get({ _id })
     if (isExist) {
-      let rateArray = []
-      for (const rate of isExist.calification) {
-        rateArray.push(rate)
-      }
-      rateArray.push(data.calification)
-      const update = await SupermarketModel.update(_id, {
-        calification: rateArray
-      })
-      return { estado: true, data: [], mensaje: null }
+      const update = await SupermarketModel.update(_id, {$push: {calification: data.calification}})
+      return update
     } else {
       return { estado: false, data: [], mensaje: "El supermercado no existe" }
     }
   }
 
-  async detailAll(data) {
+  async all(data) {
     const getAll = await SupermarketModel.search(data)
-    return { estado: true, data: getAll, mensaje: null }
+    if(getAll.length > 0) {
+      return { estado: true, data: getAll, mensaje: null }
+    }else {
+      return{ estado: false, data: [], mensaje: "No existen supermercados"}
+    }
+    
   }
 
   async count() {

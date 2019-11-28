@@ -113,7 +113,6 @@ class User {
             data.password = encriptar
         }
         if (isExist._id) {
-            console.log(id)
             const update = await UserModel.update(id, data)
             return update
         } else {

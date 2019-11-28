@@ -4,6 +4,7 @@ const asyncify = require('express-asyncify')
 const UserController = require('../controllers/userController')
 const token = require('../middleware/token')
 const routes = asyncify(express.Router())
+const {convertBase64ToFile} = require('../middleware/convertBase64File')
 
 routes.post('/create', async(request, response) => {
     const data = request.body
@@ -11,14 +12,14 @@ routes.post('/create', async(request, response) => {
     response.json(create)
 })
 
-routes.put('/backoffice/update/:id', token, async(request, response) => {
+routes.put('/backoffice/update/:id',convertBase64ToFile, token, async(request, response) => {
     const _id = request.params.id
     const data = request.body
     const update = await UserController.update({ _id }, data)
     response.json(update) 
 })
 
-routes.put('/mobile/update', token, async(request, response) => {
+routes.put('/mobile/update',convertBase64ToFile, token, async(request, response) => {
     const _id = request.user.id
     const data = request.body
     const update = await UserController.update({ _id }, data)

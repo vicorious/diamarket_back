@@ -23,14 +23,8 @@ routes.put('/deleteImage/:id', token, async(request, response) => {
     response.json(deleteImage)
 })
 
-routes.put('/updateimage/:id',convertBase64ToFile, async(request, response) => {
-    const id = request.params.id
-    const update = await supermarketController.updateImage(id, request.body)
-    response.json(update)
-})
-
 routes.get('/all', token, async(request, response) => {
-    const getAll = await supermarketController.detailAll({})
+    const getAll = await supermarketController.all({})
     response.json(getAll)
 })
 

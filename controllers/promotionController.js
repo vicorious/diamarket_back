@@ -5,12 +5,10 @@ class Promotion {
     async create(data) {
         const isExist = await PromotionModel.get({ name: data.name, supermarket: data.supermarket })
         if (!isExist._id) {
+            data.image = data.images
+            delete data.images
             const promotion = await PromotionModel.create(data)
-            if (promotion._id) {
-                return { estado: true, data: promotion, mensaje: null }
-            } else {
-                return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
-            }
+            return { estado: true, data: promotion, mensaje: null }            
         } else {
             return { estado: false, data: [], mensaje: 'La promocion ya se encuentra resgitrada' }
         }
@@ -34,7 +32,7 @@ class Promotion {
         if (promotion.length > 0) {
             return { estado: true, data: promotion, mensaje: null }
         } else {
-            return { estado: false, data: [], mensaje: "No se encuentran datos" }
+            return { estado: false, data: [], mensaje: "No se encuentra la promocion" }
         }
     }
 }

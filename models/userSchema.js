@@ -46,7 +46,7 @@ const Schema = new mongoose.Schema({
         type: Types.Date,
         default: Date.now()
     },
-    imageProfile: {
+    images: {
         type: Types.String
     },
     credits: {
@@ -82,7 +82,8 @@ class User extends Base {
         this.sort = {email: 1}
         this.model = mongoose.model('User', Schema)
         this.fields = '_id isActive dateCreate logs cards directions userList order name identification email cellPhone rol supermarketFavorite imageProfile birthday credits',
-            this.populate = [{
+            this.populate = [
+            {
                 path: 'supermarketFavorite order.idSupermarket ',
                 select: 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules dateCreate',
                 model: 'Supermarket'
