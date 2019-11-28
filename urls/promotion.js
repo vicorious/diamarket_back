@@ -4,8 +4,9 @@ const asyncify = require('express-asyncify')
 const routes = asyncify(express.Router())
 const PromotionController = require('../controllers/promotionController')
 const token = require('../middleware/token')
+const {convertBase64ToFile} = require('../middleware/convertBase64File')
 
-routes.post('/create', token, async(request, response) => {
+routes.post('/create', convertBase64ToFile, token, async(request, response) => {
     const create = await PromotionController.create(request.body)
     response.json(create)
 })
