@@ -87,9 +87,6 @@ class User extends Base {
                 path: 'supermarketFavorite order.idSupermarket ',
                 select: 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules dateCreate',
                 model: 'Supermarket'
-<<<<<<< HEAD
-            }]
-=======
             },
             {
                 path: 'userList.superMarket ',
@@ -102,7 +99,6 @@ class User extends Base {
                 model: 'Product'
             }
             ]
->>>>>>> 87537604448bcfe157e906adb6f92c28774f37b2
 
     }
 }
