@@ -58,7 +58,7 @@ class User {
         let arraySupermarket = []
         for (const admins of rol) {
             let supermarketObject = {}
-            const supermarkets = await SupermarketController.detailAll({ idAdmin: admins._id })
+            const supermarkets = await SupermarketController.all({ idAdmin: admins._id })
 
             for (const supermarket of supermarkets.data) {
                 supermarketObject.name = supermarket.name
