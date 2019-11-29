@@ -5,7 +5,7 @@ const SmsController = require('../controllers/smsController')
 const GeneralController = require('../controllers/generalController')
 const EmailController = require('../controllers/emailController')
 const makePassword = require('../utils/makePassword')
-const ProductController = require('./productController')
+const ProductModel = require('../models/productSchema')
 const SupermarketController = require('./supermarketController')
 const uuid = require('node-uuid')
 const moment = require('moment')
@@ -18,6 +18,20 @@ class User {
             const user = await UserModel.create(data)
             if (user._id) {
                 SmsController.send(data.cellPhone, 'Bienvenido DíaMarket tu código de verificación es ' + data.verifyCode)
+                return { estado: true, data: user, mensaje: null }
+            } else {
+                return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
+            }
+        } else {
+            return { estado: false, data: [], mensaje: 'El usuario ya se encuentra registrado en el sistema' }
+        }
+    }
+
+    async createFacebook() {
+        const isExist = await UserModel.get({ email: social.email })
+        if (!isExist._id) {
+            const user = await UserModel.create(data)
+            if (user._id) {
                 return { estado: true, data: user, mensaje: null }
             } else {
                 return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
@@ -152,7 +166,7 @@ class User {
             let productArray = []
             for (const lists of isExist.userList) {
                 for (const productId of lists.products) {
-                    const product = await ProductController.detail({ _id: productId })
+                    const product = await ProductModel.get({ _id: productId })
                     productArray.push(product)
                     positionProduct++
                 }
@@ -278,7 +292,7 @@ class User {
                 order.idSupermarket = await SupermarketController.detail({ _id: order.idSupermarket })
                 let products = []
                 for (const product of order.products) {
-                    const productData = await ProductController.detail({ _id: product })
+                    const productData = await ProductModel.get({ _id: product })
                     products.push(productData)
                 }
                 order.products = products

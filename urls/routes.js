@@ -12,6 +12,7 @@ const category = require('./category')
 const general = require('./general')
 const promotion = require('./promotion')
 const pqr = require('./pqr')
+const social = require('./social')
 
 routes.use('/user', user)
 routes.use('/auth', auth)
@@ -21,6 +22,7 @@ routes.use('/product', product)
 routes.use('/category', category)
 routes.use('/promotion', promotion)
 routes.use('/pqr', pqr)
+routes.use('/social', social)
 routes.use('/', general)
 
 module.exports = routes

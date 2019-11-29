@@ -13,5 +13,4 @@ routes.post('/tokenbackoffice', async(request, response) => {
     const token = await Auth.createTokenBackoffice(request.body)
     response.json(token)
 })
-
 module.exports = routes
