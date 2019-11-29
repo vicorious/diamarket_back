@@ -12,9 +12,10 @@ const Schema = new mongoose.Schema({
         type: Types.String,
         require: [true, 'La description']
     },
-    image: [{
-        type: Types.String
-    }]
+    images: {
+        type: Types.String,
+        require: [true, 'la imagen es requerida']
+    }
 })
 
 class Category extends Base {

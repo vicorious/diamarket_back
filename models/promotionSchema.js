@@ -21,7 +21,8 @@ const Schema = new mongoose.Schema({
         required: [true, 'El valor es requerido']
     },
     image: [{
-        type: Types.String
+        type: Types.String,
+        required: [true, 'La imagen es requerida']
     }]
 })
  class Promotion extends Base{
@@ -30,6 +31,18 @@ const Schema = new mongoose.Schema({
         this.sort = {name:1}
         this.model =  mongoose.model('Promotion',Schema)
         this.fields = 'name supermarket products value image'
+        this.populate = [
+            {
+                path: 'supermarket',
+                select: 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules dateCreate',
+                model: 'Supermarket'
+            },
+            {
+                path: 'products',
+                select: 'idPos name description category defaultprice image',
+                model: 'Product'
+            }
+        ]
     }
  }
 

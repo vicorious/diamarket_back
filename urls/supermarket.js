@@ -6,12 +6,12 @@ const supermarketController = require('../controllers/supermarketController')
 const token = require('../middleware/token')
 const {convertBase64ToFile} = require('../middleware/convertBase64File')
 
-routes.post('/create', token, async(request, response) => {
+routes.post('/create', convertBase64ToFile, token, async(request, response) => {
     const create = await supermarketController.create(request.body)
     response.json(create)
 })
 
-routes.put('/update/:id', token ,convertBase64ToFile,async(request, response) => {
+routes.put('/update/:id', convertBase64ToFile, token ,async(request, response) => {
     const id = request.params.id
     const update = await supermarketController.update(id, request.body)
     response.json(update)
@@ -23,14 +23,8 @@ routes.put('/deleteImage/:id', token, async(request, response) => {
     response.json(deleteImage)
 })
 
-routes.put('/updateimage/:id',convertBase64ToFile, async(request, response) => {
-    const id = request.params.id
-    const update = await supermarketController.updateImage(id, request.body)
-    response.json(update)
-})
-
 routes.get('/all', token, async(request, response) => {
-    const getAll = await supermarketController.detailAll({})
+    const getAll = await supermarketController.all({})
     response.json(getAll)
 })
 

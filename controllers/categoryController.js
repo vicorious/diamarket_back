@@ -7,7 +7,7 @@ class Category {
         const isExist = await CategoryModel.get({ name: data.name })
         if (!isExist._id) {
             const create = await CategoryModel.create(data)
-            return { estado: true, data: [], mensaje: null }
+            return { estado: true, data: create, mensaje: null }
         } else {
             return { estado: false, data: [], mensaje: 'La categoria ya existe' }
         }
@@ -17,15 +17,20 @@ class Category {
         const isExist = await CategoryModel.get({ _id: id })
         if (isExist) {
             const update = await CategoryModel.update(isExist._id, data)
-            return { estado: true, data: [], mensaje: null }
+            return update
         } else {
             return { estado: false, data: [], mensaje: 'No se ha actualizado' }
         }
     }
 
-    async detailAll() {
+    async all() {
         const getAll = await CategoryModel.search({})
-        return { estado: true, data: getAll, mensaje: null }
+        if(getAll.length > 0){
+            return { estado: true, data: getAll, mensaje: null }
+        }else {
+            return { estado: true, data: [], mensaje: "No hay categorias" }
+        }
+       
     }
 
 }
