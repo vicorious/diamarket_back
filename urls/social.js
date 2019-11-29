@@ -16,8 +16,8 @@ passport.deserializeUser(function(obj, done) {
 })
 
 passport.use(new GoogleStrategy({
-        clientID: "259516958244-uqh4jofqaq65utvd298i91lgb8e7lh02.apps.googleusercontent.com",
-        clientSecret: "Ab57ZlCPJiUARFumrklSxmLl",
+        clientID: "259516958244-2stgc0ecsu1m4sac922i8sdsdsl8oblb.apps.googleusercontent.com",
+        clientSecret: "_dyBvosP0cz6NrTx3Lj_Kz7h",
         callbackURL: "http://localhost:5002/v1/social/google/callback"
     },
     async function(accessToken, refreshToken, profile, done) {
