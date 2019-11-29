@@ -185,25 +185,7 @@ class User {
     async getUserlist(_id) {
         const isExist = await UserModel.get({ _id })
         if (isExist) {
-<<<<<<< HEAD
-            let positionProduct = 0
-            let positionList = 0
-            let listArray = []
-            let productArray = []
-            for (const lists of isExist.userList) {
-                for (const productId of lists.products) {
-                    const product = await ProductModel.get({ _id: productId })
-                    productArray.push(product)
-                    positionProduct++
-                }
-                listArray.push({ name: lists.name, superMarket: await SupermarketController.detail({ _id: lists.superMarket }), product: productArray })
-                productArray = []
-                positionList++
-            }
-            return { estado: true, data: listArray, mensaje: null }
-=======
             return { estado: true, data: isExist.userList, mensaje: null }
->>>>>>> 87537604448bcfe157e906adb6f92c28774f37b2
         } else {
             return { estado: false, data: [], mensaje: 'Error al obtener la lista' }
         }
@@ -306,28 +288,12 @@ class User {
     }
 
     async listOrder() {
-<<<<<<< HEAD
-        const data = await UserModel.search({ rol: 'client' })
-        const orders = []
-        for (const user of data) {
-            for (const order of user.order) {
-                order.idSupermarket = await SupermarketController.detail({ _id: order.idSupermarket })
-                let products = []
-                for (const product of order.products) {
-                    const productData = await ProductModel.get({ _id: product })
-                    products.push(productData)
-                }
-                order.products = products
-                orders.push(order)
-            }
-=======
         UserModel.fields = 'order'
         const orders = await UserModel.search({ rol: 'client'})
         if(orders.length > 0) {
             return{estado: true, data: orders, mensaje: null}
         }else {
             return{estado: false, data: [], mensaje: 'No existen ordenes'}
->>>>>>> 87537604448bcfe157e906adb6f92c28774f37b2
         }
     }
 }

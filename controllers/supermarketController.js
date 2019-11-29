@@ -18,13 +18,6 @@ class Supermarket {
     }
   }
 
-<<<<<<< HEAD
-    async update(id, data) {
-        const isExist = await SupermarketModel.get({ _id: id })
-        if (isExist._id) {
-            const update = await SupermarketModel.update(isExist._id, data)
-            return { estado: true, data: [], mensaje: null }
-=======
   async update(id, data) {
     const isExist = await SupermarketModel.get({ _id: id })
     if (isExist) {
@@ -35,7 +28,6 @@ class Supermarket {
           await SupermarketModel.update(isExist._id, data)
           const update = SupermarketModel.update(isExist._id, {$push: {images: images}})
           return update
->>>>>>> 87537604448bcfe157e906adb6f92c28774f37b2
         } else {
           const update = await SupermarketModel.update(isExist._id, data)
           return update
@@ -94,34 +86,6 @@ class Supermarket {
     }
   }
 
-<<<<<<< HEAD
-    async detailImage(data) {
-        const supermarket = await SupermarketModel.get({ _id: data })
-        if (supermarket._id) {
-            const imageandlogo = {
-                images: supermarket.images,
-                logo: supermarket.logo
-            }
-            return { estado: true, data: imageandlogo, mensaje: null }
-        } else {
-            return { estado: false, data: [], mensaje: "El supermercado no existe" }
-        }
-    }
-
-    async rateSupermarket(_id, data) {
-        const isExist = await SupermarketModel.get({ _id })
-        if (isExist) {
-            let rateArray = []
-            for (const rate of isExist.calification) {
-                rateArray.push(rate)
-            }
-            rateArray.push(data.calification)
-            const update = await SupermarketModel.update(_id, { calification: rateArray })
-            return { estado: true, data: [], mensaje: null }
-        } else {
-            return { estado: false, data: [], mensaje: "El supermercado no existe" }
-        }
-=======
   async rateSupermarket(_id, data) {
     const isExist = await SupermarketModel.get({ _id })
     if (isExist) {
@@ -129,7 +93,6 @@ class Supermarket {
       return update
     } else {
       return { estado: false, data: [], mensaje: "El supermercado no existe" }
->>>>>>> 87537604448bcfe157e906adb6f92c28774f37b2
     }
   }
 
