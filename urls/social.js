@@ -18,7 +18,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new GoogleStrategy({
         clientID: "259516958244-2stgc0ecsu1m4sac922i8sdsdsl8oblb.apps.googleusercontent.com",
         clientSecret: "_dyBvosP0cz6NrTx3Lj_Kz7h",
-        callbackURL: "http://localhost:5002/v1/social/google/callback"
+        callbackURL: "http://api.diamarket.co/v1/social/google/callback"
     },
     async function(accessToken, refreshToken, profile, done) {
         const { email, picture } = profile._json
