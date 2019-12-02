@@ -43,7 +43,7 @@ passport.use(new GoogleStrategy({
 passport.use(new FacebookStrategy({
         clientID: '534067730778763',
         clientSecret: '0e6eeaeaf1b83c0b69433c64246d319a',
-        callbackURL: 'http://api.diamarket.co/v1/social/facebook/callback',
+        callbackURL: 'http://localhost:5002/v1/social/facebook/callback',
         profileFields: ['id', 'displayName', 'link', 'photos', 'email'],
         enableProof: true
     },
