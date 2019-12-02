@@ -30,20 +30,6 @@ class User {
         }
     }
 
-    async createFacebook() {
-        const isExist = await UserModel.get({ email: social.email })
-        if (!isExist._id) {
-            const user = await UserModel.create(data)
-            if (user._id) {
-                return { estado: true, data: user, mensaje: null }
-            } else {
-                return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
-            }
-        } else {
-            return { estado: false, data: [], mensaje: 'El usuario ya se encuentra registrado en el sistema' }
-        }
-    }
-
     async validate(data) {
         const isExist = await UserModel.get({ email: data.email, verifyCode: data.code })
         if (isExist._id) {
