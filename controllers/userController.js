@@ -8,6 +8,7 @@ const EmailController = require('../controllers/emailController')
 const makePassword = require('../utils/makePassword')
 const ProductModel = require('../models/productSchema')
 const SupermarketController = require('./supermarketController')
+const AuthController = require('../controllers/authController')
 const uuid = require('node-uuid')
 const moment = require('moment')
 const mongoose = require('mongoose')
@@ -47,8 +48,9 @@ class User {
         const isExist = await UserModel.get({ email: data.email, verifyCode: data.code })
         if (isExist._id) {
             const code = await GeneralController.createCode()
-            const update = await UserModel.update(isExist._id, { isActive: true, verifyCode: code })
-            return update
+            await UserModel.update(isExist._id, { isActive: true, verifyCode: code })
+            const userToken = await AuthController.createTokenSocial(isExist)
+            return userToken
         } else {
             return { estado: false, data: [], mensaje: 'El código de autencticación no es valido' }
         }
@@ -101,9 +103,9 @@ class User {
             admin.email = admins.email
             arrayAdmin.push(admin)
         }
-        if(arrayAdmin.length > 0){
+        if (arrayAdmin.length > 0) {
             return { estado: true, data: arrayAdmin, mensaje: null, code: 200 }
-        }else {
+        } else {
             return { estado: true, data: [], mensaje: 'No hay datos', code: 200 }
         }
     }
@@ -153,10 +155,10 @@ class User {
         data.promos = promos
         data.uid = uuid.v4()
         const user = await UserModel.get({ _id })
-        if(user.order.length > 0){
-            const update = await UserModel.update(user._id, {$push: {order : data }})
+        if (user.order.length > 0) {
+            const update = await UserModel.update(user._id, { $push: { order: data } })
             return update
-        }else {
+        } else {
             const update = await UserModel.update(user._id, { order: data })
             return update
         }
@@ -173,10 +175,10 @@ class User {
         data.superMarket = idMarket
         data.products = products
         data.uid = uuid.v4()
-        if(user.userList.length > 0) {
-            const update = UserModel.update(user._id, {$push: {userList: data}})
+        if (user.userList.length > 0)  {
+            const update = UserModel.update(user._id, { $push: { userList: data } })
             return update
-        }else {
+        } else {
             const update = UserModel.update(user._id, { userList: data })
             return update
         }
@@ -235,13 +237,13 @@ class User {
         const isExist = await UserModel.get({ _id })
         data.uid = uuid.v4()
         if (isExist) {
-            const directionArray = []
-            for (const directions of isExist.directions) {
-                directionArray.push(directions)
+            if (isExist.directions.length > 0) {
+                const update = await UserModel.update(_id, { $push: { directions: data } })
+                return update
+            } else {
+                const update = await UserModel.update(_id, { directions: data })
+                return update
             }
-            directionArray.push(data)
-            const update = await UserModel.update(_id, { directions: directionArray })
-            return { estado: true, data: [], mensaje: null }
         } else {
             return { estado: false, data: [], mensaje: 'La dirección no se ha creado' }
         }
@@ -257,7 +259,7 @@ class User {
     }
 
     async detailClient(data) {
-        UserModel.fields= 'name directions cellPhone email userList supermarketFavorite imageProfile'
+        UserModel.fields = 'name directions cellPhone email userList supermarketFavorite imageProfile'
         const user = await UserModel.get(data)
         if (user._id) {
             return { estado: true, data: user, mensaje: null }
@@ -289,11 +291,11 @@ class User {
 
     async listOrder() {
         UserModel.fields = 'order'
-        const orders = await UserModel.search({ rol: 'client'})
-        if(orders.length > 0) {
-            return{estado: true, data: orders, mensaje: null}
-        }else {
-            return{estado: false, data: [], mensaje: 'No existen ordenes'}
+        const orders = await UserModel.search({ rol: 'client' })
+        if (orders.length > 0) {
+            return { estado: true, data: orders, mensaje: null }
+        } else {
+            return { estado: false, data: [], mensaje: 'No existen ordenes' }
         }
     }
 }
