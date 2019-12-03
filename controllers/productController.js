@@ -12,7 +12,7 @@ class User {
             delete data.images
             const product = await ProductModel.create(data)
             if (product._id) {
-                return { estado: true, data: product , mensaje: null }
+                return { estado: true, data: product, mensaje: null }
             } else {
                 return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
             }
@@ -25,6 +25,7 @@ class User {
         const isExist = await ProductModel.get(data)
         return { estado: true, data: isExist, mensaje: null }
     }
+
     async detailAll(data) {
         const products = await ProductModel.search(data)
         return { estado: true, data: products, mensaje: null }

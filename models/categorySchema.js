@@ -15,6 +15,10 @@ const Schema = new mongoose.Schema({
     images: {
         type: Types.String,
         require: [true, 'la imagen es requerida']
+    },
+    isActive: {
+        type: Types.Boolean,
+        default: true
     }
 })
 
@@ -23,7 +27,7 @@ class Category extends Base {
         super()
         this.sort = { name: 1 }
         this.model = mongoose.model('Category', Schema)
-        this.fields = 'name description image'
+        this.fields = 'name description image isActive'
     }
 }
 

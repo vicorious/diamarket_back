@@ -23,16 +23,19 @@ const Schema = new mongoose.Schema({
     image: [{
         type: Types.String,
         required: [true, 'La imagen es requerida']
-    }]
+    }],
+    isActive: {
+        type: Types.Boolean,
+        default: true
+    }
 })
- class Promotion extends Base{
-    constructor(){
+class Promotion extends Base {
+    constructor() {
         super()
-        this.sort = {name:1}
-        this.model =  mongoose.model('Promotion',Schema)
-        this.fields = 'name supermarket products value image'
-        this.populate = [
-            {
+        this.sort = { name: 1 }
+        this.model = mongoose.model('Promotion', Schema)
+        this.fields = 'name supermarket products value image isActive'
+        this.populate = [{
                 path: 'supermarket',
                 select: 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules dateCreate',
                 model: 'Supermarket'
@@ -44,7 +47,7 @@ const Schema = new mongoose.Schema({
             }
         ]
     }
- }
+}
 
 
- module.exports= new Promotion()
+module.exports = new Promotion()

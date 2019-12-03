@@ -4,7 +4,7 @@ const asyncify = require('express-asyncify')
 const UserController = require('../controllers/userController')
 const token = require('../middleware/token')
 const routes = asyncify(express.Router())
-const {convertBase64ToFile} = require('../middleware/convertBase64File')
+const { convertBase64ToFile } = require('../middleware/convertBase64File')
 
 routes.post('/create', async(request, response) => {
     const data = request.body
@@ -12,18 +12,18 @@ routes.post('/create', async(request, response) => {
     response.json(create)
 })
 
-routes.put('/backoffice/update/:id',convertBase64ToFile, token, async(request, response) => {
+routes.put('/backoffice/update/:id', convertBase64ToFile, token, async(request, response) => {
     const _id = request.params.id
     const data = request.body
     const update = await UserController.update({ _id }, data)
-    response.json(update) 
+    response.json(update)
 })
 
-routes.put('/mobile/update',convertBase64ToFile, token, async(request, response) => {
+routes.put('/mobile/update', convertBase64ToFile, token, async(request, response) => {
     const _id = request.user.id
     const data = request.body
     const update = await UserController.update({ _id }, data)
-    response.json(update)   
+    response.json(update)
 })
 
 routes.post('/create/order', token, async(request, response) => {
@@ -36,7 +36,7 @@ routes.post('/create/listproduct', token, async(request, response) => {
     response.json(create)
 })
 
-routes.get('/supermarketforadmin', token,async(request, response) => {
+routes.get('/supermarketforadmin', token, async(request, response) => {
     const superMarkets = await UserController.getAdmin()
     response.json(superMarkets)
 })
@@ -58,21 +58,21 @@ routes.post('/resetpassword', async(request, response) => {
     const data = await UserController.updatePassword(request.body)
     response.json(data)
 })
-routes.get('/backoffice/detail/client/:id', token, async(request, response) => {
+routes.get('/backoffice/detail/:id', token, async(request, response) => {
     const _id = request.params.id
-    const data = await UserController.detailClient({ _id, rol: "client" })
+    const data = await UserController.detailClient({ _id })
     response.json(data)
 })
-routes.get('/mobile/detail/client', token, async(request, response)=> {
+routes.get('/mobile/detail/client', token, async(request, response) => {
     const _id = request.user.id
-    const user = await UserController.detailClient({_id, rol: "client"})
+    const user = await UserController.detailClient({ _id, rol: "client" })
     response.json(user)
 })
 routes.get('/all/clients', token, async(request, response) => {
-    const data = await UserController.all({ rol: "client" })
-    response.json(data)
-})
-//Me hace falta este de count order
+        const data = await UserController.all({ rol: "client" })
+        response.json(data)
+    })
+    //Me hace falta este de count order
 routes.post('/countorder', async(request, response) => {
     const count = await UserController.conuntOrder(request.body.meses)
     response.json(count)

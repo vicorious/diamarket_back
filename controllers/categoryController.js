@@ -13,6 +13,15 @@ class Category {
         }
     }
 
+    async detail(_id) {
+        const isExist = await CategoryModel.get({ _id, isActive: true })
+        if (isExist._id) {
+            return isExist
+        } else {
+            return { estado: false, data: [], mensaje: 'No existe la categoria' }
+        }
+    }
+
     async update(id, data) {
         const isExist = await CategoryModel.get({ _id: id })
         if (isExist) {
@@ -24,13 +33,23 @@ class Category {
     }
 
     async all() {
-        const getAll = await CategoryModel.search({})
-        if(getAll.length > 0){
+        const getAll = await CategoryModel.search({ isActive: true })
+        if (getAll.length > 0) {
             return { estado: true, data: getAll, mensaje: null }
-        }else {
+        } else {
             return { estado: true, data: [], mensaje: "No hay categorias" }
         }
-       
+
+    }
+
+    async inactivate(_id) {
+        const isExist = await CategoryModel.get({ _id })
+        if (isExist._id) {
+            const update = await CategoryModel.update(isExist._id, { isActive: false })
+            return update
+        } else {
+            return { estado: true, data: [], mensaje: "No se ha desactivado la categoria" }
+        }
     }
 
 }

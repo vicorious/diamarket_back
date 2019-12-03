@@ -18,6 +18,10 @@ const Schema = new mongoose.Schema({
     price: {
         type: Types.Number,
         require: [true, 'El precio es requerido']
+    },
+    isActive: {
+        type: Types.Boolean,
+        default: true
     }
 })
 
@@ -26,7 +30,7 @@ class Availability extends Base {
         super()
         this.sort = { quantity: 1 }
         this.model = mongoose.model('Availability', Schema)
-        this.fields = 'idSupermarket idProduct quantity price'
+        this.fields = 'idSupermarket idProduct quantity price, isActive'
         this.populate = [{ path: 'idProduct', select: '', model: 'Product' }, { path: 'idSupermarket', select: '', model: 'Supermarket' }]
     }
 }

@@ -69,6 +69,7 @@ class User {
                 supermarketObject.schedules = supermarket.schedules
                 supermarketObject.dateCreate = supermarket.dateCreate
                 supermarketObject._id = supermarket._id
+                supermarketObject.isActive = supermarket.isActive
                 supermarketObject.address = supermarket.address
                 supermarketObject.location = supermarket.location
                 supermarketObject.neigborhood = supermarket.neigborhood
@@ -83,6 +84,7 @@ class User {
             admin._id = admins._id
             admin.supermarket = arraySupermarket
             admin.name = admins.name
+            admin.isActive = admins.isActive
             admin.rol = admins.rol
             admin.directions = admins.directions
             admin.identification = admins.identification
@@ -245,7 +247,7 @@ class User {
     }
 
     async detailClient(data) {
-        UserModel.fields = 'name directions cellPhone email userList supermarketFavorite imageProfile'
+        UserModel.fields = 'name directions identification cellPhone email birthday rol dateCreate image direction order userList supermarketFavorite isActive imageProfile'
         const user = await UserModel.get(data)
         if (user._id) {
             return { estado: true, data: user, mensaje: null }
