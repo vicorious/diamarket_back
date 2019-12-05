@@ -16,7 +16,7 @@ class Category {
     async detail(_id) {
         const isExist = await CategoryModel.get({ _id, isActive: true })
         if (isExist._id) {
-            return isExist
+            return { estado: true, data: isExist, mensaje: null }
         } else {
             return { estado: false, data: [], mensaje: 'No existe la categoria' }
         }
@@ -37,7 +37,7 @@ class Category {
         if (getAll.length > 0) {
             return { estado: true, data: getAll, mensaje: null }
         } else {
-            return { estado: true, data: [], mensaje: "No hay categorias" }
+            return { estado: false, data: [], mensaje: "No hay categorias" }
         }
 
     }
@@ -48,7 +48,7 @@ class Category {
             const update = await CategoryModel.update(isExist._id, { isActive: false })
             return update
         } else {
-            return { estado: true, data: [], mensaje: "No se ha desactivado la categoria" }
+            return { estado: false, data: [], mensaje: "No se ha desactivado la categoria" }
         }
     }
 

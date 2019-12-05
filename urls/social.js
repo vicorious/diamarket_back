@@ -14,11 +14,11 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(obj, done) {
     done(null, obj);
 })
-
 passport.use(new GoogleStrategy({
-        clientID: "259516958244-2stgc0ecsu1m4sac922i8sdsdsl8oblb.apps.googleusercontent.com",
-        clientSecret: "_dyBvosP0cz6NrTx3Lj_Kz7h",
-        callbackURL: "http://api.diamarket.co/v1/social/google/callback"
+
+        clientID: "618036118210-4avg9o6c7bmmkbkum9gm7mdth0pojn0p.apps.googleusercontent.com",
+        clientSecret: "-BnW47K9-FtHr7Ha4AdInlYx",
+        callbackURL: `http://api.diamarket.co/v1/social/google/callback`
     },
     async function(accessToken, refreshToken, profile, done) {
         const { email, picture } = profile._json
@@ -36,14 +36,15 @@ passport.use(new GoogleStrategy({
         done(null, userData)
         const user = await UserController.detail({ email })
         if (!user.data._id) {
-            await UserController.create(userData)
+            const userCreate = await UserController.create(userData)
         }
     }
 ))
+
 passport.use(new FacebookStrategy({
         clientID: '534067730778763',
         clientSecret: '0e6eeaeaf1b83c0b69433c64246d319a',
-        callbackURL: 'http://localhost:5002/v1/social/facebook/callback',
+        callbackURL: `http://localhost:5002/v1/social/facebook/callback`,
         profileFields: ['id', 'displayName', 'link', 'photos', 'email'],
         enableProof: true
     },
@@ -86,9 +87,14 @@ routes.get('/google/callback', passport.authenticate('google'), async(request, r
     setTimeout(async function() {
         const user = await UserController.detail({ email: request.user.email })
         const auth = await AuthController.createTokenSocial(user.data)
-        response.json(auth)
+        const redirection = `/v1/social/googletoken?token=${auth.data.token}`
+        response.redirect(redirection)
     }, 1000)
-
 })
+routes.get('/googletoken', async(request, response) => {
+    response.json({})
+})
+
+
 
 module.exports = routes
