@@ -18,12 +18,18 @@ class User {
         const isExist = await UserModel.get({ email: data.email })
         if (!isExist._id) {
             data.verifyCode = await GeneralController.createCode()
-            const user = await UserModel.create(data)
-            if (user._id) {
-                SmsController.send(data.cellPhone, 'Bienvenido DíaMarket tu código de verificación es ' + data.verifyCode)
+            if (data.rol === 'domiciliary' || data.rol === 'administrator') {
+                data.isActive = true
+                const user = await UserModel.create(data)
                 return { estado: true, data: user, mensaje: null }
             } else {
-                return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
+                const user = await UserModel.create(data)
+                if (user._id) {
+                    SmsController.send(data.cellPhone, 'Bienvenido DíaMarket tu código de verificación es ' + data.verifyCode)
+                    return { estado: true, data: user, mensaje: null }
+                } else {
+                    return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
+                }
             }
         } else {
             return { estado: false, data: [], mensaje: 'El usuario ya se encuentra registrado en el sistema' }
@@ -132,16 +138,19 @@ class User {
             let idProduct = mongoose.Types.ObjectId(product)
             products.push(idProduct)
         }
-        for (const promo of data.promos) {
-            let idPromo = mongoose.Types.ObjectId(promo)
-            promos.push(idPromo)
+        if (data.promo) {
+            for (const promo of data.promos) {
+                let idPromo = mongoose.Types.ObjectId(promo)
+                promos.push(idPromo)
+            }
         }
         let idMarket = mongoose.Types.ObjectId(data.idSuperMarket)
         data.idSuperMarket = idMarket
         data.dateCreate = date
         data.products = products
         data.promos = promos
-        data.uid = uuid.v4()
+        data._id = mongoose.Types.ObjectId()
+        data.clientId = _id
         const user = await UserModel.get({ _id })
         if (user.order.length > 0) {
             const update = await UserModel.update(user._id, { $push: { order: data } })
@@ -263,6 +272,23 @@ class User {
         } else {
             return { estado: false, data: [], mensaje: 'No se encuentran datos' }
         }
+    }
+
+    async clientSupermarket(_id) {
+        const users = await UserModel.search({ rol: 'client' })
+        let idArray = []
+        let userArray = []
+        for (const user of users) {
+            for (const order of user.order) {
+                if (order.idSupermarket._id == _id) {
+                    if (!idArray.includes(user._id)) {
+                        idArray.push(user._id)
+                        userArray.push(user)
+                    }
+                }
+            }
+        }
+        return { estado: true, data: userArray, mensaje: null }
     }
 
     async countGen() {

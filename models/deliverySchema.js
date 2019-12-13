@@ -6,26 +6,36 @@ const Types = mongoose.Schema.Types
 
 const Schema = new mongoose.Schema({
     orderId: {
-        types: Types.String
+        type: Types.ObjectId
     },
     idUser: {
-        types: Types.ObjectId
+        type: Types.ObjectId
     },
     status: {
-        types: Types.String
+        type: Types.String
     },
     description: {
-        types: Types.String
+        type: Types.String
+    },
+    clientId: {
+        type: Types.ObjectId
     }
 })
 
 
 class Delivery extends Base {
-    constructor(){
+    constructor() {
         super()
-        this.sort = {name:1}
-        this.model = mongoose.model('Delivery',Schema)
-        this.fields = 'orderId idUser status description'
+        this.sort = { name: 1 }
+        this.model = mongoose.model('Delivery', Schema)
+        this.fields = 'orderId idUser status description clientId'
+        this.populate = [{
+                path: 'idUser ',
+                select: 'name identification email cellPhone',
+                model: 'User'
+            },
+            { path: 'clientId', select: 'order', model: 'User' }
+        ]
     }
 }
 

@@ -44,7 +44,7 @@ passport.use(new GoogleStrategy({
 passport.use(new FacebookStrategy({
         clientID: '534067730778763',
         clientSecret: '0e6eeaeaf1b83c0b69433c64246d319a',
-        callbackURL: `http://localhost:5002/v1/social/facebook/callback`,
+        callbackURL: `http://api.diamarket.co/v1/social/facebook/callback`,
         profileFields: ['id', 'displayName', 'link', 'photos', 'email'],
         enableProof: true
     },
@@ -75,11 +75,13 @@ routes.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }))
 routes.get('/facebook/callback', passport.authenticate('facebook'), async(request, response) => {
     setTimeout(async function() {
         const user = await UserController.detail({ email: request.user.email })
-        console.log(user)
         const auth = await AuthController.createTokenSocial(user.data)
-        response.json(auth)
-    }, 1000);
-
+        const redirection = `/v1/social/facebooktoken?token=${auth.data.token}`
+        response.redirect(redirection)
+    }, 1000)
+})
+routes.get('/facebooktoken', async(request, response) => {
+    response.json({})
 })
 
 routes.get('/google', passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login', 'email'] }))

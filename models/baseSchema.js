@@ -30,6 +30,7 @@ class Base {
 
     async get(data) {
         try {
+
             let results = await this.model.findOne(data, this.fields).sort(this.sort)
             if (this.populate) {
                 results = await this.model.findOne(data, this.fields).populate(this.populate).sort(this.sort)
@@ -73,9 +74,9 @@ class Base {
     async update(_id, data) {
         try {
             await this.model.findByIdAndUpdate(_id, data, { runValidators: true })
-            return {estado:true,data:{update: true}, mensaje:null }
+            return { estado: true, data: { update: true }, mensaje: null }
         } catch (error) {
-            return {estado:false,data:{update: true}, mensaje:'Error almacenando los datos' }
+            return { estado: false, data: { update: false }, mensaje: 'Error almacenando los datos' }
         }
     }
 

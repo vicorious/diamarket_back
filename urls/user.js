@@ -69,10 +69,17 @@ routes.get('/mobile/detail/client', token, async(request, response) => {
     response.json(user)
 })
 routes.get('/all/clients', token, async(request, response) => {
-        const data = await UserController.all({ rol: "client" })
-        response.json(data)
-    })
-    //Me hace falta este de count order
+    const data = await UserController.all({ rol: "client" })
+    response.json(data)
+})
+routes.get('/all/domiciliary', token, async(request, response) => {
+    const data = await UserController.all({ rol: "domiciliary" })
+    response.json(data)
+})
+routes.get('/clients/supermarket/:id', token, async(request, response) => {
+    const data = await UserController.clientSupermarket(request.params.id)
+    response.json(data)
+})
 routes.post('/countorder', async(request, response) => {
     const count = await UserController.conuntOrder(request.body.meses)
     response.json(count)
@@ -84,6 +91,14 @@ routes.get('/orders', token, async(request, response) => {
 routes.post('/create/direction', token, async(request, response) => {
     const createDirection = await UserController.createDirection(request.user.id, request.body)
     response.json(createDirection)
+})
+routes.post('/create/facebook', token, async(request, response) => {
+    request.body.isActive = true
+    request.body.rol = 'client'
+    request.body.cellPhone = ''
+    request.body.password = '123456'
+    const create = await UserController.create(request.body)
+    response.json(create)
 })
 
 module.exports = routes

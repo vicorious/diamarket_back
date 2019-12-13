@@ -8,8 +8,8 @@ const Schema = new mongoose.Schema({
         type: Types.Boolean,
         default: true
     },
-    cellPhone:{
-      type: Types.String
+    cellPhone: {
+        type: Types.String
     },
     name: {
         type: Types.String,
@@ -37,6 +37,10 @@ const Schema = new mongoose.Schema({
     email: {
         type: Types.String,
         require: [true, 'El email es requerido']
+    },
+    supermaketType: {
+        type: Types.String,
+        required: [true, 'El tipo de supermercado es requerido']
     },
     logo: {
         type: Types.String,

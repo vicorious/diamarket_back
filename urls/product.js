@@ -25,6 +25,11 @@ routes.post('/forcategory', token, async(request, response) => {
     response.json(products)
 })
 
+routes.get('/detail/:id', token, async(request, response) => {
+    const detail = await ProductController.detail(request.params.id)
+    response.json(detail)
+})
+
 routes.post('/forname', token, async(request, response) => {
     const data = request.body
     const products = await AvailabilityController.productsForName(data)

@@ -21,9 +21,13 @@ class User {
         }
     }
 
-    async detail(data) {
-        const isExist = await ProductModel.get(data)
-        return { estado: true, data: isExist, mensaje: null }
+    async detail(_id) {
+        const isExist = await ProductModel.get({ _id })
+        if (isExist._id) {
+            return { estado: true, data: isExist, mensaje: null }
+        } else {
+            return { estado: false, data: [], mensaje: 'No existe el producto' }
+        }
     }
 
     async detailAll(data) {
