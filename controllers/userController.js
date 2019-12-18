@@ -279,11 +279,13 @@ class User {
         let idArray = []
         let userArray = []
         for (const user of users) {
-            for (const order of user.order) {
-                if (order.idSupermarket._id == _id) {
-                    if (!idArray.includes(user._id)) {
-                        idArray.push(user._id)
-                        userArray.push(user)
+            if (Array.isArray(user.order)) {
+                for (const order of user.order) {
+                    if (order.idSupermarket._id == _id) {
+                        if (!idArray.includes(user._id)) {
+                            idArray.push(user._id)
+                            userArray.push(user)
+                        }
                     }
                 }
             }
