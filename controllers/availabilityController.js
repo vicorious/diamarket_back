@@ -23,13 +23,13 @@ class Availability {
         }
     }
 
-    async inactivate(_id) {
+    async update(_id, data) {
         const isExist = await availabilityModel.get({ _id })
         if (isExist._id) {
-            const inactivate = await availabilityModel.update(isExist._id, { isActive: false })
-            return inactivate
+            const update = await availabilityModel.update(isExist._id, data)
+            return update
         } else {
-            return { estado: false, data: [], mensaje: 'No se ha desctivado el producto' }
+            return { estado: false, data: [], mensaje: 'No existe esta disponibilidad' }
         }
     }
 

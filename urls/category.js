@@ -23,11 +23,6 @@ routes.get('/detail/:id', token, async(request, response) => {
     response.json(detail)
 })
 
-routes.put('/inactivate/:id', token, async(request, response) => {
-    const inactivate = await categoryController.inactivate(request.params.id)
-    response.json(inactivate)
-})
-
 routes.get('/all', token, async(request, response) => {
     const all = await categoryController.all()
     response.json(all)

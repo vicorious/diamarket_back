@@ -21,6 +21,16 @@ class User {
         }
     }
 
+    async update(_id, data) {
+        const isExist = await ProductModel.get({ _id })
+        if (isExist._id) {
+            const update = await ProductModel.update(isExist._id, data)
+            return update
+        } else {
+            return { estado: false, data: [], mensaje: 'No existe el producto' }
+        }
+    }
+
     async detail(_id) {
         const isExist = await ProductModel.get({ _id })
         if (isExist._id) {

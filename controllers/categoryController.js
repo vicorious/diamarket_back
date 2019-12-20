@@ -22,8 +22,8 @@ class Category {
         }
     }
 
-    async update(id, data) {
-        const isExist = await CategoryModel.get({ _id: id })
+    async update(_id, data) {
+        const isExist = await CategoryModel.get({ _id })
         if (isExist) {
             const update = await CategoryModel.update(isExist._id, data)
             return update
@@ -40,16 +40,6 @@ class Category {
             return { estado: false, data: [], mensaje: "No hay categorias" }
         }
 
-    }
-
-    async inactivate(_id) {
-        const isExist = await CategoryModel.get({ _id })
-        if (isExist._id) {
-            const update = await CategoryModel.update(isExist._id, { isActive: false })
-            return update
-        } else {
-            return { estado: false, data: [], mensaje: "No se ha desactivado la categoria" }
-        }
     }
 
 }

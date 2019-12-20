@@ -12,7 +12,7 @@ async function token(request, response, next) {
             const id = verify._id
             const dataUser = await userController.detail({ _id: id })
             if (dataUser.data._id) {
-                request.user = { id, rol: dataUser.rol }
+                request.user = { id, rol: dataUser.data.rol }
                 return next()
             } else {
                 response.send({ estado: false, data: [], mensaje: 'Las credenciales de autenticación no se proveyeron.' })

@@ -13,6 +13,11 @@ routes.post('/create', convertBase64ToFile, token, async(request, response) => {
     response.json(create)
 })
 
+routes.put('/update/:id', convertBase64ToFile, token, async(request, response) => {
+    const update = await ProductController.update(request.params.id, request.body)
+    response.json(update)
+})
+
 routes.get('/forsupermarket/:id', token, async(request, response) => {
     const id = request.params.id
     const products = await AvailabilityController.productsSuperMarkets(id)

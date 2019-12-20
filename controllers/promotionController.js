@@ -14,6 +14,16 @@ class Promotion {
         }
     }
 
+    async update(_id, data) {
+        const isExist = await PromotionModel.get({ _id })
+        if (isExist._id) {
+            const update = await PromotionModel.update(isExist._id, data)
+            return update
+        } else {
+            return { estado: false, data: [], mensaje: "No existe esta promoción" }
+        }
+    }
+
     async count() {
         const count = await PromotionModel.count({ isActive: true })
         return count
@@ -26,16 +36,6 @@ class Promotion {
             return { estado: true, data: promotion, mensaje: null }
         } else {
             return { estado: false, data: [], mensaje: "No existe esta promoción" }
-        }
-    }
-
-    async inactivate(_id) {
-        const isExist = await PromotionModel.get({ _id })
-        if (isExist._id) {
-            const inactivate = await PromotionModel.update(isExist._id, { isActive: false })
-            return inactivate
-        } else {
-            return { estado: false, data: [], mensaje: 'No se ha desctivado la promoción' }
         }
     }
 

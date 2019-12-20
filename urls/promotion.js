@@ -10,9 +10,9 @@ routes.post('/create', convertBase64ToFile, token, async(request, response) => {
     const create = await PromotionController.create(request.body)
     response.json(create)
 })
-routes.put('/inactivate/:id', token, async(request, response) => {
-    const inactivate = await PromotionController.inactivate(request.params.id)
-    response.json(inactivate)
+routes.put('/update/:id', token, convertBase64ToFile, async(request, response) => {
+    const update = await PromotionController.update(request.params.id, request.body)
+    response.json(update)
 })
 routes.get('/all/:supermarket', token, async(request, response) => {
     const supermarket = request.params.supermarket

@@ -9,12 +9,12 @@ routes.post('/create', token, async(request, response) => {
     response.json(create)
 })
 
-routes.put('/inactivate/:id', token, async(request, response) => {
-    const inactivate = await availabilityController.inactivate(request.params.id)
-    response.json(inactivate)
+routes.put('/update/:id', token, async(request, response) => {
+    const update = await availabilityController.update(request.params.id, request.body)
+    response.json(update)
 })
 
-routes.get('/active', async(request, response) => {
+routes.get('/active', token, async(request, response) => {
     const res = await availabilityController.incativeFullData()
     response.json(res)
 })
