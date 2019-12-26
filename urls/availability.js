@@ -19,4 +19,9 @@ routes.get('/active', token, async(request, response) => {
     response.json(res)
 })
 
+routes.get('/createdata', async(request, response)=>{
+    const create = await availabilityController.createData()
+    response.json(create)
+})
+
 module.exports = routes

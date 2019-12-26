@@ -17,7 +17,7 @@ class Base {
             response = await model.save()
             response = { _id: response._id }
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             response = makeErrors(error.errors)
         }
         return response
