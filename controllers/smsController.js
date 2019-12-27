@@ -1,21 +1,25 @@
 'use strict'
 const twilio = require('twilio')
-const accountId = 'ACc3011e08a0913177b6248e84a8d684cd'
-const authToken = '97aea70ee6603da9781e309df8998721'
-const numberTwilio = '+12056192898'
+const accountId = 'AC19e5b1890b43ebfcf6e4e2a8b3ddcc97'
+const authToken = '0327aa3ac0ff856276aa31e4a78188e8'
+const numberTwilio = '+14234541365'
 const client = new twilio(accountId, authToken)
 
 
 class Sms {
 
-
-    send(cellphone, body) {
-
-        client.messages.create({
-            body: body,
-            to: `+${cellphone}`,
-            from: numberTwilio
-        }).then((message) => console.log(message.sid))
+    async send(cellphone, body) {
+        console.log(cellphone, body);
+        try {
+            await client.messages.create({
+                body: body,
+                to: `+${cellphone}`,
+                from: numberTwilio
+            }).then((message) => console.log("mensaje mensaje",message))
+        } catch (error) {
+            console.log(error)
+        }
+        
     }
 
 
