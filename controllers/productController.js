@@ -3,6 +3,7 @@ const ProductModel = require('../models/productSchema')
 const generalController = require('../controllers/generalController')
 const availabilityController = require('../controllers/availabilityController')
 const promotionController = require('../controllers/promotionController')
+const categoryModel = require('../models/categorySchema')
 class User {
 
     async create(data) {
@@ -43,6 +44,32 @@ class User {
     async detailAll(data) {
         const products = await ProductModel.search(data)
         return { estado: true, data: products, mensaje: null }
+    }
+
+    async categoryData(){
+        try {
+            const categorys = await categoryModel.search({})
+            let count = 0
+            for (let r = 0; r <= 20; r++) {
+                for (const category of categorys) {
+                    count++
+                    let random = await generalController.createCode()
+                    let obj = {
+                        image: ["https://jumbocolombiafood.vteximg.com.br/arquivos/ids/3323070-750-750/7702129075275-1.jpg?v=636670897146530000"],
+                        idPos: random,
+                        name: `Jamón${count}`,
+                        description: "Descripción de el producto",
+                        category: category.name,
+                        defaultprice: 12300 
+                    }
+                    const create = await ProductModel.create(obj)
+                }
+            }
+            return "Successful!"
+        } catch (error) {
+            console.log(error)
+            return "Failure!"
+        }
     }
 }
 

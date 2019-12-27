@@ -41,5 +41,9 @@ routes.post('/forname', token, async(request, response) => {
     response.json(products)
 })
 
+routes.get('/categoryData', async(request, response)=>{
+    const create = await ProductController.categoryData()
+    response.json(create)
+})
 
 module.exports = routes
