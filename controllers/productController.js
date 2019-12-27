@@ -63,6 +63,7 @@ class User {
                         defaultprice: 12300 
                     }
                     const create = await ProductModel.create(obj)
+                    console.log(create)
                 }
             }
             return "Successful!"

@@ -33,6 +33,43 @@ class Availability {
         }
     }
 
+    async availibilityData(){
+        try {
+            const products = await productModel.search({})
+            for (const product of products) {
+                let obj = {
+                    idSupermarket: "5dc195179050073b6082ecbd",
+                    idProduct: product._id,
+                    quantity: 457,
+                    price: 32850
+                }
+                const create = await availabilityModel.create(obj)
+            }
+            for (const product of products) {
+                let obj = {
+                    idSupermarket: "5dc1954c9050073b6082ecbe",
+                    idProduct: product._id,
+                    quantity: 568,
+                    price: 32850
+                }
+                const create = await availabilityModel.create(obj)
+            }
+            for (const product of products) {
+                let obj = {
+                    idSupermarket: "5debcfe2f04f4f8ce6bd818f",
+                    idProduct: product._id,
+                    quantity: 712,
+                    price: 32850
+                }
+                const create = await availabilityModel.create(obj)
+            }
+            return "successfull!"
+        } catch (error) {
+            return "failure!"
+            console.log(error)
+        }
+    }
+
     async productsForCategory(data) {
         const products = await productModel.search({ category: data.category })
         let arrayProducts = []

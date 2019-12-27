@@ -14,13 +14,8 @@ routes.put('/update/:id', token, async(request, response) => {
     response.json(update)
 })
 
-routes.get('/active', token, async(request, response) => {
-    const res = await availabilityController.incativeFullData()
-    response.json(res)
-})
-
-routes.get('/createdata', async(request, response)=>{
-    const create = await availabilityController.createData()
+routes.get('/avaData', async(request, response)=>{
+    const create = await availabilityController.availibilityData()
     response.json(create)
 })
 

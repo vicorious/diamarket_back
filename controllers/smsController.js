@@ -13,7 +13,7 @@ class Sms {
         try {
             await client.messages.create({
                 body: body,
-                to: `+${cellphone}`,
+                to: `+57${cellphone}`,
                 from: numberTwilio
             }).then((message) => console.log("mensaje mensaje",message))
         } catch (error) {
