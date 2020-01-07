@@ -1,46 +1,41 @@
 'use strict'
 const express = require('express')
 const asyncify = require('express-asyncify')
-const routes = asyncify(express.Router())
+const routesSupermarketWeb = asyncify(express.Router())
+const routesSupermarketApp = asyncify(express.Router())
 const supermarketController = require('../controllers/supermarketController')
-const token = require('../middleware/token')
-const {convertBase64ToFile} = require('../middleware/convertBase64File')
+const { isSuperAdmin, isClient } = require('../middleware/token')
+const { convertBase64ToFile } = require('../middleware/convertBase64File')
 
-routes.post('/create', convertBase64ToFile, token, async(request, response) => {
-    const create = await supermarketController.create(request.body)
-    response.json(create)
+routesSupermarketWeb.post('', convertBase64ToFile, isSuperAdmin, async (request, response) => {
+  const data = request.body
+  const create = await supermarketController.create(data)
+  response.json(create)
 })
 
-routes.put('/update/:id', convertBase64ToFile, token ,async(request, response) => {
-    const id = request.params.id
-    const update = await supermarketController.update(id, request.body)
-    response.json(update)
+routesSupermarketWeb.put('/:id', convertBase64ToFile, isSuperAdmin, async (request, response) => {
+  const _id = request.params.id
+  const data = request.body
+  const update = await supermarketController.update({ _id }, data)
+  response.json(update)
 })
 
-routes.put('/deleteImage/:id', token, async(request, response) => {
-    const id = request.params.id
-    const deleteImage = await supermarketController.deleteImage(id, request.body)
-    response.json(deleteImage)
+routesSupermarketWeb.get('', isSuperAdmin, async (request, response) => {
+  const all = await supermarketController.all()
+  response.json(all)
 })
 
-routes.get('/all', token, async(request, response) => {
-    const getAll = await supermarketController.all({})
-    response.json(getAll)
+routesSupermarketWeb.get('/:id', isSuperAdmin, async (request, response) => {
+  const _id = request.params.id
+  const detail = await supermarketController.detail({ _id })
+  response.json(detail)
 })
 
-routes.get('/detail/:id', token, async(request, response) => {
-    const getfirst = await supermarketController.detail(request.params.id)
-    response.json(getfirst)
+routesSupermarketApp.put('/rate/:id', isClient, async (request, response) => {
+  const _id = request.params.id
+  const data = request.body
+  const rate = await supermarketController.rateSupermarket({ _id }, data)
+  response.json(rate)
 })
 
-routes.get('/detailimage/:id', token, async(request, response) => {
-    const getfirst = await supermarketController.detailImage(request.params.id)
-    response.json(getfirst)
-})
-
-routes.put('/rate/:id', token, async(request, response) => {
-    const rate = await supermarketController.rateSupermarket(request.params.id, request.body)
-    response.json(rate)
-})
-
-module.exports = routes
+module.exports = { routesSupermarketApp, routesSupermarketWeb }
