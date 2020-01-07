@@ -17,7 +17,7 @@ const Schema = new mongoose.Schema({
     require: [true, 'La descripción es requerida']
   },
   category: {
-    type: Types.String,
+    type: Types.ObjectId,
     require: [true, 'La categoria es requerida']
   },
   defaultprice: {
@@ -36,6 +36,13 @@ class Product extends Base {
     this.sort = { name: 1 }
     this.model = mongoose.model('Product', Schema)
     this.fields = 'idPos name description category defaultprice image'
+    this.populate = [
+      {
+        path: 'category',
+        select: 'name description image isActive',
+        model: 'Category'
+      }
+    ]
   }
 }
 
