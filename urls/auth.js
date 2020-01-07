@@ -3,14 +3,16 @@ const express = require('express')
 const asyncify = require('express-asyncify')
 const Auth = require('../controllers/authController')
 
-const routes = asyncify(express.Router())
+const routesAuthWeb = asyncify(express.Router())
+const routesAuthApp = asyncify(express.Router())
 
-routes.post('/token', async(request, response) => {
-    const token = await Auth.createToken(request.body)
-    response.json(token)
+routesAuthApp.post('', async (request, response) => {
+  const token = await Auth.createToken(request.body)
+  response.json(token)
 })
-routes.post('/tokenbackoffice', async(request, response) => {
-    const token = await Auth.createTokenBackoffice(request.body)
-    response.json(token)
+
+routesAuthWeb.post('', async (request, response) => {
+  const token = await Auth.createTokenBackoffice(request.body)
+  response.json(token)
 })
-module.exports = routes
+module.exports = { routesAuthApp, routesAuthWeb }
