@@ -1,30 +1,58 @@
 'use strict'
 const express = require('express')
 const asyncify = require('express-asyncify')
-const routes = asyncify(express.Router())
 const PqrController = require('../controllers/pqrController')
-const token = require('../middleware/token')
+const { isSuperAdmin, isAdmin, isClient } = require('../middleware/token')
+const routesPqrWeb = asyncify(express.Router())
+const routesPqrApp = asyncify(express.Router())
 
-routes.post('/create', token, async(request, response) => {
-    request.body.userId = request.user.id
-    console.log(request.user.id);
-    const create = await PqrController.create(request.body)
-    response.json(create)
+routesPqrWeb.post('', isAdmin, isSuperAdmin, async (request, response) => {
+  const data = request.body
+  const create = await PqrController.create(data)
+  response.json(create)
 })
 
-routes.get('/all', token, async(request, response) => {
-    const all = await PqrController.getAll()
-    response.json(all)
+routesPqrWeb.get('', isSuperAdmin, async (request, response) => {
+  const all = await PqrController.getAll()
+  response.json(all)
 })
 
-routes.get('/detail/:id', token, async(request, response) => {
-    const detail = await PqrController.getFirst(request.params.id)
-    response.json(detail)
+routesPqrWeb.get('/:id', isSuperAdmin, isAdmin, async (request, response) => {
+  const _id = request.params.id
+  const detail = await PqrController.getFirst({ _id })
+  response.json(detail)
 })
 
-routes.put('/update/:id', token, async(request, response) => {
-    const update = await PqrController.update(request.params.id, request.body)
-    response.json(update)
+routesPqrWeb.put('/:id', isSuperAdmin, isAdmin, async (request, response) => {
+  const _id = request.params.id
+  const data = request.body
+  const update = await PqrController.update({ _id }, data)
+  response.json(update)
 })
 
-module.exports = routes
+routesPqrWeb.get('/bysupermarket', isAdmin, async (request, response) => {
+  const _id = request.user.id
+  const pqrs = await PqrController.bySupermarket({ _id })
+  response.json(pqrs)
+})
+
+routesPqrApp.post('', isClient, async (request, response) => {
+  request.body.client = request.user.id
+  const data = request.body
+  const create = await PqrController.create(data)
+  response.json(create)
+})
+
+routesPqrApp.get('/:id', isClient, async (request, response) => {
+  const _id = request.params.id
+  const detail = await PqrController.getFirst({ _id })
+  response.json(detail)
+})
+
+routesPqrApp.get('/byuser', isClient, async (request, response) => {
+  const id = request.user.id
+  const all = await PqrController.allForUser(id)
+  response.json(all)
+})
+
+module.exports = { routesPqrApp, routesPqrWeb }

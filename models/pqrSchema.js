@@ -4,9 +4,8 @@ const Base = require('./baseSchema')
 const Types = mongoose.Schema.Types
 
 const Schema = new mongoose.Schema({
-  userId: {
-    type: Types.ObjectId,
-    require: [true, 'El nombre es requerido']
+  client: {
+    type: Types.ObjectId
   },
   description: {
     type: Types.String,
@@ -25,6 +24,13 @@ const Schema = new mongoose.Schema({
   },
   createUpdate: {
     type: Types.Date
+  },
+  supermarket: {
+    type: Types.ObjectId
+  },
+  isFrequent: {
+    type: Types.Boolean,
+    default: false
   }
 })
 

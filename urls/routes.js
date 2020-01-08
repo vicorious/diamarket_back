@@ -11,7 +11,7 @@ const { routesProductApp, routesProductWeb } = require('./product')
 const { routesCategoryApp, routesCategoryWeb } = require('./category')
 // const general = require('./general')
 // const promotion = require('./promotion')
-// const pqr = require('./pqr')
+const { routesPqrApp, routesPqrWeb } = require('./pqr')
 // const social = require('./social')
 // const delivery = require('./delivery')
 
@@ -20,6 +20,7 @@ routes.use('/app/product', routesProductApp)
 routes.use('/app/supermarket', routesSupermarketApp)
 routes.use('/app/user', routesUserApp)
 routes.use('/app/category', routesCategoryApp)
+routes.use('/app/pqr', routesPqrApp)
 
 routes.use('/web/auth', routesAuthWeb)
 routes.use('/web/supermarket', routesSupermarketWeb)
@@ -27,5 +28,6 @@ routes.use('/web/product', routesProductWeb)
 routes.use('/web/availability', routesAvailabilityWeb)
 routes.use('/web/user', routesUserWeb)
 routes.use('/web/category', routesCategoryWeb)
+routes.use('/web/pqr', routesPqrWeb)
 
 module.exports = routes
