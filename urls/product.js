@@ -3,7 +3,6 @@
 const express = require('express')
 const asyncify = require('express-asyncify')
 const ProductController = require('../controllers/productController')
-const AvailabilityController = require('../controllers/availabilityController')
 const { isAdmin, isClient, isSuperAdmin } = require('../middleware/token')
 const { convertBase64ToFile } = require('../middleware/convertBase64File')
 const routesProductApp = asyncify(express.Router())

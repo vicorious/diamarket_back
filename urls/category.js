@@ -1,31 +1,44 @@
 'use strict'
+
 const express = require('express')
 const asyncify = require('express-asyncify')
-const routes = asyncify(express.Router())
 const categoryController = require('../controllers/categoryController')
-const token = require('../middleware/token')
 const { convertBase64ToFile } = require('../middleware/convertBase64File')
+const { isSuperAdmin, isAdmin, isClient } = require('../middleware/token')
+const routesCategoryWeb = asyncify(express.Router())
+const routesCategoryApp = asyncify(express.Router())
 
-
-routes.post('/create', convertBase64ToFile, token, async(request, response) => {
-    const create = await categoryController.create(request.body)
-    response.json(create)
+routesCategoryWeb.post('', convertBase64ToFile, isSuperAdmin, async (request, response) => {
+  const create = await categoryController.create(request.body)
+  response.json(create)
 })
 
-routes.put('/update/:id', convertBase64ToFile, token, async(request, response) => {
-    const id = request.params.id
-    const update = await categoryController.update(id, request.body)
-    response.json(update)
+routesCategoryWeb.put('/:id', convertBase64ToFile, isSuperAdmin, async (request, response) => {
+  const _id = request.params.id
+  const update = await categoryController.update({ _id }, request.body)
+  response.json(update)
 })
 
-routes.get('/detail/:id', token, async(request, response) => {
-    const detail = await categoryController.detail(request.params.id)
-    response.json(detail)
+routesCategoryWeb.get('/:id', isSuperAdmin, isAdmin, async (request, response) => {
+  const _id = request.params.id
+  const detail = await categoryController.detail(_id)
+  response.json(detail)
 })
 
-routes.get('/all', token, async(request, response) => {
-    const all = await categoryController.all()
-    response.json(all)
+routesCategoryWeb.get('/all', isSuperAdmin, isAdmin, async (request, response) => {
+  const all = await categoryController.all()
+  response.json(all)
 })
 
-module.exports = routes
+routesCategoryApp.get('/:id', isClient, async (request, response) => {
+  const _id = request.params.id
+  const detail = await categoryController.detail({ _id })
+  response.json(detail)
+})
+
+routesCategoryApp.get('/all', isClient, async (request, response) => {
+  const all = await categoryController.all()
+  response.json(all)
+})
+
+module.exports = { routesCategoryWeb, routesCategoryApp }
