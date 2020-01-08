@@ -7,12 +7,20 @@ const routesAuthWeb = asyncify(express.Router())
 const routesAuthApp = asyncify(express.Router())
 
 routesAuthApp.post('', async (request, response) => {
-  const token = await Auth.createToken(request.body)
+  const data = request.body
+  const token = await Auth.createToken(data)
   response.json(token)
 })
 
 routesAuthWeb.post('', async (request, response) => {
-  const token = await Auth.createTokenBackoffice(request.body)
+  const data = request.body
+  const token = await Auth.createToken(data)
+  response.json(token)
+})
+
+routesAuthApp.post('/social', async (request, response) => {
+  const data = request.body
+  const token = await Auth.createTokenSocial(data)
   response.json(token)
 })
 module.exports = { routesAuthApp, routesAuthWeb }

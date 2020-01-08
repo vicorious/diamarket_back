@@ -47,7 +47,7 @@ const Schema = new mongoose.Schema({
     type: Types.Date,
     default: Date.now()
   },
-  images: {
+  image: {
     type: Types.String
   },
   credits: {
@@ -60,12 +60,6 @@ const Schema = new mongoose.Schema({
     type: Types.Mixed
   }],
   directions: [{
-    type: Types.Mixed
-  }],
-  userList: [{
-    type: Types.Mixed
-  }],
-  order: [{
     type: Types.Mixed
   }]
 })

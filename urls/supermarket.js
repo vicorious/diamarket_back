@@ -4,7 +4,7 @@ const asyncify = require('express-asyncify')
 const routesSupermarketWeb = asyncify(express.Router())
 const routesSupermarketApp = asyncify(express.Router())
 const supermarketController = require('../controllers/supermarketController')
-const { isSuperAdmin, isClient } = require('../middleware/token')
+const { isSuperAdmin, isAdmin, isClient } = require('../middleware/token')
 const { convertBase64ToFile } = require('../middleware/convertBase64File')
 
 routesSupermarketWeb.post('', convertBase64ToFile, isSuperAdmin, async (request, response) => {
@@ -13,7 +13,7 @@ routesSupermarketWeb.post('', convertBase64ToFile, isSuperAdmin, async (request,
   response.json(create)
 })
 
-routesSupermarketWeb.put('/:id', convertBase64ToFile, isSuperAdmin, async (request, response) => {
+routesSupermarketWeb.put('/:id', convertBase64ToFile, isSuperAdmin, isAdmin, async (request, response) => {
   const _id = request.params.id
   const data = request.body
   const update = await supermarketController.update({ _id }, data)
