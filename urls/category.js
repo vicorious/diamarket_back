@@ -25,7 +25,7 @@ routesCategoryWeb.get('/:id', isSuperAdmin, isAdmin, async (request, response) =
   response.json(detail)
 })
 
-routesCategoryWeb.get('/all', isSuperAdmin, isAdmin, async (request, response) => {
+routesCategoryWeb.get('', isSuperAdmin, isAdmin, async (request, response) => {
   const all = await categoryController.all()
   response.json(all)
 })
@@ -36,7 +36,7 @@ routesCategoryApp.get('/:id', isClient, async (request, response) => {
   response.json(detail)
 })
 
-routesCategoryApp.get('/all', isClient, async (request, response) => {
+routesCategoryApp.get('', isClient, async (request, response) => {
   const all = await categoryController.all()
   response.json(all)
 })
