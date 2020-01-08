@@ -31,13 +31,13 @@ routesPqrWeb.put('/:id', isSuperAdmin, isAdmin, async (request, response) => {
 })
 
 routesPqrWeb.get('/bysupermarket', isAdmin, async (request, response) => {
-  const _id = request.user.id
+  const _id = request.User.id
   const pqrs = await PqrController.bySupermarket({ _id })
   response.json(pqrs)
 })
 
 routesPqrApp.post('', isClient, async (request, response) => {
-  request.body.client = request.user.id
+  request.body.client = request.User.id
   const data = request.body
   const create = await PqrController.create(data)
   response.json(create)
@@ -50,7 +50,7 @@ routesPqrApp.get('/:id', isClient, async (request, response) => {
 })
 
 routesPqrApp.get('/byuser', isClient, async (request, response) => {
-  const id = request.user.id
+  const id = request.User.id
   const all = await PqrController.allForUser(id)
   response.json(all)
 })
