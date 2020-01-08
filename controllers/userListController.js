@@ -1,7 +1,7 @@
 'use strict'
 const UserListModel = require('../models/userListSchema')
 
-class Promotion {
+class UserList {
   async create (data) {
     const isExist = await UserListModel.get({ name: data.name })
     if (!isExist._id) {
@@ -41,4 +41,4 @@ class Promotion {
   }
 }
 
-module.exports = new Promotion()
+module.exports = new UserList()

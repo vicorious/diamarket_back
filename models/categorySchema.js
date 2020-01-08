@@ -3,6 +3,26 @@ const mongoose = require('mongoose')
 const Base = require('./baseSchema')
 const Types = mongoose.Schema.Types
 
+/**
+ * @swagger
+ * definitions:
+ *  Category:
+ *    type: object
+ *    required:
+ *    - name
+ *    - description
+ *    - image
+ *    properties:
+ *      name:
+ *        type: string
+ *      description:
+ *        type: string
+ *      image:
+ *        type: string
+ *      isActive:
+ *        type: boolean
+ */
+
 const Schema = new mongoose.Schema({
   name: {
     type: Types.String,
@@ -12,7 +32,7 @@ const Schema = new mongoose.Schema({
     type: Types.String,
     require: [true, 'La description']
   },
-  images: {
+  image: {
     type: Types.String,
     require: [true, 'la imagen es requerida']
   },

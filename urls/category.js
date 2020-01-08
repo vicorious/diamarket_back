@@ -8,11 +8,108 @@ const { isSuperAdmin, isAdmin, isClient } = require('../middleware/token')
 const routesCategoryWeb = asyncify(express.Router())
 const routesCategoryApp = asyncify(express.Router())
 
+/**
+ * @swagger
+ * /web/category:
+ *  post:
+ *    tags:
+ *      - Category
+ *    decription: Se crea una nueva categoria
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        $ref: '#/definitions/Category'
+ *    responses:
+ *      200:
+ *        description: Si la categoria se registra correctamente devuelvo un objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data: 
+ *              type: object
+ *              properties:
+ *                _id:
+ *                  type: string
+ *                  example: sasdasddas
+ *            mensaje: 
+ *              type: string
+ *              example: null
+ * 
+ *      400:
+ *        description: Si el nombre de la categoria ya se encuentra registrado se devuelve el siguiente error
+ *        schema:
+ *          properties:
+ *            error:
+ *              type: string
+ *              example: La categoria ya existe
+ *
+ *
+ */
 routesCategoryWeb.post('', convertBase64ToFile, isSuperAdmin, async (request, response) => {
-  const create = await categoryController.create(request.body)
+  const data = request.body
+  const create = await categoryController.create(data)
   response.json(create)
 })
 
+/**
+ * @swagger
+ * /web/category/{id}:
+ *  post:
+ *    tags:
+ *      - Category
+ *    decription: Se crea una nueva categoria
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    - in: path
+ *      name: id
+ *      type: string
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        $ref: '#/definitions/Category'
+ *    responses:
+ *      200:
+ *        description: Si la categoria se registra correctamente devuelvo un objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data: 
+ *              type: object
+ *              properties:
+ *                _id:
+ *                  type: string
+ *                  example: sasdasddas
+ *            mensaje: 
+ *              type: string
+ *              example: null
+ * 
+ *      400:
+ *        description: Si el nombre de la categoria ya se encuentra registrado se devuelve el siguiente error
+ *        schema:
+ *          properties:
+ *            error:
+ *              type: string
+ *              example: La categoria ya existe
+ *
+ *
+ */
 routesCategoryWeb.put('/:id', convertBase64ToFile, isSuperAdmin, async (request, response) => {
   const _id = request.params.id
   const update = await categoryController.update({ _id }, request.body)
