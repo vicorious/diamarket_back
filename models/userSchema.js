@@ -7,6 +7,7 @@ const makePassword = require('../utils/makePassword')
 const Schema = new mongoose.Schema({
   name: {
     type: Types.String,
+    lowercase: true,
     require: [true, 'El email es requerido']
   },
   identification: {

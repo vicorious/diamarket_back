@@ -17,18 +17,18 @@ class Product {
     }
   }
 
-  async update (_id, data) {
-    const isExist = await ProductModel.get({ _id })
+  async update (id, data) {
+    const isExist = await ProductModel.get(id)
     if (isExist._id) {
-      const update = await ProductModel.update(_id, data)
+      const update = await ProductModel.update(id, data)
       return update
     } else {
       return { estado: false, data: [], mensaje: 'No existe el producto' }
     }
   }
 
-  async detail (_id) {
-    const isExist = await ProductModel.get({ _id })
+  async detail (id) {
+    const isExist = await ProductModel.get(id)
     if (isExist._id) {
       return { estado: true, data: isExist, mensaje: null }
     } else {

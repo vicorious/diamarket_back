@@ -1,22 +1,25 @@
 const express = require('express')
 const asyncify = require('express-asyncify')
-const routes = asyncify(express.Router())
 const availabilityController = require('../controllers/availabilityController')
-const token = require('../middleware/token')
+const { isSuperAdmin, isAdmin } = require('../middleware/token')
+const routesAvailabilityWeb = asyncify(express.Router())
 
-routes.post('/create', token, async(request, response) => {
-    const create = await availabilityController.create(request.body)
-    response.json(create)
+routesAvailabilityWeb.post('/create', isSuperAdmin, async (request, response) => {
+  const data = request.body
+  const create = await availabilityController.create(data)
+  response.json(create)
 })
 
-routes.put('/update/:id', token, async(request, response) => {
-    const update = await availabilityController.update(request.params.id, request.body)
-    response.json(update)
+routesAvailabilityWeb.put('/update/:id', isSuperAdmin, isAdmin, async (request, response) => {
+  const _id = request.params.id
+  const data = request.body
+  const update = await availabilityController.update({ _id }, data)
+  response.json(update)
 })
 
-routes.get('/avaData', async(request, response)=>{
-    const create = await availabilityController.availibilityData()
-    response.json(create)
-})
+// routes.get('/avaData', async (request, response) => {
+//   const create = await availabilityController.availibilityData()
+//   response.json(create)
+// })
 
-module.exports = routes
+module.exports = { routesAvailabilityWeb }
