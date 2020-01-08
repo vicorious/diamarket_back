@@ -4,6 +4,7 @@ const SmsController = require('../controllers/smsController')
 const GeneralController = require('../controllers/generalController')
 const makePassword = require('../utils/makePassword')
 const AuthController = require('../controllers/authController')
+const EmailController = require('./emailController')
 const OrderSchema = require('../models/orderServiceSchema')
 const uuid = require('node-uuid')
 
@@ -30,6 +31,25 @@ class User {
     }
   }
 
+  async createSocial (data) {
+    const isExist = await UserModel.get({ email: data.email })
+    if (!isExist._id) {
+      const password = await GeneralController.createCode()
+      data.password = password
+      data.identification = data.id
+      data.cellphone = '123456789'
+      data.rol = 'client'
+      data.isActive = true
+      delete data.id
+      const create = await UserModel.create(data)
+      const user = await UserModel.get({ _id: create._id })
+      const auth = await AuthController.createTokenUser(user)
+      return auth
+    } else {
+      return { estado: false, data: [], mensaje: 'El usuario ya se encuentra registrado en el sistema' }
+    }
+  }
+
   async validate (data) {
     const isExist = await UserModel.get({ email: data.email, verifyCode: data.code })
     if (isExist._id) {
@@ -42,17 +62,17 @@ class User {
     }
   }
 
-  //   async updateVeryfycode (email) {
-  //     const code = await GeneralController.createCode()
-  //     const isExist = await UserModel.get({ email })
-  //     if (isExist._id) {
-  //       await EmailController.send(email, `Su codigo de verificacion es: ${code}`)
-  //       const update = await UserModel.update(isExist._id, { verifyCode: code })
-  //       return update
-  //     } else {
-  //       return { estado: false, data: [], mensaje: 'No se ha actualizado el código de recuperación' }
-  //     }
-  //   }
+  async sendEmailPassword (email) {
+    const code = await GeneralController.createCode()
+    const isExist = await UserModel.get({ email })
+    if (isExist._id) {
+      await EmailController.send(email, `Su codigo de verificacion es: ${code}`)
+      const update = await UserModel.update(isExist._id, { verifyCode: code })
+      return update
+    } else {
+      return { estado: false, data: [], mensaje: 'No se ha actualizado el código de recuperación' }
+    }
+  }
 
   async updatePassword (data) {
     const codeRandom = await GeneralController.createCode()
@@ -115,7 +135,7 @@ class User {
   }
 
   async clientSupermarket (_id) {
-    const orders = await OrderSchema.search({ superMarket_: _id })
+    const orders = await OrderSchema.search({ superMarket: _id })
     const clients = []
     if (orders.length > 0) {
       for (const order of orders) {

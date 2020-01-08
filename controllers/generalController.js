@@ -1,6 +1,5 @@
 'use-strict'
 const SupermarketController = require('./supermarketController')
-const user = require('./userController')
 const PromotionController = require('./promotionController')
 
 class Funtions {

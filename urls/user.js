@@ -68,11 +68,11 @@ routesUserApp.put('/validate', async (request, response) => {
   response.json(validate)
 })
 
-// routesUserApp.post('/verifycode', async (request, response) => {
-//   const data = request.body.email
-//   const update = await UserController.updateVeryfycode(data)
-//   response.json(update)
-// })
+routesUserApp.post('/verifycode', async (request, response) => {
+  const data = request.body.email
+  const update = await UserController.sendEmailPassword(data)
+  response.json(update)
+})
 
 routesUserApp.post('/resetpassword', async (request, response) => {
   const data = request.body
