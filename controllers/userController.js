@@ -1,7 +1,7 @@
 'use strict'
 const UserModel = require('../models/userSchema')
 const SmsController = require('../controllers/smsController')
-const GeneralController = require('../controllers/generalController')
+const MakeCode = require('../utils/makeCode')
 const makePassword = require('../utils/makePassword')
 const AuthController = require('../controllers/authController')
 const EmailController = require('./emailController')
@@ -12,7 +12,7 @@ class User {
   async create (data) {
     const isExist = await UserModel.get({ email: data.email })
     if (!isExist._id) {
-      data.verifyCode = await GeneralController.createCode()
+      data.verifyCode = await MakeCode
       if (data.rol === 'domiciliary' || data.rol === 'administrator') {
         data.isActive = true
         const user = await UserModel.create(data)
@@ -34,7 +34,7 @@ class User {
   async createSocial (data) {
     const isExist = await UserModel.get({ email: data.email })
     if (!isExist._id) {
-      const password = await GeneralController.createCode()
+      const password = await MakeCode
       data.password = password
       data.identification = data.id
       data.cellphone = '123456789'
@@ -53,7 +53,7 @@ class User {
   async validate (data) {
     const isExist = await UserModel.get({ email: data.email, verifyCode: data.code })
     if (isExist._id) {
-      const code = await GeneralController.createCode()
+      const code = await MakeCode
       await UserModel.update(isExist._id, { isActive: true, verifyCode: code })
       const userToken = await AuthController.createTokenUser(isExist)
       return userToken
@@ -63,7 +63,7 @@ class User {
   }
 
   async sendEmailPassword (email) {
-    const code = await GeneralController.createCode()
+    const code = await MakeCode
     const isExist = await UserModel.get({ email })
     if (isExist._id) {
       await EmailController.send(email, `Su codigo de verificacion es: ${code}`)
@@ -75,7 +75,7 @@ class User {
   }
 
   async updatePassword (data) {
-    const codeRandom = await GeneralController.createCode()
+    const codeRandom = await MakeCode
     const user = await UserModel.get({ verifyCode: data.code, email: data.email })
     if (user._id) {
       const passwordCrypt = await makePassword(data.password)

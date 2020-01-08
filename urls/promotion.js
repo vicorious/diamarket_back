@@ -1,27 +1,34 @@
 'use strict'
 const express = require('express')
 const asyncify = require('express-asyncify')
-const routes = asyncify(express.Router())
+const routesPromotionWeb = asyncify(express.Router())
+const routesPromotionApp = asyncify(express.Router())
 const PromotionController = require('../controllers/promotionController')
-const token = require('../middleware/token')
+const { isSuperAdmin, isAdmin, isClient } = require('../middleware/token')
 const { convertBase64ToFile } = require('../middleware/convertBase64File')
 
-routes.post('/create', convertBase64ToFile, token, async(request, response) => {
-    const create = await PromotionController.create(request.body)
-    response.json(create)
+routesPromotionWeb.post('', convertBase64ToFile, isSuperAdmin, async (request, response) => {
+  const create = await PromotionController.create(request.body)
+  response.json(create)
 })
-routes.put('/update/:id', token, convertBase64ToFile, async(request, response) => {
-    const update = await PromotionController.update(request.params.id, request.body)
-    response.json(update)
+routesPromotionWeb.put('/:id', isSuperAdmin, convertBase64ToFile, async (request, response) => {
+  const update = await PromotionController.update(request.params.id, request.body)
+  response.json(update)
 })
-routes.get('/all/:supermarket', token, async(request, response) => {
-    const supermarket = request.params.supermarket
-    const search = await PromotionController.detailAll(supermarket)
-    response.json(search)
+routesPromotionWeb.get('/all/:supermarket', isSuperAdmin, isAdmin, async (request, response) => {
+  const supermarket = request.params.supermarket
+  const search = await PromotionController.all(supermarket)
+  response.json(search)
 })
-routes.get('/detail/:id', token, async(request, response) => {
-    const detail = await PromotionController.detail(request.params.id)
-    response.json(detail)
+routesPromotionWeb.get('/:id', isSuperAdmin, isAdmin, async (request, response) => {
+  const detail = await PromotionController.detail(request.params.id)
+  response.json(detail)
 })
 
-module.exports = routes
+routesPromotionApp.get('/all/:supermarket', isClient, async (request, response) => {
+  const supermarket = request.params.supermarket
+  const search = await PromotionController.all(supermarket)
+  response.json(search)
+})
+
+module.exports = { routesPromotionApp, routesPromotionWeb }

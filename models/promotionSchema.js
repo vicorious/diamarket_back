@@ -20,6 +20,12 @@ const Schema = new mongoose.Schema({
     type: Types.Number,
     required: [true, 'El valor es requerido']
   },
+  credits: {
+    type: Types.Number
+  },
+  discount: {
+    type: Types.Number
+  },
   image: [{
     type: Types.String,
     required: [true, 'La imagen es requerida']
