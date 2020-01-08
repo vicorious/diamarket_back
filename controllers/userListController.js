@@ -8,7 +8,7 @@ class UserList {
       const list = await UserListModel.create(data)
       return { estado: true, data: list, mensaje: null }
     } else {
-      return { estado: false, data: [], mensaje: 'La promocion ya se encuentra resgitrada' }
+      return { estado: false, data: [], mensaje: 'Ya existe una lista con este nombre' }
     }
   }
 
@@ -18,7 +18,7 @@ class UserList {
       const update = await UserListModel.update(isExist._id, data)
       return update
     } else {
-      return { estado: false, data: [], mensaje: 'No existe esta promoción' }
+      return { estado: false, data: [], mensaje: 'No exite la lista de usuario' }
     }
   }
 
@@ -27,7 +27,7 @@ class UserList {
     if (list._id) {
       return { estado: true, data: list, mensaje: null }
     } else {
-      return { estado: false, data: [], mensaje: 'No existe esta promoción' }
+      return { estado: false, data: [], mensaje: 'No existe la lista de usuario' }
     }
   }
 
@@ -36,7 +36,7 @@ class UserList {
     if (list.length > 0) {
       return { estado: true, data: list, mensaje: null }
     } else {
-      return { estado: false, data: [], mensaje: 'No se encuentra la promocion' }
+      return { estado: false, data: [], mensaje: 'No se encuentran listas creadas' }
     }
   }
 }

@@ -48,6 +48,12 @@ routesUserWeb.get('/supermarketclients/:id', isAdmin, async (request, response) 
   response.json(data)
 })
 
+routesUserApp.post('', async (request, response) => {
+  const data = request.body
+  const create = await UserController.create(data)
+  response.json(create)
+})
+
 routesUserApp.post('/direction', isClient, async (request, response) => {
   const _id = request.User.id
   const data = request.body

@@ -44,7 +44,7 @@ async function isDomiciliary (request, response, next) {
     try {
       const verify = await jwt.verify(token, SECRET)
       const id = verify._id
-      const user = await UserSchema.get({ _id: id, userType: 'domicilary' })
+      const user = await UserSchema.get({ _id: id, userType: 'domiciliary' })
       if (user._id) {
         request.User = { id, userType: user.userType }
         return next()

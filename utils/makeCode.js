@@ -1,9 +1,9 @@
 'use strict'
 module.exports = function () {
-  let uniqueCode = ''
-  const possible = '0123456789'
-  for (var i = 0; i < 6; i++) {
-    uniqueCode += possible.charAt(Math.floor(Math.random() * possible.length))
+  let number = ''
+  for (let i = 1; i <= 6; i++) {
+    const random = Math.floor(Math.random() * 9)
+    number += random
   }
-  return uniqueCode
+  return number
 }
