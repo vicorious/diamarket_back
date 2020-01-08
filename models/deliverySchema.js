@@ -28,11 +28,15 @@ class Delivery extends Base {
     this.model = mongoose.model('Delivery', Schema)
     this.fields = 'orderId idUser status description clientId'
     this.populate = [{
-      path: 'idUser ',
+      path: 'idUser clientId',
       select: 'name identification email cellPhone',
       model: 'User'
     },
-    { path: 'clientId', select: 'order', model: 'User' }
+    {
+      path: 'orderId',
+      select: 'value direction methodPayment status superMarket products promotions user dateCreate',
+      model: 'OrderService'
+    }
     ]
   }
 }
