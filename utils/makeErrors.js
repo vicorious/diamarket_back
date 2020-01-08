@@ -1,10 +1,10 @@
 'use strict'
 module.exports = function (errors) {
-  let response = {}
+  const response = {}
   for (var error in errors) {
     const message = errors[error].message
     response[error] = {
-      'message': message
+      message: message
     }
   }
   return { errors: response }
