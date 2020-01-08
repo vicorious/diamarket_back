@@ -1,6 +1,6 @@
 'use strict'
-
 const ProductModel = require('../models/productSchema')
+const AvailabilityModel = require('../models/availabilitySchema')
 
 class Product {
   async create (data) {
@@ -39,6 +39,47 @@ class Product {
   async all (data) {
     const products = await ProductModel.search(data)
     return { estado: true, data: products, mensaje: null }
+  }
+
+  async productsSuperMarkets (idSupermarket) {
+    const products = await AvailabilityModel.search({ idSupermarket, isActive: true })
+    if (products.length > 0) {
+      return { estado: true, data: products, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'Este supermercado no tiene productos' }
+    }
+  }
+
+  async productsForCategory (data) {
+    const products = await ProductModel.search({ category: data.category })
+    const arrayProducts = []
+    for (const product of products) {
+      const productsCategory = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
+      if (productsCategory._id) {
+        arrayProducts.push(productsCategory)
+      }
+    }
+    if (arrayProducts.length > 0) {
+      return { estado: true, data: arrayProducts, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'Esta categoria no tiene productos' }
+    }
+  }
+
+  async productsForName (data) {
+    const products = await ProductModel.search({ name: data.name })
+    const arrayProducts = []
+    for (const product of products) {
+      const productsName = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
+      if (productsName._id) {
+        arrayProducts.push(productsName)
+      }
+    }
+    if (arrayProducts.length > 0) {
+      return { estado: true, data: arrayProducts, mensaje: null }
+    } else {
+      return { estado: true, data: arrayProducts, mensaje: 'No existe productos por este nombre' }
+    }
   }
 
 //   async categoryData () {
