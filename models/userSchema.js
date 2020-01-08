@@ -61,12 +61,6 @@ const Schema = new mongoose.Schema({
   }],
   directions: [{
     type: Types.Mixed
-  }],
-  userList: [{
-    type: Types.Mixed
-  }],
-  order: [{
-    type: Types.Mixed
   }]
 })
 

@@ -4,7 +4,7 @@ const asyncify = require('express-asyncify')
 const routes = asyncify(express.Router())
 
 const { routesAuthApp, routesAuthWeb } = require('./auth')
-// const user = require('./user')
+const { routesUserApp, routesUserWeb } = require('./user')
 // const availability = require('./availability')
 const { routesSupermarketApp, routesSupermarketWeb } = require('./supermarket')
 // const product = require('./product')
@@ -29,8 +29,10 @@ const { routesSupermarketApp, routesSupermarketWeb } = require('./supermarket')
 
 routes.use('/app/auth', routesAuthApp)
 routes.use('/app/supermarket', routesSupermarketApp)
+routes.use('/app/user', routesUserApp)
 
 routes.use('/web/auth', routesAuthWeb)
 routes.use('/web/supermarket', routesSupermarketWeb)
+routes.use('/web/app', routesUserWeb)
 
 module.exports = routes
