@@ -3,21 +3,50 @@ const mongoose = require('mongoose')
 const Base = require('./baseSchema')
 const Types = mongoose.Schema.Types
 
+/**
+ * @swagger
+ * definitions:
+ *  Delivery:
+ *    type: object
+ *    required:
+ *    - orderId
+ *    - idUser
+ *    - status
+ *    - description
+ *    - clientId
+ *    properties:
+ *      orderId:
+ *        type: string
+ *      idUser:
+ *        type: string
+ *      status:
+ *        type: string
+ *      description:
+ *        type: string
+ *      clientId:
+ *        type: string
+ */
+
 const Schema = new mongoose.Schema({
   orderId: {
-    type: Types.ObjectId
+    type: Types.ObjectId,
+    required: [true, 'La orden es requerida']
   },
   idUser: {
-    type: Types.ObjectId
+    type: Types.ObjectId,
+    required: [true, 'El domiciliario es requerido']
   },
   status: {
-    type: Types.String
+    type: Types.String,
+    required: [true, 'El estado es requerido']
   },
   description: {
-    type: Types.String
+    type: Types.String,
+    required: [true, 'La descripción es requerida']
   },
   clientId: {
-    type: Types.ObjectId
+    type: Types.ObjectId,
+    required: [true, 'El cliente es requerido']
   }
 })
 

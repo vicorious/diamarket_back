@@ -48,6 +48,54 @@ routesUserWeb.get('/supermarketclients/:id', isAdmin, async (request, response) 
   response.json(data)
 })
 
+/**
+ * @swagger
+ * /app/user:
+ *  post:
+ *    tags:
+ *      - User
+ *    description: Este endpoint crea un usuario cliente
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        $ref: '#/definitions/User'
+ *    responses:
+ *      200:
+ *        description: Si el usuario se crea correctamente
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                _id:
+ *                  type: string
+ *                  example: '5dc3493ee92df70280d9a63d'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: El usuario ya se encuentra registrado
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'El usuario ya se encuentra registrado en el sistema'
+ */
+
 routesUserApp.post('', async (request, response) => {
   const data = request.body
   const create = await UserController.create(data)

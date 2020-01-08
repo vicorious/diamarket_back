@@ -3,6 +3,47 @@ const mongoose = require('mongoose')
 const Base = require('./baseSchema')
 const Types = mongoose.Schema.Types
 
+/**
+ * @swagger
+ * definitions:
+ *  OrderService:
+ *    type: object
+ *    required:
+ *    - value
+ *    - direction
+ *    - methodPayment
+ *    - status
+ *    - superMarket
+ *    - products
+ *    - promotions
+ *    - user
+ *    properties:
+ *      value:
+ *        type: number
+ *      direction:
+ *        type: string
+ *      methodPatyment:
+ *        type: string
+ *      status:
+ *        type: number
+ *      superMarket:
+ *        type: string
+ *      products:
+ *        type: array
+ *        items:
+ *          type: string
+ *          example: '5dc3493ee92df70280d9a63d, 5dd55aaeb5ac703603660beb'
+ *      promotions:
+ *        type: array
+ *        items:
+ *          type: string
+ *          example: '5dc3493ee92df70280d9a63d, 5dd55aaeb5ac703603660beb'
+ *      user:
+ *        type: string
+ *      dateCreate:
+ *        type: string
+ */
+
 const Schema = new mongoose.Schema({
   value: {
     type: Types.Number,

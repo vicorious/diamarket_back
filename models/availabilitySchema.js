@@ -2,6 +2,29 @@ const mongoose = require('mongoose')
 const Base = require('./baseSchema')
 const Types = mongoose.Schema.Types
 
+/**
+ * @swagger
+ * definitions:
+ *  Availibility:
+ *    type: object
+ *    required:
+ *    - idSupermarket
+ *    - idProduct
+ *    - quantity
+ *    - price
+ *    properties:
+ *      idSupermarket:
+ *        type: string
+ *      idProduct:
+ *        type: string
+ *      quantity:
+ *        type: string
+ *      price:
+ *        type: number
+ *      isActive:
+ *        type: boolean
+ */
+
 const Schema = new mongoose.Schema({
   idSupermarket: {
     type: Types.ObjectId,

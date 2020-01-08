@@ -34,16 +34,16 @@ const routesCategoryApp = asyncify(express.Router())
  *            estado:
  *              type: boolean
  *              example: true
- *            data: 
+ *            data:
  *              type: object
  *              properties:
  *                _id:
  *                  type: string
  *                  example: sasdasddas
- *            mensaje: 
+ *            mensaje:
  *              type: string
  *              example: null
- * 
+ *
  *      400:
  *        description: Si el nombre de la categoria ya se encuentra registrado se devuelve el siguiente error
  *        schema:
@@ -90,16 +90,16 @@ routesCategoryWeb.post('', convertBase64ToFile, isSuperAdmin, async (request, re
  *            estado:
  *              type: boolean
  *              example: true
- *            data: 
+ *            data:
  *              type: object
  *              properties:
  *                _id:
  *                  type: string
  *                  example: sasdasddas
- *            mensaje: 
+ *            mensaje:
  *              type: string
  *              example: null
- * 
+ *
  *      400:
  *        description: Si el nombre de la categoria ya se encuentra registrado se devuelve el siguiente error
  *        schema:

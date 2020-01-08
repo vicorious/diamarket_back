@@ -4,6 +4,89 @@ const Base = require('./baseSchema')
 const Types = mongoose.Schema.Types
 const makePassword = require('../utils/makePassword')
 
+/**
+ * @swagger
+ * definitions:
+ *  User:
+ *    type: object
+ *    required:
+ *    - name
+ *    - identification
+ *    - email
+ *    - cellPhone
+ *    - password
+ *    - rol
+ *    properties:
+ *      name:
+ *        type: string
+ *      identification:
+ *        type: string
+ *      email:
+ *        type: string
+ *      cellPhone:
+ *        type: string
+ *      supermaerketFavorite:
+ *        type: string
+ *      password:
+ *        type: string
+ *      isActive:
+ *        type: boolean
+ *      birthday:
+ *        type: string
+ *      rol:
+ *        type: string
+ *      verifyCode:
+ *        type: string
+ *      dateCreate:
+ *        type: string
+ *      image:
+ *        type: string
+ *      credits:
+ *        type: string
+ *      logs:
+ *        type: array
+ *        items:
+ *          type: object
+ *          properties:
+ *            value:
+ *              type: number
+ *            date:
+ *              type: string
+ *            operation:
+ *              type: boolean
+ *      cards:
+ *        type: array
+ *        items:
+ *          type: object
+ *          properties:
+ *            number:
+ *              type: string
+ *            token:
+ *              type: string
+ *      directions:
+ *        type: array
+ *        items:
+ *          type: object
+ *          properties:
+ *            uid:
+ *              type: string
+ *            name:
+ *              type: string
+ *            address:
+ *              type: string
+ *            location:
+ *              type: object
+ *              properties:
+ *                type:
+ *                  type: string
+ *                  example: Point
+ *                coordinates:
+ *                  type: array
+ *                  items:
+ *                    type: number
+ *                    example: '12312312312312312, 3213123'
+ */
+
 const Schema = new mongoose.Schema({
   name: {
     type: Types.String,
