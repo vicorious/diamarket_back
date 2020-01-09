@@ -11,17 +11,20 @@ routesUserListApp.post('', isClient, async (request, response) => {
   const create = await UserListController.create(data)
   response.json(create)
 })
+
 routesUserListApp.put('/:id', isClient, async (request, response) => {
-  const id = request.paramas.id
+  const id = request.params.id
   const data = request.body
   const update = await UserListController.update(id, data)
   response.json(update)
 })
+
 routesUserListApp.get('', isClient, async (request, response) => {
   const user = request.User.id
   const search = await UserListController.all({ user })
   response.json(search)
 })
+
 routesUserListApp.get('/:id', isClient, async (request, response) => {
   const _id = request.params.id
   const detail = await UserListController.detail({ _id })

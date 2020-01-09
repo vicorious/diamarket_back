@@ -13,7 +13,6 @@ class User {
     const isExist = await UserModel.get({ email: data.email })
     if (!isExist._id) {
       const pr = await makeCode()
-      console.log(pr)
       data.verifyCode = await makeCode()
       if (data.rol === 'domiciliary' || data.rol === 'administrator') {
         data.isActive = true
