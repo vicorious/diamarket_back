@@ -27,7 +27,7 @@ class Auth {
   async createTokenSocial (data) {
     const user = await UserModel.get({ email: data.email })
     if (user._id) {
-      const token = await this.createTokenSocial(user)
+      const token = await this.createTokenUser(user)
       return token
     } else {
       return { estado: false, data: [], mensaje: 'El correo del usuario no existe' }
