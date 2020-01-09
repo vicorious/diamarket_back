@@ -27,7 +27,7 @@ routesProductWeb.get('/forsupermarket/:id', isSuperAdmin, isAdmin, async (reques
   response.json(products)
 })
 
-routesProductWeb.post('/forcategory', isAdmin, async (request, response) => {
+routesProductWeb.post('/for/category', isAdmin, async (request, response) => {
   const data = request.body
   const products = await ProductController.productsForCategory(data)
   response.json(products)
@@ -39,7 +39,7 @@ routesProductWeb.get('/:id', isSuperAdmin, isAdmin, async (request, response) =>
   response.json(detail)
 })
 
-routesProductWeb.post('/forname', isSuperAdmin, isAdmin, async (request, response) => {
+routesProductWeb.post('/for/name', isSuperAdmin, isAdmin, async (request, response) => {
   const data = request.body
   const products = await ProductController.productsForName(data)
   response.json(products)
@@ -51,7 +51,7 @@ routesProductApp.get('/forsupermarket/:id', isClient, async (request, response) 
   response.json(products)
 })
 
-routesProductApp.post('/forcategory', isClient, async (request, response) => {
+routesProductApp.post('/for/category', isClient, async (request, response) => {
   const data = request.body
   const products = await ProductController.productsForCategory(data)
   response.json(products)
@@ -63,7 +63,7 @@ routesProductApp.get('/:id', isClient, async (request, response) => {
   response.json(detail)
 })
 
-routesProductApp.post('/forname', isClient, async (request, response) => {
+routesProductApp.post('/for/name', isClient, async (request, response) => {
   const data = request.body
   const products = await ProductController.productsForName(data)
   response.json(products)

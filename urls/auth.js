@@ -6,13 +6,13 @@ const Auth = require('../controllers/authController')
 const routesAuthWeb = asyncify(express.Router())
 const routesAuthApp = asyncify(express.Router())
 
-routesAuthApp.post('', async (request, response) => {
+routesAuthWeb.post('', async (request, response) => {
   const data = request.body
   const token = await Auth.createToken(data)
   response.json(token)
 })
 
-routesAuthWeb.post('', async (request, response) => {
+routesAuthApp.post('', async (request, response) => {
   const data = request.body
   const token = await Auth.createToken(data)
   response.json(token)

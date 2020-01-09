@@ -30,7 +30,7 @@ routesPqrWeb.put('/:id', isSuperAdmin, isAdmin, async (request, response) => {
   response.json(update)
 })
 
-routesPqrWeb.get('/bysupermarket', isAdmin, async (request, response) => {
+routesPqrWeb.get('/by/supermarket', isAdmin, async (request, response) => {
   const _id = request.User.id
   const pqrs = await PqrController.bySupermarket({ _id })
   response.json(pqrs)
@@ -45,11 +45,11 @@ routesPqrApp.post('', isClient, async (request, response) => {
 
 routesPqrApp.get('/:id', isClient, async (request, response) => {
   const _id = request.params.id
-  const detail = await PqrController.getFirst({ _id })
+  const detail = await PqrController.detail({ _id })
   response.json(detail)
 })
 
-routesPqrApp.get('/byuser', isClient, async (request, response) => {
+routesPqrApp.get('/by/user', isClient, async (request, response) => {
   const id = request.User.id
   const all = await PqrController.allForUser(id)
   response.json(all)

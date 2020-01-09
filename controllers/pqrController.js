@@ -37,6 +37,7 @@ class Pqr {
   }
 
   async allForUser (id) {
+    console.log('holaaa');
     const pqrs = await PqrModel.search({ client: id })
     if (pqrs.length > 0) {
       return { estado: true, data: pqrs, mensaje: null }
