@@ -9,10 +9,10 @@ async function isSuperAdmin (request, response, next) {
     const token = authorization.split(' ')[1]
     try {
       const verify = await jwt.verify(token, SECRET)
-      const id = verify._id
-      const user = await UserSchema.get({ _id: id, userType: 'superadministrator' })
+      const _id = verify._id
+      const user = await UserSchema.get({ _id, rol: 'superadministrator' })
       if (user._id) {
-        request.User = { id, userType: user.userType }
+        request.User = { _id, rol: user.rol }
         return next()
       }
     } catch (TokenExpiredError) {}
@@ -26,10 +26,10 @@ async function isAdmin (request, response, next) {
     const token = authorization.split(' ')[1]
     try {
       const verify = await jwt.verify(token, SECRET)
-      const id = verify._id
-      const user = await UserSchema.get({ _id: id, userType: 'administrator' })
+      const _id = verify._id
+      const user = await UserSchema.get({ _id, rol: 'administrator' })
       if (user._id) {
-        request.User = { id, userType: user.userType }
+        request.User = { _id, rol: user.rol }
         return next()
       }
     } catch (TokenExpiredError) {}
@@ -43,10 +43,10 @@ async function isDomiciliary (request, response, next) {
     const token = authorization.split(' ')[1]
     try {
       const verify = await jwt.verify(token, SECRET)
-      const id = verify._id
-      const user = await UserSchema.get({ _id: id, userType: 'domiciliary' })
+      const _id = verify._id
+      const user = await UserSchema.get({ _id, rol: 'domiciliary' })
       if (user._id) {
-        request.User = { id, userType: user.userType }
+        request.User = { _id, rol: user.rol }
         return next()
       }
     } catch (TokenExpiredError) {}
@@ -60,10 +60,10 @@ async function isClient (request, response, next) {
     const token = authorization.split(' ')[1]
     try {
       const verify = await jwt.verify(token, SECRET)
-      const id = verify._id
-      const user = await UserSchema.get({ _id: id, userType: 'client' })
+      const _id = verify._id
+      const user = await UserSchema.get({ _id, rol: 'client' })
       if (user._id) {
-        request.User = { id, userType: user.userType }
+        request.User = { _id, rol: user.rol }
         return next()
       }
     } catch (TokenExpiredError) {}

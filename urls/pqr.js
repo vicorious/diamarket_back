@@ -30,26 +30,200 @@ routesPqrWeb.put('/:id', isSuperAdmin, isAdmin, async (request, response) => {
   response.json(update)
 })
 
-routesPqrWeb.get('/bysupermarket', isAdmin, async (request, response) => {
+routesPqrWeb.get('/by/supermarket', isAdmin, async (request, response) => {
   const _id = request.User.id
   const pqrs = await PqrController.bySupermarket({ _id })
   response.json(pqrs)
 })
 
-routesPqrApp.post('', isClient, async (request, response) => {
+/**
+ * @swagger
+ * /app/pqr/supermarket:
+ *  post:
+ *    tags:
+ *      - Pqr
+ *    description: En este endpoint se genera un pqr para el supermercado
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        type: object
+ *        properties:
+ *          description:
+ *            type: string
+ *          supermarket:
+ *            type: string
+ *            example: El id del supermercado
+ *    responses:
+ *      200:
+ *        description: Se crea la pqr
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                _id:
+ *                  type: string
+ *            mensaje:
+ *              type: string
+ *              example: null
+ */
+routesPqrApp.post('/supermarket', isClient, async (request, response) => {
   request.body.client = request.User.id
   const data = request.body
   const create = await PqrController.create(data)
   response.json(create)
 })
 
+/**
+ * @swagger
+ * /app/pqr/superadmin:
+ *  post:
+ *    tags:
+ *      - Pqr
+ *    description: En este endpoint se crea una pqr para el super administradorr
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        type: object
+ *        properties:
+ *          description:
+ *            type: string
+ *    responses:
+ *      200:
+ *        description: Se crea la pqr
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                _id:
+ *                  type: string
+ *            mensaje:
+ *              type: string
+ *              example: null
+ */
+routesPqrApp.post('/superadmin', isClient, async (request, response) => {
+  request.body.client = request.User.id
+  const data = request.body
+  const create = await PqrController.create(data)
+  response.json(create)
+})
+
+/**
+ * @swagger
+ * /app/pqr/{id}:
+ *  get:
+ *    tags:
+ *      - Pqr
+ *    description: En este endpoint se detalla una pqr
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    - in: path
+ *      name: id
+ *      type: string
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Se detalla la pqr
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              $ref : '#/definitions/Pqr'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si no existe se devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              example: array vacio
+ *            mensaje:
+ *              type: string
+ *              example: No existe la pqr
+ */
 routesPqrApp.get('/:id', isClient, async (request, response) => {
   const _id = request.params.id
-  const detail = await PqrController.getFirst({ _id })
+  const detail = await PqrController.detail({ _id })
   response.json(detail)
 })
 
-routesPqrApp.get('/byuser', isClient, async (request, response) => {
+/**
+ * @swagger
+ * /app/pqr:
+ *  get:
+ *    tags:
+ *      - Pqr
+ *    description: En este endpoint se traen todas las pqr por el usuario en sesion
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Se listan las pqr por el usuario
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: array
+ *              items:
+ *                $ref : '#/definitions/Pqr'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si no existe se devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              example: array vacio
+ *            mensaje:
+ *              type: string
+ *              example: No existen pqrs para este usuario
+ */
+routesPqrApp.get('', isClient, async (request, response) => {
   const id = request.User.id
   const all = await PqrController.allForUser(id)
   response.json(all)

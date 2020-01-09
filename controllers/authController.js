@@ -11,7 +11,6 @@ class Auth {
       const dataUser = await UserModel.get({ email: data.email, password: password, isActive: true, rol: 'client' })
       if (dataUser._id) {
         const token = jwt.sign({ _id: dataUser._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
-
         return { estado: true, data: { token: token, user: dataUser }, mensaje: null }
       }
       return { estado: false, data: [], mensaje: 'Usuario no validado o usuario y/o contraseña incorrectos' }
