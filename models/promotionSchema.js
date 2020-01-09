@@ -3,6 +3,37 @@ const mongoose = require('mongoose')
 const Base = require('./baseSchema')
 const Types = mongoose.Schema.Types
 
+/**
+ * @swagger
+ * definitions:
+ *  Promotion:
+ *    type: object
+ *    required:
+ *    - name
+ *    - supermarket
+ *    - products
+ *    - value
+ *    - image
+ *    properties:
+ *      name:
+ *        type: string
+ *      supermarket:
+ *        $ref: '#/definitions/Supermarket'
+ *      products:
+ *        $ref: '#/definitions/Product'
+ *      value:
+ *        type: Number
+ *      credits:
+ *        type: Number
+ *      discount:
+ *        type: Number
+ *      image:
+ *        type: array
+ *        items:
+ *          type: string
+ *      isActive:
+ *        type: boolean
+ */
 const Schema = new mongoose.Schema({
   name: {
     type: Types.String,

@@ -3,6 +3,28 @@ const mongoose = require('mongoose')
 const Base = require('./baseSchema')
 const Types = mongoose.Schema.Types
 
+/**
+ * @swagger
+ * definitions:
+ *  UserList:
+ *    type: object
+ *    required:
+ *    - name
+ *    - supermarket
+ *    - products
+ *    - user
+ *    properties:
+ *      name:
+ *        type: string
+ *      supermarket:
+ *        $ref: '#/definitions/Supermarket'
+ *      products:
+ *        type: array
+ *        items:
+ *          $ref: '#/definitions/Product'
+ *      user:
+ *        $ref: '#/definitions/User'
+ */
 const Schema = new mongoose.Schema({
   name: {
     type: Types.String,

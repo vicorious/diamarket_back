@@ -3,6 +3,34 @@ const mongoose = require('mongoose')
 const Base = require('./baseSchema')
 const Types = mongoose.Schema.Types
 
+/**
+ * @swagger
+ * definitions:
+ *  Product:
+ *    type: object
+ *    required:
+ *    - idPos
+ *    - name
+ *    - description
+ *    - category
+ *    - defaultPrice
+ *    - image
+ *    properties:
+ *      idPos:
+ *        type: string
+ *      name:
+ *        type: string
+ *      description:
+ *        type: string
+ *      category:
+ *        $ref: '#/definitions/Category'
+ *      defaultPrice:
+ *        type: boolean
+ *      image:
+ *        type: array
+ *        items:
+ *          type: string
+ */
 const Schema = new mongoose.Schema({
   idPos: {
     type: Types.Number,
@@ -10,17 +38,19 @@ const Schema = new mongoose.Schema({
   },
   name: {
     type: Types.String,
+    lowercase: true,
     require: [true, 'El nombre es requerido']
   },
   description: {
     type: Types.String,
+    lowercase: true,
     require: [true, 'La descripción es requerida']
   },
   category: {
     type: Types.ObjectId,
     require: [true, 'La categoria es requerida']
   },
-  defaultprice: {
+  defaultPrice: {
     type: Types.Number,
     require: [true, 'El precio es requerido']
   },

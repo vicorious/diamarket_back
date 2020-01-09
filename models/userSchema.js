@@ -26,7 +26,7 @@ const makePassword = require('../utils/makePassword')
  *      cellPhone:
  *        type: string
  *      supermaerketFavorite:
- *        type: string
+ *        $ref: '#/definitions/Supermarket'
  *      password:
  *        type: string
  *      isActive:
