@@ -68,6 +68,8 @@ class Product {
 
   async productsForName (data) {
     const products = await ProductModel.search({ name: data.name })
+    const pro = await ProductModel.get({ name: 'Spaguetti' })
+    console.log('AQUIIII', pro)
     const arrayProducts = []
     for (const product of products) {
       const productsName = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
@@ -78,7 +80,7 @@ class Product {
     if (arrayProducts.length > 0) {
       return { estado: true, data: arrayProducts, mensaje: null }
     } else {
-      return { estado: true, data: arrayProducts, mensaje: 'No existe productos por este nombre' }
+      return { estado: false, data: [], mensaje: 'No existe productos por este nombre' }
     }
   }
 
