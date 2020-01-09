@@ -16,15 +16,15 @@ const Types = mongoose.Schema.Types
  *    - clientId
  *    properties:
  *      orderId:
- *        type: string
+ *        $ref: '#/definitions/OrderService'
  *      idUser:
- *        type: string
+ *        $ref: '#/definitions/User'
  *      status:
  *        type: string
  *      description:
  *        type: string
  *      clientId:
- *        type: string
+ *        $ref: '#/definitions/User'
  */
 
 const Schema = new mongoose.Schema({
@@ -42,6 +42,7 @@ const Schema = new mongoose.Schema({
   },
   description: {
     type: Types.String,
+    lowercase: true,
     required: [true, 'La descripción es requerida']
   },
   clientId: {

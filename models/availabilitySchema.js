@@ -14,9 +14,9 @@ const Types = mongoose.Schema.Types
  *    - price
  *    properties:
  *      idSupermarket:
- *        type: string
+ *        $ref: '#/definitions/Supermarket'
  *      idProduct:
- *        type: string
+ *        $ref: '#/definitions/Product'
  *      quantity:
  *        type: string
  *      price:

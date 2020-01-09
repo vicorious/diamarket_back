@@ -22,24 +22,22 @@ const Types = mongoose.Schema.Types
  *        type: number
  *      direction:
  *        type: string
- *      methodPatyment:
+ *      methodPayment:
  *        type: string
  *      status:
  *        type: number
  *      superMarket:
- *        type: string
+ *        $ref: '#/definitions/Supermarket'
  *      products:
  *        type: array
  *        items:
- *          type: string
- *          example: '5dc3493ee92df70280d9a63d, 5dd55aaeb5ac703603660beb'
+ *          $ref: '#/definitions/Product'
  *      promotions:
  *        type: array
  *        items:
- *          type: string
- *          example: '5dc3493ee92df70280d9a63d, 5dd55aaeb5ac703603660beb'
+ *          $ref: '#/definitions/Promotion'
  *      user:
- *        type: string
+ *        $ref: '#/definitions/User'
  *      dateCreate:
  *        type: string
  */

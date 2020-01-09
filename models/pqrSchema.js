@@ -12,7 +12,7 @@ const Types = mongoose.Schema.Types
  *    - description
  *    properties:
  *      client:
- *        type: string
+ *        $ref: '#/definitions/User'
  *      description:
  *        type: string
  *      createDate:
@@ -24,7 +24,7 @@ const Types = mongoose.Schema.Types
  *      createUpdate:
  *        type: string
  *      supermarket:
- *        type: string
+ *        $ref: '#/definitions/Supermarket'
  *      isFrequent:
  *        type: boolean
  */
@@ -35,6 +35,7 @@ const Schema = new mongoose.Schema({
   },
   description: {
     type: Types.String,
+    lowercase: true,
     required: [true, 'La descripción es requerida']
   },
   createDate: {

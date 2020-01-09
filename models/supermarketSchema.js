@@ -3,6 +3,82 @@ const mongoose = require('mongoose')
 const Base = require('./baseSchema')
 const Types = mongoose.Schema.Types
 
+/**
+ * @swagger
+ * definitions:
+ *  Supermarket:
+ *    type: object
+ *    required:
+ *    - name
+ *    - address
+ *    - location
+ *    - neigborhood
+ *    - locality
+ *    - email
+ *    - supermarketType
+ *    - logo
+ *    - idAdmin
+ *    - schedules
+ *    properties:
+ *      status:
+ *        type: boolean
+ *      cellPhone:
+ *        type: string
+ *      name:
+ *        type: string
+ *      address:
+ *        type: string
+ *      calification:
+ *        type: array
+ *        items:
+ *          type: Number
+ *      location:
+ *        type: array
+ *        items:
+ *          type: object
+ *          properties:
+ *            type:
+ *              type: string
+ *              example: Point
+ *            coordinates:
+ *              type: array
+ *              items:
+ *                type: number
+ *                example: "3123123, 1321312"
+ *      neigborhood:
+ *        type: string
+ *      locality:
+ *        type: string
+ *      email:
+ *        type: string
+ *      supermarketType:
+ *        type: string
+ *      logo:
+ *        type: string
+ *      images:
+ *        type: array
+ *        items:
+ *          type: string
+ *      isActive:
+ *        type: boolean
+ *      idAdmin:
+ *        $ref: '#/definitions/User'
+ *      schedules:
+ *        type: array
+ *        items:
+ *          type: object
+ *          properties:
+ *            schedulesInit:
+ *              type: number
+ *            schedulesFinish:
+ *              type: number
+ *            hourInit:
+ *              type: date
+ *            hourFinish:
+ *              type: date
+ *      dateCreate:
+ *        type: string
+ */
 const Schema = new mongoose.Schema({
   status: {
     type: Types.Boolean,
@@ -63,7 +139,7 @@ const Schema = new mongoose.Schema({
   }],
   dateCreate: {
     type: Types.Date,
-    default: Date.now()
+    default: Date.now
   }
 })
 

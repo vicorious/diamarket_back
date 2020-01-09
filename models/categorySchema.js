@@ -26,10 +26,12 @@ const Types = mongoose.Schema.Types
 const Schema = new mongoose.Schema({
   name: {
     type: Types.String,
+    lowercase: true,
     require: [true, 'El nombre es requerido']
   },
   description: {
     type: Types.String,
+    lowercase: true,
     require: [true, 'La description']
   },
   image: {
