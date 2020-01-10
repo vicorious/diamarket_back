@@ -31,6 +31,55 @@ routesSupermarketWeb.get('/:id', isSuperAdmin, async (request, response) => {
   response.json(detail)
 })
 
+/**
+ * @swagger
+ * /app/supermarket/rate/{id}:
+ *  put:
+ *    tags:
+ *      - Supermarket
+ *    description: En este endpoint se califica el supermercado
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    - in: path
+ *      name: id
+ *      type: string
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Si se actualiza correctamente la calificacion se devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                update:
+ *                  type: boolean
+ *                  example: true
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si no existen promociones se devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              example: array vacio
+ *            mensaje:
+ *              type: string
+ *              example: No existen promociones para este supermercado
+ */
 routesSupermarketApp.put('/rate/:id', isClient, async (request, response) => {
   const _id = request.params.id
   const data = request.body

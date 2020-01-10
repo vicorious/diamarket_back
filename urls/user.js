@@ -102,6 +102,70 @@ routesUserApp.post('', async (request, response) => {
   response.json(create)
 })
 
+/**
+ * @swagger
+ * /app/user/direction:
+ *  post:
+ *    tags:
+ *      - User
+ *    description: Este endpoint crea las direcciones del cliente
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        properties:
+ *          name:
+ *            type: string
+ *          address:
+ *            type: string
+ *          location:
+ *            type: object
+ *            properties:
+ *              type:
+ *                type: string
+ *                example: Point
+ *              coordinates:
+ *                type: array
+ *                items:
+ *                  example: 'Lat, long'
+ *    responses:
+ *      200:
+ *        description: Si la direccion se crea correctamente se responde el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                update:
+ *                  type: boolean
+ *                  example: true
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si el usuario no existe se responde el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'El usuario no existe'
+ */
 routesUserApp.post('/direction', isClient, async (request, response) => {
   const _id = request.User.id
   const data = request.body
@@ -109,6 +173,56 @@ routesUserApp.post('/direction', isClient, async (request, response) => {
   response.json(createDirection)
 })
 
+/**
+ * @swagger
+ * /app/user:
+ *  put:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se actualiza la informacion de un usuario, se puede enviar cualquier dato del usuario este endpoint lo actualizara
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        $ref: '#/definitions/User'
+ *    responses:
+ *      200:
+ *        description: Si el usuario existe devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                update:
+ *                  type: boolean
+ *                  example: true
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si el usuario no existe se responde el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'El usuario no ha sido actualizado'
+ */
 routesUserApp.put('', convertBase64ToFile, isClient, async (request, response) => {
   const _id = request.User.id
   const data = request.body
@@ -116,24 +230,230 @@ routesUserApp.put('', convertBase64ToFile, isClient, async (request, response) =
   response.json(update)
 })
 
+/**
+ * @swagger
+ * /app/user/validate:
+ *  put:
+ *    tags:
+ *      - User
+ *    description: En este endpoint sse valida el codigo para activar el usuario
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        properties:
+ *          email:
+ *            type: string
+ *          code:
+ *            type: string
+ *    responses:
+ *      200:
+ *        description: Si se encuentra el usuario se activa de una vez y se devuelve el token
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                token:
+ *                  type: string
+ *                user:
+ *                  $ref: '#/definitions/User'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si el usuario no existe devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'El código de autencticación no es valido'
+ */
 routesUserApp.put('/validate', async (request, response) => {
   const data = request.body
   const validate = await UserController.validate(data)
   response.json(validate)
 })
 
-routesUserApp.post('/verifycode', async (request, response) => {
-  const data = request.body.email
-  const update = await UserController.sendEmailPassword(data)
+/**
+ * @swagger
+ * /app/user/sendcode:
+ *  post:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se envia el codigo para restaurar la contraseña
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        properties:
+ *          email:
+ *            type: string
+ *          code:
+ *            type: string
+ *    responses:
+ *      200:
+ *        description: Si se encuentra el usuario se activa de una vez y se devuelve el token
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                token:
+ *                  type: string
+ *                user:
+ *                  $ref: '#/definitions/User'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si el usuario no existe devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'El código de autencticación no es valido'
+ */
+routesUserApp.post('/sendcode', async (request, response) => {
+  const data = request.body
+  const update = await UserController.sendCode(data)
   response.json(update)
 })
 
-routesUserApp.post('/resetpassword', async (request, response) => {
+/**
+ * @swagger
+ * /app/user/changepassword:
+ *  post:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se cambia la contraseña
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        properties:
+ *          code:
+ *            type: string
+ *          password:
+ *            type: string
+ *    responses:
+ *      200:
+ *        description: Si se encuentra el usuario se cambia la contraseña
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                update:
+ *                  type: boolean
+ *                  example: true
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si el usuario no existe devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'El código  no coincide'
+ */
+routesUserApp.post('/changepassword', async (request, response) => {
   const data = request.body
   const user = await UserController.updatePassword(data)
   response.json(user)
 })
 
+/**
+ * @swagger
+ * /app/user/detail:
+ *  get:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se cambia la contraseña
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Si se encuentra el usuario se devuelve el objeto del usuario
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              $ref: '#/definitions/User'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si el usuario no existe devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'El usuario no se encuentra registrado'
+ */
 routesUserApp.get('/detail', isClient, async (request, response) => {
   const _id = request.User.id
   const user = await UserController.detail({ _id })

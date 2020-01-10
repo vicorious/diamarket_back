@@ -36,7 +36,7 @@ class Promotion {
     if (promotion.length > 0) {
       return { estado: true, data: promotion, mensaje: null }
     } else {
-      return { estado: false, data: [], mensaje: 'No se encuentra la promocion' }
+      return { estado: false, data: [], mensaje: 'No existen promociones para este supermercado' }
     }
   }
 }

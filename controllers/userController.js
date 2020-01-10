@@ -12,7 +12,6 @@ class User {
   async create (data) {
     const isExist = await UserModel.get({ email: data.email })
     if (!isExist._id) {
-      const pr = await makeCode()
       data.verifyCode = await makeCode()
       if (data.rol === 'domiciliary' || data.rol === 'administrator') {
         data.isActive = true
@@ -21,7 +20,7 @@ class User {
       } else {
         const user = await UserModel.create(data)
         if (user._id) {
-          SmsController.send(data.cellPhone, 'Bienvenido DíaMarket tu código de verificación es ' + data.verifyCode)
+          await SmsController.send(data.cellPhone, 'Bienvenido DíaMarket tu código de verificación es ' + data.verifyCode)
           return { estado: true, data: user, mensaje: null }
         } else {
           return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
@@ -63,6 +62,18 @@ class User {
     }
   }
 
+  async sendCode (data) {
+    const user = await UserModel.get({ cellPhone: data.cellPhone })
+    if (user._id) {
+      const code = await makeCode()
+      await SmsController.send(data.cellPhone, 'Bienvenido DíaMarket tu código de restauracion es ' + code)
+      await UserModel.update(user._id, { verifyCode: code })
+      return { estado: true, data: { message: 'El sms fue enviado', mensaje: null } }
+    } else {
+      return { estado: false, data: [], mensaje: 'El usuario no existe' }
+    }
+  }
+
   async sendEmailPassword (email) {
     const code = await makeCode()
     const isExist = await UserModel.get({ email })
@@ -77,13 +88,13 @@ class User {
 
   async updatePassword (data) {
     const codeRandom = await makeCode()
-    const user = await UserModel.get({ verifyCode: data.code, email: data.email })
+    const user = await UserModel.get({ verifyCode: data.code })
     if (user._id) {
       const passwordCrypt = await makePassword(data.password)
       const update = await UserModel.update(user._id, { password: passwordCrypt, verifyCode: codeRandom })
       return update
     } else {
-      return { estado: false, data: [], mensaje: 'El código u correo no coincide' }
+      return { estado: false, data: [], mensaje: 'El código  no coincide' }
     }
   }
 
@@ -113,7 +124,7 @@ class User {
         return update
       }
     } else {
-      return { estado: false, data: [], mensaje: 'La dirección no se ha creado' }
+      return { estado: false, data: [], mensaje: 'El usuario no existe' }
     }
   }
 
