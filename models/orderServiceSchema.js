@@ -45,7 +45,7 @@ const Types = mongoose.Schema.Types
 const Schema = new mongoose.Schema({
   value: {
     type: Types.Number,
-    required: [true, 'El precio el requerido']
+    required: [true, 'El precio es requerido']
   },
   direction: {
     type: Types.String,
@@ -57,19 +57,18 @@ const Schema = new mongoose.Schema({
   },
   status: {
     type: Types.Number,
-    required: [true, 'El status es requerido']
+    required: [true, 'El status es requerido'],
+    default: 1
   },
   superMarket: {
     type: Types.ObjectId,
     required: [true, 'El supermercado es requerido']
   },
   products: [{
-    type: Types.ObjectId,
-    required: [true, 'El producto es requerido']
+    type: Types.ObjectId
   }],
   promotions: [{
-    type: Types.ObjectId,
-    required: [true, 'La promocion es requerida']
+    type: Types.ObjectId
   }],
   user: {
     type: Types.ObjectId,

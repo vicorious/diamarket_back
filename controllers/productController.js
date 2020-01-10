@@ -68,8 +68,6 @@ class Product {
 
   async productsForName (data) {
     const products = await ProductModel.search({ name: data.name })
-    const pro = await ProductModel.get({ name: 'Spaguetti' })
-    console.log('AQUIIII', pro)
     const arrayProducts = []
     for (const product of products) {
       const productsName = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
