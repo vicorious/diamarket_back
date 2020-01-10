@@ -3,13 +3,16 @@ const AvailabilityModel = require('../models/availabilitySchema')
 
 class OrderService {
   async create (id, data) {
-    let sum = 0
+    let sumPrices = 0
     if (data.products) {
-      data.products.map(async function (obj) {
+      const pro = data.products.map(async function (obj) {
         const product = await AvailabilityModel.get({ idProduct: obj, idSupermarket: data.superMarket })
         const productPrice = product.price
-        sum = sum + productPrice
+        sumPrices = sumPrices + productPrice
+        return sumPrices
       })
+      const arrayPrices = await Promise.all(pro)
+      data.value = arrayPrices[arrayPrices.length - 1]
     }
     data.user = id
     const create = await OrderServiceModel.create(data)
