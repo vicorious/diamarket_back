@@ -24,9 +24,6 @@ const routesOrderServiceWeb = asyncify(express.Router())
  *      type: object
  *      schema:
  *          properties:
- *            value:
- *              type: number
- *              example: "10000"
  *            direction:
  *              type: string
  *              example: "Cll 123 # 1 - 12"
