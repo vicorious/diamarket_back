@@ -71,7 +71,7 @@ class Promotion extends Base {
     super()
     this.sort = { name: 1 }
     this.model = mongoose.model('Promotion', Schema)
-    this.fields = 'name supermarket products value image isActive'
+    this.fields = 'name supermarket products value discount image isActive'
     this.populate = [{
       path: 'supermarket',
       select: 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules dateCreate',

@@ -1,18 +1,47 @@
 const OrderServiceModel = require('../models/orderServiceSchema')
 const AvailabilityModel = require('../models/availabilitySchema')
+const PromotionModel = require('../models/promotionSchema')
 
 class OrderService {
   async create (id, data) {
-    let sumPrices = 0
-    if (data.products) {
-      const pro = data.products.map(async function (obj) {
+    let sumPricesProduct = 0
+    let sumPricesPromotion = 0
+    if (data.products && data.promotions) {
+      const prom = data.promotions.map(async function (obj) {
+        const promotion = await PromotionModel.get({ _id: obj, supermarket: data.superMarket })
+        const promotionPrice = promotion.discount
+        sumPricesPromotion = sumPricesPromotion + promotionPrice
+        return sumPricesPromotion
+      })
+      const prod = data.products.map(async function (obj) {
         const product = await AvailabilityModel.get({ idProduct: obj, idSupermarket: data.superMarket })
         const productPrice = product.price
-        sumPrices = sumPrices + productPrice
-        return sumPrices
+        sumPricesProduct = sumPricesProduct + productPrice
+        return sumPricesProduct
       })
-      const arrayPrices = await Promise.all(pro)
-      data.value = arrayPrices[arrayPrices.length - 1]
+      const arrayPricesPromotions = await Promise.all(prom)
+      const arrayPricesProducts = await Promise.all(prod)
+      data.value = arrayPricesProducts[arrayPricesProducts.length - 1] + arrayPricesPromotions[arrayPricesPromotions.length - 1]
+    }
+    if (data.products && !data.promotions) {
+      const prod = data.products.map(async function (obj) {
+        const product = await AvailabilityModel.get({ idProduct: obj, idSupermarket: data.superMarket })
+        const productPrice = product.price
+        sumPricesProduct = sumPricesProduct + productPrice
+        return sumPricesProduct
+      })
+      const arrayPricesProducts = await Promise.all(prod)
+      data.value = arrayPricesProducts[arrayPricesProducts.length - 1]
+    }
+    if (!data.products && data.promotions) {
+      const prom = data.promotions.map(async function (obj) {
+        const promotion = await PromotionModel.get({ _id: obj, supermarket: data.superMarket })
+        const promotionPrice = promotion.discount
+        sumPricesPromotion = sumPricesPromotion + promotionPrice
+        return sumPricesPromotion
+      })
+      const arrayPricesPromotions = await Promise.all(prom)
+      data.value = arrayPricesPromotions[arrayPricesPromotions.length - 1]
     }
     data.user = id
     const create = await OrderServiceModel.create(data)
