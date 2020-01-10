@@ -66,7 +66,7 @@ routesCategoryWeb.post('', convertBase64ToFile, isSuperAdmin, async (request, re
  *  post:
  *    tags:
  *      - Category
- *    decription: Se crea una nueva categoria
+ *    description: Se crea una nueva categoria
  *    produces:
  *    - applications/json
  *    parameters:
@@ -107,8 +107,6 @@ routesCategoryWeb.post('', convertBase64ToFile, isSuperAdmin, async (request, re
  *            error:
  *              type: string
  *              example: La categoria ya existe
- *
- *
  */
 routesCategoryWeb.put('/:id', convertBase64ToFile, isSuperAdmin, async (request, response) => {
   const _id = request.params.id
@@ -133,7 +131,7 @@ routesCategoryWeb.get('', isSuperAdmin, isAdmin, async (request, response) => {
  *  get:
  *    tags:
  *      - Category
- *    decription: Se detalla una categoria
+ *    description: Se detalla una categoria
  *    produces:
  *    - applications/json
  *    parameters:

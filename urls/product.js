@@ -45,11 +45,114 @@ routesProductWeb.post('/for/name', isSuperAdmin, isAdmin, async (request, respon
   response.json(products)
 })
 
+/**
+ * @swagger
+ * /app/product/forsupermarket/{id}:
+ *  get:
+ *    tags:
+ *      - Product
+ *    description: Este endpoint lista los productos según el id de el supermercado
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    - in: path
+ *      name: id
+ *      type: string
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Si encuentra los productos del supermercado
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              $ref: '#/definitions/Product'
+ *            mensaje:
+ *              type: string
+ *              example: true
+ *      400:
+ *        description: Si el supermercado no tiene asignado productos
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                exmaple: "array vacio"
+ *            mensaje:
+ *              type: string
+ *              example: "Este supermercado no tiene productos"
+ */
+
 routesProductApp.get('/forsupermarket/:id', isClient, async (request, response) => {
   const idSupermarket = request.params.id
   const products = await ProductController.productsSuperMarkets(idSupermarket)
   response.json(products)
 })
+
+/**
+ * @swagger
+ * /app/product/for/category:
+ *  get:
+ *    tags:
+ *      - Product
+ *    description: Este endpoint lista los productos según la categoria y el supermercado
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      type: object
+ *      schema:
+ *        properties:
+ *          idSupermarket:
+ *            type: string
+ *            example: "5e17a913ebf3fa2ff83b97a3"
+ *          category:
+ *            type: string
+ *            example: "5e17a913ebf3fa2ff83b97a3"
+ *    responses:
+ *      200:
+ *        description: Si encuentra los productos del supermercado
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              $ref: '#/definitions/Product'
+ *            mensaje:
+ *              type: string
+ *              example: true
+ *      400:
+ *        description: Si la categoria no posee productos
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                exmaple: "array vacio"
+ *            mensaje:
+ *              type: string
+ *              example: "Esta categoria no tiene productos"
+ */
 
 routesProductApp.post('/for/category', isClient, async (request, response) => {
   const data = request.body
@@ -57,11 +160,112 @@ routesProductApp.post('/for/category', isClient, async (request, response) => {
   response.json(products)
 })
 
+/**
+ * @swagger
+ * /app/product/{id}:
+ *  get:
+ *    tags:
+ *      - Product
+ *    description: Este endpoint detalla el producto
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    - in: path
+ *      name: id
+ *      type: string
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Si encuentra el producto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              $ref: '#/definitions/Product'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si no encuentra el producto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: "Array vacio"
+ *            mensaje:
+ *              type: string
+ *              example: "No existe el producto"
+ */
+
 routesProductApp.get('/:id', isClient, async (request, response) => {
   const _id = request.params.id
   const detail = await ProductController.detail({ _id })
   response.json(detail)
 })
+
+/**
+ * @swagger
+ * /app/product/for/name/{id}:
+ *  get:
+ *    tags:
+ *      - Product
+ *    description: Este endpoint detalla un producto según el nombre y el supermercado
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        properties:
+ *          idSupermarket:
+ *            type: string
+ *            example: "5e17a913ebf3fa2ff83b97a3"
+ *          name:
+ *            type: string
+ *            example: "Cereal"
+ *      200:
+ *        description: Si encuentra el producto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              $ref: '#/definitions/Product'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si no encuentra el producto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: "Array vacio"
+ *            mensaje:
+ *              type: string
+ *              example: "No existe productos cor este nombre"
+ */
 
 routesProductApp.post('/for/name', isClient, async (request, response) => {
   const data = request.body

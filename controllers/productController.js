@@ -80,7 +80,7 @@ class Product {
     if (arrayProducts.length > 0) {
       return { estado: true, data: arrayProducts, mensaje: null }
     } else {
-      return { estado: false, data: [], mensaje: 'No existe productos por este nombre' }
+      return { estado: false, data: [], mensaje: 'No existe productos cor este nombre' }
     }
   }
 
