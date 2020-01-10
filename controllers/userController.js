@@ -1,6 +1,6 @@
 'use strict'
 const UserModel = require('../models/userSchema')
-const SmsController = require('../controllers/smsController')
+const { sendSms } = require('../utils/makeSms')
 const makeCode = require('../utils/makeCode')
 const makePassword = require('../utils/makePassword')
 const AuthController = require('../controllers/authController')
@@ -20,7 +20,7 @@ class User {
       } else {
         const user = await UserModel.create(data)
         if (user._id) {
-          await SmsController.send(data.cellPhone, 'Bienvenido DíaMarket tu código de verificación es ' + data.verifyCode)
+          await sendSms(data.cellPhone, data.verifyCode)
           return { estado: true, data: user, mensaje: null }
         } else {
           return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
@@ -66,7 +66,7 @@ class User {
     const user = await UserModel.get({ cellPhone: data.cellPhone })
     if (user._id) {
       const code = await makeCode()
-      await SmsController.send(data.cellPhone, 'Bienvenido DíaMarket tu código de restauracion es ' + code)
+      await sendSms(data.cellPhone, 'Bienvenido DíaMarket tu código de restauracion es ' + code)
       await UserModel.update(user._id, { verifyCode: code })
       return { estado: true, data: { message: 'El sms fue enviado', mensaje: null } }
     } else {
