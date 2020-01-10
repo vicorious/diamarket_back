@@ -66,7 +66,7 @@ class User {
     const user = await UserModel.get({ cellPhone: data.cellPhone })
     if (user._id) {
       const code = await makeCode()
-      await sendSms(data.cellPhone, 'Bienvenido DíaMarket tu código de restauracion es ' + code)
+      await sendSms(data.cellPhone, 'Bienvenido DiaMarket tu codigo de restauracion es ' + code)
       await UserModel.update(user._id, { verifyCode: code })
       return { estado: true, data: { message: 'El sms fue enviado', mensaje: null } }
     } else {
