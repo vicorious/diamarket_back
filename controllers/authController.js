@@ -8,7 +8,7 @@ class Auth {
   async createToken (data) {
     if (data.email && data.password) {
       const password = makePassword(data.password)
-      const dataUser = await UserModel.get({ email: data.email, password: password, isActive: true, rol: 'client' })
+      const dataUser = await UserModel.get({ email: data.email, password: password, isActive: true })
       if (dataUser._id) {
         const token = jwt.sign({ _id: dataUser._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
         return { estado: true, data: { token: token, user: dataUser }, mensaje: null }

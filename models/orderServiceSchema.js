@@ -31,11 +31,21 @@ const Types = mongoose.Schema.Types
  *      products:
  *        type: array
  *        items:
- *          $ref: '#/definitions/Product'
+ *          properties:
+ *            product:
+ *              type: string
+ *              example: id
+ *            quantity:
+ *              type: number
  *      promotions:
  *        type: array
  *        items:
- *          $ref: '#/definitions/Promotion'
+ *          properties:
+ *            promotion:
+ *              type: string
+ *              example: id
+ *            quantity:
+ *              type: number
  *      user:
  *        $ref: '#/definitions/User'
  *      dateCreate:
@@ -65,10 +75,10 @@ const Schema = new mongoose.Schema({
     required: [true, 'El supermercado es requerido']
   },
   products: [{
-    type: Types.ObjectId
+    type: Types.Mixed
   }],
   promotions: [{
-    type: Types.ObjectId
+    type: Types.Mixed
   }],
   user: {
     type: Types.ObjectId,
