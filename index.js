@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '20000mb' }))
 app.use('/v1', routeUser)
 
 server.listen(port, () => {
-    console.log(`${chalk.green('[diamarket-account]')} server listening on port ${port}`)
+  console.log(`${chalk.green('[diamarket-account]')} server listening on port ${port}`)
 })
 
 module.exports = server
