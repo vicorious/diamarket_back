@@ -21,20 +21,24 @@ async function isSuperAdmin (request, response, next) {
 }
 
 async function isAdmin (request, response, next) {
-  const authorization = request.headers.authorization
-  if (authorization) {
-    const token = authorization.split(' ')[1]
-    try {
-      const verify = await jwt.verify(token, SECRET)
-      const id = verify._id
-      const user = await UserSchema.get({ _id: id, rol: 'administrator' })
-      if (user._id) {
-        request.User = { id, rol: user.rol }
-        return next()
-      }
-    } catch (TokenExpiredError) {}
+  if (!request.User) {
+    const authorization = request.headers.authorization
+    if (authorization) {
+      const token = authorization.split(' ')[1]
+      try {
+        const verify = await jwt.verify(token, SECRET)
+        const id = verify._id
+        const user = await UserSchema.get({ _id: id, rol: 'administrator' })
+        if (user._id) {
+          request.User = { id, rol: user.rol }
+          return next()
+        }
+      } catch (TokenExpiredError) {}
+    }
+    response.send({ estado: false, data: [], mensaje: 'Las credenciales de autenticación no se proveyeron.' })
+  } else {
+    return next()
   }
-  response.send({ estado: false, data: [], mensaje: 'Las credenciales de autenticación no se proveyeron.' })
 }
 
 async function isDomiciliary (request, response, next) {

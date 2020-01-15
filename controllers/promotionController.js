@@ -12,8 +12,8 @@ class Promotion {
     }
   }
 
-  async update (_id, data) {
-    const isExist = await PromotionModel.get({ _id })
+  async update (id, data) {
+    const isExist = await PromotionModel.get(id)
     if (isExist._id) {
       const update = await PromotionModel.update(isExist._id, data)
       return update
@@ -22,8 +22,8 @@ class Promotion {
     }
   }
 
-  async detail (_id) {
-    const promotion = await PromotionModel.get({ _id, isActive: true })
+  async detail (id) {
+    const promotion = await PromotionModel.get({ id, isActive: true })
     if (promotion._id) {
       return { estado: true, data: promotion, mensaje: null }
     } else {

@@ -28,6 +28,7 @@ class Product {
   }
 
   async detail (id) {
+    console.log(id)
     const isExist = await ProductModel.get(id)
     if (isExist._id) {
       return { estado: true, data: isExist, mensaje: null }

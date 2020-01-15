@@ -149,7 +149,7 @@ routesOrderServiceApp.put('/:id', isClient, async (request, response) => {
 
 /**
  * @swagger
- * /app/orderservice/{id}:
+ * /app/orderservice/detail/{id}:
  *  get:
  *    tags:
  *      - OrderService
@@ -194,7 +194,7 @@ routesOrderServiceApp.put('/:id', isClient, async (request, response) => {
  *              example: "No se ha encontrado la orden"
  */
 
-routesOrderServiceApp.get('/:id', isClient, async (request, response) => {
+routesOrderServiceApp.get('/detail/:id', isClient, async (request, response) => {
   const _id = request.params.id
   const order = await OrderServiceController.detail({ _id })
   response.json(order)
