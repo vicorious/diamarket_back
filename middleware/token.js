@@ -41,7 +41,7 @@ async function isAdmin (request, response, next) {
     }
     response.send({ estado: false, data: [], mensaje: 'Las credenciales de autenticación no se proveyeron.' })
   } else {
-    return next
+    return next()
   }
 }
 

@@ -25,7 +25,7 @@ routesSupermarketWeb.get('', isSuperAdmin, async (request, response) => {
   response.json(all)
 })
 
-routesSupermarketWeb.get('/:id', isSuperAdmin, async (request, response) => {
+routesSupermarketWeb.get('/detail/:id', isSuperAdmin, async (request, response) => {
   const _id = request.params.id
   const detail = await supermarketController.detail({ _id })
   response.json(detail)

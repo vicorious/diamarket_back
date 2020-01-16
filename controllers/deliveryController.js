@@ -7,8 +7,8 @@ class Delivery {
     return { estado: true, data: create, mensaje: null }
   }
 
-  async update (_id, data) {
-    const isExist = await DeliveryModel.get({ _id })
+  async update (id, data) {
+    const isExist = await DeliveryModel.get(id)
     if (isExist._id) {
       const order = await OrderModel.get({ _id: isExist.orderId })
       const update = await DeliveryModel.update(isExist._id, data)
@@ -19,8 +19,8 @@ class Delivery {
     }
   }
 
-  async detail (_id) {
-    const isExist = await DeliveryModel.get({ _id })
+  async detail (id) {
+    const isExist = await DeliveryModel.get(id)
     if (isExist._id) {
       return { estado: true, data: isExist, mensaje: null }
     } else {

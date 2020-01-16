@@ -27,19 +27,19 @@ routesProductWeb.get('/forsupermarket/:id', isSuperAdmin, isAdmin, async (reques
   response.json(products)
 })
 
-routesProductWeb.post('/for/category', isAdmin, async (request, response) => {
+routesProductWeb.post('/forcategory', isAdmin, async (request, response) => {
   const data = request.body
   const products = await ProductController.productsForCategory(data)
   response.json(products)
 })
 
-routesProductWeb.get('/:id', isSuperAdmin, isAdmin, async (request, response) => {
-  const _id = request.param.id
+routesProductWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, response) => {
+  const _id = request.params.id
   const detail = await ProductController.detail({ _id })
   response.json(detail)
 })
 
-routesProductWeb.post('/for/name', isSuperAdmin, isAdmin, async (request, response) => {
+routesProductWeb.post('/forname', isSuperAdmin, isAdmin, async (request, response) => {
   const data = request.body
   const products = await ProductController.productsForName(data)
   response.json(products)
@@ -101,7 +101,7 @@ routesProductApp.get('/forsupermarket/:id', isClient, async (request, response) 
 
 /**
  * @swagger
- * /app/product/for/category:
+ * /app/product/forcategory:
  *  get:
  *    tags:
  *      - Product
@@ -154,7 +154,7 @@ routesProductApp.get('/forsupermarket/:id', isClient, async (request, response) 
  *              example: "Esta categoria no tiene productos"
  */
 
-routesProductApp.post('/for/category', isClient, async (request, response) => {
+routesProductApp.post('/forcategory', isClient, async (request, response) => {
   const data = request.body
   const products = await ProductController.productsForCategory(data)
   response.json(products)
@@ -162,7 +162,7 @@ routesProductApp.post('/for/category', isClient, async (request, response) => {
 
 /**
  * @swagger
- * /app/product/{id}:
+ * /app/product/detail/{id}:
  *  get:
  *    tags:
  *      - Product
@@ -208,7 +208,7 @@ routesProductApp.post('/for/category', isClient, async (request, response) => {
  *              example: "No existe el producto"
  */
 
-routesProductApp.get('/:id', isClient, async (request, response) => {
+routesProductApp.get('/detail/:id', isClient, async (request, response) => {
   const _id = request.params.id
   const detail = await ProductController.detail({ _id })
   response.json(detail)
@@ -216,7 +216,7 @@ routesProductApp.get('/:id', isClient, async (request, response) => {
 
 /**
  * @swagger
- * /app/product/for/name/{id}:
+ * /app/product/forname:
  *  get:
  *    tags:
  *      - Product
@@ -267,10 +267,15 @@ routesProductApp.get('/:id', isClient, async (request, response) => {
  *              example: "No existe productos cor este nombre"
  */
 
-routesProductApp.post('/for/name', isClient, async (request, response) => {
+routesProductApp.post('/forname', isClient, async (request, response) => {
   const data = request.body
   const products = await ProductController.productsForName(data)
   response.json(products)
+})
+
+routesProductWeb.get('/createData', async (request, response) => {
+  const createData = await ProductController.createData()
+  response.json(createData)
 })
 
 module.exports = { routesProductApp, routesProductWeb }

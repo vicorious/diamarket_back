@@ -8,11 +8,14 @@ const { isSuperAdmin, isAdmin, isClient } = require('../middleware/token')
 const { convertBase64ToFile } = require('../middleware/convertBase64File')
 
 routesPromotionWeb.post('', convertBase64ToFile, isSuperAdmin, async (request, response) => {
-  const create = await PromotionController.create(request.body)
+  const data = request.body
+  const create = await PromotionController.create(data)
   response.json(create)
 })
 routesPromotionWeb.put('/:id', isSuperAdmin, convertBase64ToFile, async (request, response) => {
-  const update = await PromotionController.update(request.params.id, request.body)
+  const _id = request.params.id
+  const data = request.body
+  const update = await PromotionController.update({ _id }, data)
   response.json(update)
 })
 routesPromotionWeb.get('/all/:supermarket', isSuperAdmin, isAdmin, async (request, response) => {
@@ -20,8 +23,9 @@ routesPromotionWeb.get('/all/:supermarket', isSuperAdmin, isAdmin, async (reques
   const search = await PromotionController.all(supermarket)
   response.json(search)
 })
-routesPromotionWeb.get('/:id', isSuperAdmin, isAdmin, async (request, response) => {
-  const detail = await PromotionController.detail(request.params.id)
+routesPromotionWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, response) => {
+  const _id = request.params.id
+  const detail = await PromotionController.detail({ _id })
   response.json(detail)
 })
 

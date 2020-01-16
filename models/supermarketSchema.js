@@ -114,7 +114,7 @@ const Schema = new mongoose.Schema({
     type: Types.String,
     require: [true, 'El email es requerido']
   },
-  supermaketType: {
+  supermarketType: {
     type: Types.String,
     required: [true, 'El tipo de supermercado es requerido']
   },
