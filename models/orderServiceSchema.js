@@ -21,7 +21,21 @@ const Types = mongoose.Schema.Types
  *      value:
  *        type: number
  *      direction:
- *        type: string
+ *        type: object
+ *        properties:
+ *          address:
+ *            type: String
+ *          location:
+ *            type: object
+ *            properties:
+ *              type:
+ *                type: string
+ *                example: Point
+ *              coordinates:
+ *                type: array
+ *                items:
+ *                  type: number
+ *                  example: '12312312312312312, 3213123'
  *      methodPayment:
  *        type: string
  *      status:
@@ -58,8 +72,7 @@ const Schema = new mongoose.Schema({
     required: [true, 'El precio es requerido']
   },
   direction: {
-    type: Types.String,
-    required: [true, 'La direccion es requerida']
+    type: Types.Mixed
   },
   methodPayment: {
     type: Types.String,

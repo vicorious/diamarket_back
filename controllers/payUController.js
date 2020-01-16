@@ -1,9 +1,16 @@
 'use strict'
-// const urlDev = 'https://sandbox.api.payulatam.com/payments-api/4.0/service.cgi'
-// const urlProd = 'https://api.payulatam.com/payments-api/4.0/service.cgi'
+// Decirle a nestor que el valor de la orden debe ir junto al iba y al iba de la orden
+const MakeUrlPayU = require('../utils/makeUrlPayU')
+const MakeObjectPaymen = require('../utils/makeObjectPayment')
 
 class PayU {
+  async payCredit () {
+    
+  }
 
+  async payCash () {}
+
+  async payDebit () {}
 }
 
 module.exports = new PayU()

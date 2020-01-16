@@ -6,6 +6,7 @@ const { isSuperAdmin, isAdmin, isDomiciliary, isClient } = require('../middlewar
 const routesUserApp = asyncify(express.Router())
 const routesUserWeb = asyncify(express.Router())
 const { convertBase64ToFile } = require('../middleware/convertBase64File')
+const cookie = require('cookie-parser')
 
 routesUserWeb.post('', isSuperAdmin, isAdmin, async (request, response) => {
   const data = request.body
@@ -20,7 +21,7 @@ routesUserWeb.put('', convertBase64ToFile, isSuperAdmin, isAdmin, isDomiciliary,
   response.json(update)
 })
 
-routesUserWeb.get('/:id', isSuperAdmin, isAdmin, async (request, response) => {
+routesUserWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, response) => {
   const _id = request.params.id
   const data = await UserController.detail({ _id })
   response.json(data)
@@ -32,7 +33,8 @@ routesUserWeb.get('/detail', isSuperAdmin, isAdmin, isDomiciliary, async (reques
   response.json(detail)
 })
 
-routesUserWeb.get('/clients', isSuperAdmin, async (request, response) => {
+routesUserWeb.get('/clients', async (request, response) => {
+  console.log()
   const data = await UserController.all({ rol: 'client' })
   response.json(data)
 })
