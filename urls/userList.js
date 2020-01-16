@@ -188,7 +188,7 @@ routesUserListApp.get('', isClient, async (request, response) => {
 
 /**
  * @swagger
- * /app/userlist/{id}):
+ * /app/userlist/detail/{id}):
  *  get:
  *    tags:
  *      - UserList
@@ -231,7 +231,7 @@ routesUserListApp.get('', isClient, async (request, response) => {
  *              type: string
  *              example: 'No existe la lista de usuario'
  */
-routesUserListApp.get('/:id', isClient, async (request, response) => {
+routesUserListApp.get('/detail/:id', isClient, async (request, response) => {
   const _id = request.params.id
   const detail = await UserListController.detail({ _id })
   response.json(detail)

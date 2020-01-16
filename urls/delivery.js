@@ -10,14 +10,14 @@ routesDeliveryWeb.post('', async (request, response) => {
   response.json(create)
 })
 routesDeliveryWeb.put('/:id', async (request, response) => {
-  const id = request.params.id
+  const _id = request.params.id
   const data = request.body
-  const update = await DeliveryController.update(id, data)
+  const update = await DeliveryController.update({ _id }, data)
   response.json(update)
 })
-routesDeliveryWeb.get('/:id', async (request, response) => {
-  const id = request.params.id
-  const detail = await DeliveryController.detail(id)
+routesDeliveryWeb.get('/detail/:id', async (request, response) => {
+  const _id = request.params.id
+  const detail = await DeliveryController.detail({ _id })
   response.json(detail)
 })
 

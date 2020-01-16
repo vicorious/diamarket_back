@@ -17,7 +17,7 @@ routesPqrWeb.get('', isSuperAdmin, async (request, response) => {
   response.json(all)
 })
 
-routesPqrWeb.get('/:id', isSuperAdmin, isAdmin, async (request, response) => {
+routesPqrWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, response) => {
   const _id = request.params.id
   const detail = await PqrController.getFirst({ _id })
   response.json(detail)
@@ -30,7 +30,7 @@ routesPqrWeb.put('/:id', isSuperAdmin, isAdmin, async (request, response) => {
   response.json(update)
 })
 
-routesPqrWeb.get('/by/supermarket', isAdmin, async (request, response) => {
+routesPqrWeb.get('/bysupermarket', isAdmin, async (request, response) => {
   const _id = request.User.id
   const pqrs = await PqrController.bySupermarket({ _id })
   response.json(pqrs)
@@ -131,7 +131,7 @@ routesPqrApp.post('/superadmin', isClient, async (request, response) => {
 
 /**
  * @swagger
- * /app/pqr/{id}:
+ * /app/pqr/detail/{id}:
  *  get:
  *    tags:
  *      - Pqr
@@ -174,7 +174,7 @@ routesPqrApp.post('/superadmin', isClient, async (request, response) => {
  *              type: string
  *              example: No existe la pqr
  */
-routesPqrApp.get('/:id', isClient, async (request, response) => {
+routesPqrApp.get('/detail/:id', isClient, async (request, response) => {
   const _id = request.params.id
   const detail = await PqrController.detail({ _id })
   response.json(detail)

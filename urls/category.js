@@ -114,7 +114,7 @@ routesCategoryWeb.put('/:id', convertBase64ToFile, isSuperAdmin, async (request,
   response.json(update)
 })
 
-routesCategoryWeb.get('/:id', isSuperAdmin, isAdmin, async (request, response) => {
+routesCategoryWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, response) => {
   const _id = request.params.id
   const detail = await categoryController.detail(_id)
   response.json(detail)
@@ -127,7 +127,7 @@ routesCategoryWeb.get('', isSuperAdmin, isAdmin, async (request, response) => {
 
 /**
  * @swagger
- * /app/category/{id}:
+ * /app/category/detail/{id}:
  *  get:
  *    tags:
  *      - Category
@@ -172,7 +172,7 @@ routesCategoryWeb.get('', isSuperAdmin, isAdmin, async (request, response) => {
  *              type: string
  *              example: 'No existe la categoria'
  */
-routesCategoryApp.get('/:id', isClient, async (request, response) => {
+routesCategoryApp.get('/detail/:id', isClient, async (request, response) => {
   const _id = request.params.id
   const detail = await categoryController.detail({ _id })
   response.json(detail)

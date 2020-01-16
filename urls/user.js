@@ -20,7 +20,7 @@ routesUserWeb.put('', convertBase64ToFile, isSuperAdmin, isAdmin, isDomiciliary,
   response.json(update)
 })
 
-routesUserWeb.get('/:id', isSuperAdmin, isAdmin, async (request, response) => {
+routesUserWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, response) => {
   const _id = request.params.id
   const data = await UserController.detail({ _id })
   response.json(data)
