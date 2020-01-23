@@ -87,4 +87,55 @@ routesSupermarketApp.put('/rate/:id', isClient, async (request, response) => {
   response.json(rate)
 })
 
+/**
+ * @swagger
+ * /app/supermarket:
+ *   get:
+ *     tags:
+ *       - Supermarket
+ *     description: Este endpoint lista todos los supermercados para el usuario
+ *     produces:
+ *     - applications/json
+ *     parameters:
+ *     - in: header
+ *       name: Authorization
+ *       type: string
+ *       required: true
+ *     responses:
+ *       200:
+ *         description:  Se listan todos los supermercados
+ *         schema:
+ *           properties:
+ *             estado:
+ *               type: boolean
+ *               example: true
+ *             data:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 $ref: "#/definitions/Supermarket"
+ *             mensaje:
+ *               type: string
+ *               example: null
+ *       400:
+ *         description: No existen supermercados creados
+ *         schema:
+ *           properties:
+ *             estado:
+ *               type: boolean
+ *               exmaple: false
+ *             data:
+ *               type: array
+ *               items:
+ *                 example: "Array vacio"
+ *             mensaje:
+ *               type: string
+ *               example: "No existen supermercados"
+ */
+
+routesSupermarketApp.get('', isClient, async (request, response) => {
+  const all = await supermarketController.all()
+  response.json(all)
+})
+
 module.exports = { routesSupermarketApp, routesSupermarketWeb }
