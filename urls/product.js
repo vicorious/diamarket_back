@@ -273,9 +273,4 @@ routesProductApp.post('/forname', isClient, async (request, response) => {
   response.json(products)
 })
 
-routesProductWeb.get('/createData', async (request, response) => {
-  const createData = await ProductController.createData()
-  response.json(createData)
-})
-
 module.exports = { routesProductApp, routesProductWeb }
