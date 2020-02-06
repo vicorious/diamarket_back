@@ -231,7 +231,7 @@ routesUserListApp.get('', isClient, async (request, response) => {
  *              type: string
  *              example: 'No se encuentra la lista a borrar'
  */
-routesUserListApp.get('/detail/:id', async (request, response) => {
+routesUserListApp.get('/detail/:id', isClient, async (request, response) => {
   const _id = request.params.id
   const detail = await UserListController.detail({ _id })
   response.json(detail)
@@ -255,7 +255,7 @@ routesUserListApp.get('/detail/:id', async (request, response) => {
  *      required: true
  *    responses:
  *      200:
- *        description: Si la eliminaxion de la data fue exitosa se responde con el siguiente objeto
+ *        description: Si la eliminacion de la data fue exitosa se responde con el siguiente objeto
  *        schema:
  *          properties:
  *            estado:
