@@ -129,7 +129,7 @@ routesUserListApp.post('', isClient, async (request, response) => {
  *                type: string
  *                example: "No exite la lista de usuario"
  */
-routesUserListApp.put('/:id', async (request, response) => {
+routesUserListApp.put('/:id', isClient, async (request, response) => {
   const id = request.params.id
   const data = request.body
   const update = await UserListController.update(id, data)
@@ -229,7 +229,7 @@ routesUserListApp.get('', isClient, async (request, response) => {
  *                example: 'Array vacio'
  *            mensaje:
  *              type: string
- *              example: 'No existe la lista de usuario'
+ *              example: 'No se encuentra la lista a borrar'
  */
 routesUserListApp.get('/detail/:id', async (request, response) => {
   const _id = request.params.id
@@ -237,7 +237,56 @@ routesUserListApp.get('/detail/:id', async (request, response) => {
   response.json(detail)
 })
 
-routesUserListApp.delete('/:_id', async (request, response) => {
+/**
+ * @swagger
+ * /app/userlist/{id}):
+ *  delete:
+ *    tags:
+ *      - UserList
+ *    description: En este endpoint se elimina una lista de usuario
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    - in: path
+ *      name: id
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Si la eliminaxion de la data fue exitosa se responde con el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                deleted:
+ *                  type: boolean
+ *                  example: true
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si la lista no existe
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'No existe la lista de usuario'
+ */
+routesUserListApp.delete('/:_id', isClient, async (request, response) => {
   const _id = request.params._id
   const userList = await UserListController.delete({ _id })
   response.json(userList)
