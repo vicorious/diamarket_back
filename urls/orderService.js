@@ -6,11 +6,10 @@ const routesOrderServiceApp = asyncify(express.Router())
 const routesOrderServiceWeb = asyncify(express.Router())
 
 routesOrderServiceApp.post('', isClient, async (request, response) => {
-  console.log(document.cookie)
-  // const user = request.User.id
-  // const data = request.body
-  // const create = await OrderServiceController.create(user, data)
-  // response.json(create)
+  request.body.user = request.User.id
+  const data = request.body
+  const create = await OrderServiceController.create(data)
+  response.json(create)
 })
 
 /**

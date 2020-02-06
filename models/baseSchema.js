@@ -81,9 +81,9 @@ class Base {
   async delete (_id) {
     const object = await this.model.findByIdAndDelete(_id)
     if (object === null) {
-      return { deleted: false }
+      return { estado: false, data: { deleted: false }, mensaje: 'Error al borrar los datos' }
     }
-    return { deleted: true }
+    return { estado: true, data: { deleted: true }, mensaje: null }
   }
 
   async count (data) {

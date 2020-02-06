@@ -5,7 +5,7 @@ const PayUController = require('../controllers/payUController')
 
 class OrderService {
   async create1 (data) {
-
+    console.log(data                                                             )
   }
 
   async create (id, data) {

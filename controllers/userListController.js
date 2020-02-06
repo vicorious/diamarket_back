@@ -39,6 +39,15 @@ class UserList {
       return { estado: false, data: [], mensaje: 'No se encuentran listas creadas' }
     }
   }
+
+  async delete (_id) {
+    const list = await UserListModel.get(_id)
+    if (list._id) {
+      return UserListModel.delete(list._id)
+    } else {
+      return { estado: false, data: [], mensaje: 'No se encuentra la lista a borrar' }
+    }
+  }
 }
 
 module.exports = new UserList()

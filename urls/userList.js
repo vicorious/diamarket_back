@@ -129,7 +129,7 @@ routesUserListApp.post('', isClient, async (request, response) => {
  *                type: string
  *                example: "No exite la lista de usuario"
  */
-routesUserListApp.put('/:id', isClient, async (request, response) => {
+routesUserListApp.put('/:id', async (request, response) => {
   const id = request.params.id
   const data = request.body
   const update = await UserListController.update(id, data)
@@ -231,10 +231,15 @@ routesUserListApp.get('', isClient, async (request, response) => {
  *              type: string
  *              example: 'No existe la lista de usuario'
  */
-routesUserListApp.get('/detail/:id', isClient, async (request, response) => {
+routesUserListApp.get('/detail/:id', async (request, response) => {
   const _id = request.params.id
   const detail = await UserListController.detail({ _id })
   response.json(detail)
 })
 
+routesUserListApp.delete('/:_id', async (request, response) => {
+  const _id = request.params._id
+  const userList = await UserListController.delete({ _id })
+  response.json(userList)
+})
 module.exports = { routesUserListApp }
