@@ -1,8 +1,13 @@
 const OrderServiceModel = require('../models/orderServiceSchema')
 const AvailabilityModel = require('../models/availabilitySchema')
 const PromotionModel = require('../models/promotionSchema')
+const PayUController = require('../controllers/payUController')
 
 class OrderService {
+  async create1 (data) {
+    console.log(data                                                             )
+  }
+
   async create (id, data) {
     let sumPricesProduct = 0
     let sumPricesPromotion = 0

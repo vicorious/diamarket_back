@@ -5,80 +5,10 @@ const { isClient } = require('../middleware/token')
 const routesOrderServiceApp = asyncify(express.Router())
 const routesOrderServiceWeb = asyncify(express.Router())
 
-/**
- * @swagger
- * /app/orderservice:
- *  post:
- *    tags:
- *      - OrderService
- *    description: Este endpoint crea la orden de un usuario
- *    produces:
- *    - applications/json
- *    parameters:
- *    - in: header
- *      name: Authorization
- *      type: string
- *      required: true
- *    - in: body
- *      name: body
- *      type: object
- *      schema:
- *          properties:
- *            direction:
- *              type: string
- *              example: "Cll 123 # 1 - 12"
- *            methodPayment:
- *              type: string
- *              example: "Efectivo"
- *            superMarket:
- *              type: string
- *              example: "5e178280c02a1c04e0dcc67b"
- *            products:
- *              type: array
- *              items:
- *                type: string
- *                example: "5e178280c02a1c04e0dcc67b, 5dd5b8c1f4e3a1511ad7c310"
- *            promotions:
- *              type: array
- *              items:
- *                type: string
- *                example: "5e178280c02a1c04e0dcc67b"
- *    responses:
- *      200:
- *        description: Si la orden se creo correctamente
- *        schema:
- *          properties:
- *            estado:
- *              type: boolean
- *              example: true
- *            data:
- *              type: object
- *              properties:
- *                _id:
- *                  type: string
- *                  example: "5e178280c02a1c04e0dcc67b"
- *            mensaje:
- *              type: string
- *              example: null
- *      400:
- *        description: Si se da un error al crear la orden
- *        schema:
- *          properties:
- *            estado:
- *              type: boolean
- *              example: false
- *            data:
- *              type: array
- *              example: array vacio
- *            mensaje:
- *              type: string
- *              example: "Error al crear la orden"
- */
-
 routesOrderServiceApp.post('', isClient, async (request, response) => {
-  const user = request.User.id
+  request.body.user = request.User.id
   const data = request.body
-  const create = await OrderServiceController.create(user, data)
+  const create = await OrderServiceController.create(data)
   response.json(create)
 })
 

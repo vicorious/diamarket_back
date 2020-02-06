@@ -8,6 +8,7 @@ const http = require('http')
 const morgan = require('morgan')
 const cors = require('cors')
 const routeUser = require('./urls/routes')
+const cookieParser = require('cookie-parser')
 
 const port = 5002
 const app = asyncify(express())
@@ -17,6 +18,7 @@ app.use(cors())
 app.use(morgan('combined'))
 app.use(bodyParser.json({ extended: true, limit: '20000mb' }))
 app.use(bodyParser.urlencoded({ extended: true, limit: '20000mb' }))
+app.use(cookieParser())
 app.use('/v1', routeUser)
 
 server.listen(port, () => {
