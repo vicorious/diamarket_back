@@ -6,12 +6,358 @@ const { isSuperAdmin, isAdmin, isDomiciliary, isClient } = require('../middlewar
 const routesUserApp = asyncify(express.Router())
 const routesUserWeb = asyncify(express.Router())
 const { convertBase64ToFile } = require('../middleware/convertBase64File')
-const cookie = require('cookie-parser')
 
-routesUserWeb.post('', isSuperAdmin, isAdmin, async (request, response) => {
+/**
+ * @swagger
+ * /web/user/superadministrator:
+ *  post:
+ *    tags:
+ *      - User
+ *    description: Este endpoint crea un usuario super administrador, solamente lo pueden crear los superadministradores del proyecto
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        type: object
+ *        properties:
+ *          name:
+ *            type: string
+ *          identification:
+ *            type: string
+ *          email:
+ *            type: string
+ *          cellPhone:
+ *            type: string
+ *          password:
+ *            type: string
+ *    responses:
+ *      200:
+ *        description: Si el usuario se crea correctamente
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                _id:
+ *                  type: string
+ *                  example: '5dc3493ee92df70280d9a63d'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: El usuario ya se encuentra registrado
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'El usuario ya se encuentra registrado en el sistema'
+ */
+
+routesUserWeb.post('/superadministrator', isSuperAdmin, async (request, response) => {
+  request.body.rol = 'superadministrator'
   const data = request.body
   const create = await UserController.create(data)
   response.json(create)
+})
+
+/**
+ * @swagger
+ * /web/user/administrator:
+ *  post:
+ *    tags:
+ *      - User
+ *    description: Este endpoint crea un usuario administrador, solamente tiene permisos los super administradores del proyecto
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        type: object
+ *        properties:
+ *          name:
+ *            type: string
+ *          identification:
+ *            type: string
+ *          email:
+ *            type: string
+ *          cellPhone:
+ *            type: string
+ *          password:
+ *            type: string
+ *    responses:
+ *      200:
+ *        description: Si el usuario se crea correctamente
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                _id:
+ *                  type: string
+ *                  example: '5dc3493ee92df70280d9a63d'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: El usuario ya se encuentra registrado
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'El usuario ya se encuentra registrado en el sistema'
+ */
+
+routesUserWeb.post('/administrator', isSuperAdmin, async (request, response) => {
+  request.body.rol = 'administrator'
+  const data = request.body
+  const create = await UserController.create(data)
+  response.json(create)
+})
+
+/**
+ * @swagger
+ * /web/user/domiciliary:
+ *  post:
+ *    tags:
+ *      - User
+ *    description: Este endpoint crea un usuario domiciliary, solamente tiene permisos los super administradores y los administradores del proyecto
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        type: object
+ *        properties:
+ *          name:
+ *            type: string
+ *          identification:
+ *            type: string
+ *          email:
+ *            type: string
+ *          cellPhone:
+ *            type: string
+ *          password:
+ *            type: string
+ *          workingSupermarket:
+ *            type: string
+ *            example: id del supermercado
+ *    responses:
+ *      200:
+ *        description: Si el usuario se crea correctamente
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                _id:
+ *                  type: string
+ *                  example: '5dc3493ee92df70280d9a63d'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: El usuario ya se encuentra registrado
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'El usuario ya se encuentra registrado en el sistema'
+ */
+
+routesUserWeb.post('/domiciliary', isSuperAdmin, isAdmin, async (request, response) => {
+  request.body.rol = 'domiciliary'
+  const data = request.body
+  const create = await UserController.create(data)
+  response.json(create)
+})
+
+/**
+ * @swagger
+ * /web/user/detail/{id}:
+ *  get:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se detalla al usuario por el id enviado en cabecera
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: path
+ *      name: id
+ *      required: true
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Si se encuentra el usuario se devuelve el objeto del usuario
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              $ref: '#/definitions/User'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si el usuario no existe devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'El usuario no se encuentra registrado'
+ */
+routesUserWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, response) => {
+  const _id = request.params.id
+  const data = await UserController.detail({ _id })
+  response.json(data)
+})
+
+/**
+ * @swagger
+ * /web/user/detail:
+ *  get:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se detalla el usuario en sesion
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: si se encuentra el usuario se devuelve toda la informacion
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              $ref: '#/definitions/User'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si el usuario no existe devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'El usuario no se encuentra registrado'
+ */
+routesUserWeb.get('/detail', isSuperAdmin, isAdmin, isDomiciliary, async (request, response) => {
+  const _id = request.User.id
+  const detail = await UserController.detail({ _id })
+  response.json(detail)
+})
+
+/**
+ * @swagger
+ * /web/user/usertype/{usertype}:
+ *  get:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se traen todos los usuarios por rol
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    - in: header
+ *      name: usertype
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: si se encuentra los usuarios se devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: array
+ *              items:
+ *                $ref: '#/definitions/User'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si el usuario no existe devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'El usuario no se encuentra registrado'
+ */
+routesUserWeb.get('/usertype/:usertype', async (request, response) => {
+  const rol = request.params.usertyoe
+  const data = await UserController.all({ rol })
+  response.json(data)
 })
 
 routesUserWeb.put('', convertBase64ToFile, isSuperAdmin, isAdmin, isDomiciliary, async (request, response) => {
@@ -19,29 +365,6 @@ routesUserWeb.put('', convertBase64ToFile, isSuperAdmin, isAdmin, isDomiciliary,
   const data = request.body
   const update = await UserController.update({ _id }, data)
   response.json(update)
-})
-
-routesUserWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, response) => {
-  const _id = request.params.id
-  const data = await UserController.detail({ _id })
-  response.json(data)
-})
-
-routesUserWeb.get('/detail', isSuperAdmin, isAdmin, isDomiciliary, async (request, response) => {
-  const _id = request.User.id
-  const detail = await UserController.detail({ _id })
-  response.json(detail)
-})
-
-routesUserWeb.get('/clients', async (request, response) => {
-  console.log()
-  const data = await UserController.all({ rol: 'client' })
-  response.json(data)
-})
-
-routesUserWeb.get('/all/domiciliary', isSuperAdmin, async (request, response) => {
-  const data = await UserController.all({ rol: 'domiciliary' })
-  response.json(data)
 })
 
 routesUserWeb.get('/supermarketclients/:id', isAdmin, async (request, response) => {

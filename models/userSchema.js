@@ -26,7 +26,11 @@ const makePassword = require('../utils/makePassword')
  *      cellPhone:
  *        type: string
  *      supermaerketFavorite:
- *        $ref: '#/definitions/Supermarket'
+ *        type: string
+ *        example: "id del supermercado"
+ *      workingSupermarket:
+ *        type: string
+ *        example: "id del supermercado"
  *      password:
  *        type: string
  *      isActive:
@@ -106,6 +110,9 @@ const Schema = new mongoose.Schema({
     require: [true, 'El numero de telefono es requerido']
   },
   supermarketFavorite: {
+    type: Types.ObjectId
+  },
+  workingSupermarket: {
     type: Types.ObjectId
   },
   password: {

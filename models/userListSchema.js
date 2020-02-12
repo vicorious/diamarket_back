@@ -36,6 +36,7 @@ const Schema = new mongoose.Schema({
   },
   products: [{
     type: Types.ObjectId,
+    ref: 'Product',
     required: [true, 'Los productos son requeridos']
   }],
   user: {
