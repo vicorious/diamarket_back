@@ -65,53 +65,18 @@ class Supermarket {
     }
   }
 
-  // async count () {
-  //   const count = await SupermarketModel.count()
-  //   return count
-  // }
+  async countSuperMarket () {
+    const count = await SupermarketModel.count()
+    return count
+  }
 
-  // async countGen () {
-  //   let countOrder = 0
-  //   let countOrderFinish = 0
-  //   let countOrderWait = 0
-  //   const userCount = await UserModel.count({ rol: 'client' })
-  //   const data = await UserModel.search({ rol: 'client' })
-  //   for (const user of data) {
-  //     for (const order of user.order) {
-  //       if (order.uid) countOrder++
-  //     }
-  //   }
-  //   for (const user of data) {
-  //     for (const order of user.order) {
-  //       if (order.status === 'finalizada') {
-  //         countOrderFinish++
-  //       }
-  //     }
-  //   }
-  //   for (const user of data) {
-  //     for (const order of user.order) {
-  //       if (order.status === 'pendiente') {
-  //         countOrderWait++
-  //       }
-  //     }
-  //   }
-  //   return { countOrder, userCount, countOrderFinish, countOrderWait }
-  // }
-
-  // async forMonth () {
-  //   const date = new Date()
-  //   const dateNow = `${date.getMonth() + 1}-${date.getFullYear()}`
-  //   const supermarkets = await SupermarketModel.search()
-  //   let countSupermarket = 0
-  //   for (const supermarket of supermarkets) {
-  //     const dateSupermarket = `${supermarket.dateCreate.getMonth() +
-  //       1}-${supermarket.dateCreate.getFullYear()}`
-  //     if (dateNow === dateSupermarket) {
-  //       countSupermarket++
-  //     }
-  //   }
-  //   return countSupermarket
-  // }
+  async countSuperMarketForMonth () {
+    const date = new Date()
+    const dateNow = `${date.getMonth() + 1}-${date.getFullYear()}`
+    const supermarkets = await SupermarketModel.search({})
+    const superMarketsFilter = await supermarkets.filter(obj => dateNow === `${obj.dateCreate.getMonth() + 1}-${obj.dateCreate.getFullYear()}`)
+    return superMarketsFilter.length
+  }
 }
 
 module.exports = new Supermarket()
