@@ -1,6 +1,7 @@
 const OrderServiceModel = require('../models/orderServiceSchema')
 const AvailabilityModel = require('../models/availabilitySchema')
 const PromotionModel = require('../models/promotionSchema')
+const UserModel = require('../models/userSchema')
 const PayUController = require('../controllers/payUController')
 
 class OrderService {
@@ -83,6 +84,15 @@ class OrderService {
     } else {
       return { estado: false, data: [], mensaje: 'No se han encontrado ordenes' }
     }
+  }
+
+  async countGeneral () {
+    const countsUsers = await UserModel.count({ rol: 'client' })
+    const countOrder = await OrderServiceModel.count()
+    const orders = await OrderServiceModel.search({})
+    const countOrderFinish = await orders.filter(obj => obj.status === 'finalizada')
+    const countOrderWait = await orders.filter(obj => obj.status === 'pendiente')
+    return { countOrder, userCount: countsUsers, countOrderFinish: countOrderFinish.length, countOrderWait: countOrderWait.length }
   }
 }
 

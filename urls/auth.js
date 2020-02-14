@@ -70,6 +70,117 @@ routesAuthWeb.post('', async (request, response) => {
 
 /**
  * @swagger
+ * /web/auth/sendcode:
+ *  post:
+ *    tags:
+ *      - Auth
+ *    description: En este endpoint se envia el codigo para cambiar la contraseña
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: body
+ *      schema:
+ *        type: object
+ *        properties:
+ *          email:
+ *            type: strign
+ *            example: nicolas@gmail.com
+ *    responses:
+ *      200:
+ *        description: Si el usuario existe en la base de datos se responde con el siguiente json
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                update:
+ *                  type: boolean
+ *                  example: true
+ *            message:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: si el usuario no existe se responde con el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              example: []
+ *            mensaje:
+ *              type: string
+ *              example: El usuario no existe
+ */
+routesAuthWeb.post('/sendcode', async (request, response) => {
+  const email = request.body.email
+  const data = await Auth.sendCode({ email })
+  response.json(data)
+})
+
+/**
+ * @swagger
+ * /web/auth/resetpassword:
+ *  post:
+ *    tags:
+ *      - Auth
+ *    description: En este endpoint cambia la contraseña del usuario
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: body
+ *      schema:
+ *        type: object
+ *        properties:
+ *          code:
+ *            type: strign
+ *            example: 543321
+ *          password:
+ *            type: string
+ *            example: 6150
+ *    responses:
+ *      200:
+ *        description: Si el usuario existe en la base de datos se responde con el siguiente json
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                update:
+ *                  type: boolean
+ *                  example: true
+ *            message:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: si el usuario no existe se responde con el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              example: []
+ *            mensaje:
+ *              type: string
+ *              example: El usuario no existe
+ */
+routesAuthWeb.post('/resetpassword', async (request, response) => {
+  const data = request.body
+  const resetPassword = await Auth.resetPassword(data)
+  response.json(resetPassword)
+})
+
+/**
+ * @swagger
  * /app/auth:
  *  post:
  *    tags:

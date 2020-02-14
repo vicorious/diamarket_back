@@ -39,6 +39,11 @@ class Promotion {
       return { estado: false, data: [], mensaje: 'No existen promociones para este supermercado' }
     }
   }
+
+  async count () {
+    const countPromotions = await PromotionModel.count()
+    return countPromotions
+  }
 }
 
 module.exports = new Promotion()

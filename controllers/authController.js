@@ -2,6 +2,8 @@
 const jwt = require('jsonwebtoken')
 const UserModel = require('../models/userSchema')
 const makePassword = require('../utils/makePassword')
+const MakeCode = require('../utils/makeCode')
+const { sendSms } = require('../utils/makeSms')
 const SECRET = 'Cb6t%5UpGtx-G@jUM[RG~Aei8k8MKStC]=}pBlIT:C-9jr2{8fVaLZNUmqt%'
 
 class Auth {
@@ -30,6 +32,29 @@ class Auth {
       return token
     } else {
       return { estado: false, data: [], mensaje: 'El correo del usuario no existe' }
+    }
+  }
+
+  async sendCode (email) {
+    const user = await UserModel.get(email)
+    if (user._id) {
+      const code = await MakeCode()
+      await sendSms(user.cellPhone, code)
+      return UserModel.update(user._id, { verifyCode: code })
+    } else {
+      return { estado: false, data: [], mensaje: 'El usuario no existe' }
+    }
+  }
+
+  async resetPassword (data) {
+    const user = await UserModel.get({ verifyCode: data.code })
+    console.log(user)
+    if (user._id) {
+      const password = await makePassword(data.password)
+      console.log(password)
+      return UserModel.update(user._id, { password })
+    } else {
+      return { estado: false, data: [], mensaje: 'El usuario no existe' }
     }
   }
 }
