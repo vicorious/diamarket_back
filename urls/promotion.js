@@ -31,6 +31,60 @@ routesPromotionWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, res
 
 /**
  * @swagger
+ * /web/promotion:
+ *  get:
+ *    tags:
+ *      - Promotion
+ *    description: En este endpoint lista todas las promociones
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Se listan todas las promociones registradas en la base de datos
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: array
+ *              items:
+ *                $ref : '#/definitions/Promotion'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si no existen promociones se devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              example: array vacio
+ *            mensaje:
+ *              type: string
+ *              example: No existen promociones
+ */
+routesPromotionWeb.get('', isSuperAdmin, async (request, response) => {
+  const promotions = await PromotionController.all({})
+  response.json(promotions)
+})
+
+routesPromotionWeb.get('/forsupermarket', isAdmin, async (request, response) => {
+  const _id = request.User.id
+  const promotions = await PromotionController.forSuperMarket(_id)
+  response.json(promotions)
+})
+
+/**
+ * @swagger
  * /app/promotion/all/{supermarket}:
  *  get:
  *    tags:
@@ -78,7 +132,8 @@ routesPromotionWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, res
  */
 routesPromotionApp.get('/all/:supermarket', isClient, async (request, response) => {
   const supermarket = request.params.supermarket
-  const search = await PromotionController.all(supermarket)
+  const data = { supermarket: supermarket, isActive: true }
+  const search = await PromotionController.all(data)
   response.json(search)
 })
 

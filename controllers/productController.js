@@ -1,6 +1,7 @@
 'use strict'
 const ProductModel = require('../models/productSchema')
 const AvailabilityModel = require('../models/availabilitySchema')
+const SuperMarketModel = require('../models/supermarketSchema')
 
 class Product {
   async create (data) {
@@ -28,7 +29,6 @@ class Product {
   }
 
   async detail (id) {
-    console.log(id)
     const isExist = await ProductModel.get(id)
     if (isExist._id) {
       return { estado: true, data: isExist, mensaje: null }
@@ -80,6 +80,16 @@ class Product {
       return { estado: true, data: arrayProducts, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No existe productos cor este nombre' }
+    }
+  }
+
+  async forSuperMarket (_id) {
+    const superMarket = await SuperMarketModel.get({ idAdmin: _id })
+    const products = AvailabilityModel.search({ idSupermarket: superMarket._id })
+    if (products.length > 0) {
+      return { estado: true, data: products, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No existen productos para este supermercado' }
     }
   }
 
