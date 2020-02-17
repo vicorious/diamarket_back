@@ -6,6 +6,7 @@ const makePassword = require('../utils/makePassword')
 const AuthController = require('../controllers/authController')
 const EmailController = require('./emailController')
 const OrderSchema = require('../models/orderServiceSchema')
+const SuperMarketSchema = require('../models/supermarketSchema')
 const uuid = require('node-uuid')
 
 class User {
@@ -163,6 +164,24 @@ class User {
       }
     } else {
       return { estado: true, data: [], mensaje: 'Este supermercado no tiene clientes' }
+    }
+  }
+
+  async administratorsWithoutSupermarket () {
+    const users = await UserModel.search({ rol: 'administrator' })
+    const supermarkets = await SuperMarketSchema.search({ idAdmin: { $exists: true } })
+    const administrators = []
+    for (const user of users) {
+      for (const supermarket of supermarkets) {
+        if (supermarket.idAdmin !== user._id) {
+          administrators.push(user)
+        }
+      }
+    }
+    if (administrators.length > 0) {
+      return { estado: true, data: administrators, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No hay administradores disponibles para asignar' }
     }
   }
 }

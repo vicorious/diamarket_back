@@ -21,6 +21,56 @@ routesProductWeb.put('/:id', convertBase64ToFile, isSuperAdmin, isAdmin, async (
   response.json(update)
 })
 
+/**
+ * @swagger
+ * /web/product:
+ *  get:
+ *    tags:
+ *      - Product
+ *    description: Este endpoint lista los productos
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Si encuentra los productos del supermercado
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: array
+ *              items:
+ *                $ref: '#/definitions/Product'
+ *            mensaje:
+ *              type: string
+ *              example: true
+ *      400:
+ *        description: Si el producto no existe se responde el siguiente json
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                exmaple: "array vacio"
+ *            mensaje:
+ *              type: string
+ *              example: no existen productos
+ */
+routesProductWeb.get('', async (request, response) => {
+  const products = await ProductController.all({})
+  response.json(products)
+})
+
 routesProductWeb.get('/forsupermarket/:id', isSuperAdmin, isAdmin, async (request, response) => {
   const idSupermarket = request.params.id
   const products = await ProductController.productsSuperMarkets(idSupermarket)
