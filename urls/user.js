@@ -633,13 +633,11 @@ routesUserApp.put('/validate', async (request, response) => {
  *      name: body
  *      schema:
  *        properties:
- *          email:
- *            type: string
- *          code:
+ *          cellPhone:
  *            type: string
  *    responses:
  *      200:
- *        description: Si se encuentra el usuario se activa de una vez y se devuelve el token
+ *        description: Si se encuentra el usuario se envia el codigo de verificacion para el cambio de contraseña
  *        schema:
  *          properties:
  *            estado:
@@ -648,10 +646,9 @@ routesUserApp.put('/validate', async (request, response) => {
  *            data:
  *              type: object
  *              properties:
- *                token:
+ *                message:
  *                  type: string
- *                user:
- *                  $ref: '#/definitions/User'
+ *                  example: El sms fue enviado
  *            mensaje:
  *              type: string
  *              example: null
@@ -669,7 +666,7 @@ routesUserApp.put('/validate', async (request, response) => {
  *                example: 'Array vacio'
  *            mensaje:
  *              type: string
- *              example: 'El código de autencticación no es valido'
+ *              example: 'El usuario no existe'
  */
 routesUserApp.post('/sendcode', async (request, response) => {
   const data = request.body
