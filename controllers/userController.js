@@ -132,7 +132,15 @@ class User {
   async detail (id) {
     const user = await UserModel.get(id)
     if (user._id) {
-      return { estado: true, data: user, mensaje: null }
+      if (user.rol === 'administrator') {
+        const userWitchSupermarket = user
+        const supermarket = await SuperMarketSchema.get({ idAdmin: user._id })
+        userWitchSupermarket.superMarket._id = supermarket._id ? supermarket._id : 'No asignado'
+        userWitchSupermarket.superMarket.name = supermarket.name ? supermarket.name : 'No asignado'
+        return { estado: true, data: userWitchSupermarket, mensaje: null }
+      } else {
+        return { estado: true, data: user, mensaje: null }
+      }
     } else {
       return { estado: false, data: [], mensaje: 'El usuario no se encuentra registrado' }
     }
@@ -182,6 +190,27 @@ class User {
       return { estado: true, data: administrators, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay administradores disponibles para asignar' }
+    }
+  }
+
+  async clientsForSuperMarket (data) {
+    const user = await UserModel.get(data)
+    const supermarket = await SuperMarketSchema.get({ idAdmin: user._id })
+    const users = await UserModel.search({ supermarketFavorite: supermarket })
+    if (users.length > 0) {
+      return { estado: true, data: users, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No hay clientes en este supermercado' }
+    }
+  }
+
+  async domiciliaryForSuperMarket (_id) {
+    const supermarket = await SuperMarketSchema.get({ idAdmin: _id })
+    const users = await UserModel.search({ workingSupermarket: supermarket._id })
+    if (users.length > 0) {
+      return { estado: true, data: users, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'Este supermercado no tiene domiciliarios' }
     }
   }
 }

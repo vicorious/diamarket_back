@@ -362,7 +362,7 @@ routesUserWeb.get('/usertype/:usertype', async (request, response) => {
 
 /**
  * @swagger
- * /web/user/usertype/{usertype}:
+ * /web/user/administrators:
  *  get:
  *    tags:
  *      - User
@@ -404,13 +404,166 @@ routesUserWeb.get('/usertype/:usertype', async (request, response) => {
  *              type: string
  *              example: 'No hay administradores disponibles para asignar'
  */
-routesUserWeb.get('/administrators', async (request, response) => {
+routesUserWeb.get('/administrators', isSuperAdmin, async (request, response) => {
   const administrators = await UserController.administratorsWithoutSupermarket()
   response.json(administrators)
 })
 
-routesUserWeb.put('', convertBase64ToFile, isSuperAdmin, isAdmin, isDomiciliary, async (request, response) => {
+/**
+ * @swagger
+ * /web/user/clientsforsupermarket:
+ *  get:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se traen todos los clientes de un supermercado
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: si se encuentra los usuarios se devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: array
+ *              items:
+ *                $ref: '#/definitions/User'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si el usuario no existe devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'No hay clientes para este supermercado'
+ */
+routesUserWeb.get('/clientsforsupermarket', isAdmin, async (request, response) => {
   const _id = request.User.id
+  const users = await UserController.clientsForSuperMarket({ _id })
+  response.json(users)
+})
+
+/**
+ * @swagger
+ * /web/user/domiciliaryforsupermarket:
+ *  get:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se traen todos los domiciliarios de un supermercado
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: si se encuentra los usuarios se devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: array
+ *              items:
+ *                $ref: '#/definitions/User'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si el usuario no existe devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'Este supermercado no tiene domiciliarios'
+ */
+routesUserWeb.get('/domiciliaryforsupermarket', isAdmin, async (request, response) => {
+  const _id = request.User.id
+  const users = await UserController.domiciliaryForSuperMarket(_id)
+  response.json(users)
+})
+
+/**
+ * @swagger
+ * /web/user/{id}:
+ *  put:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se actualiza la informacion de un usuario, se puede enviar cualquier dato del usuario este endpoint lo actualizara
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    - in: path
+ *      name: id
+ *      required: trie
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        $ref: '#/definitions/User'
+ *    responses:
+ *      200:
+ *        description: Si el usuario existe devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                update:
+ *                  type: boolean
+ *                  example: true
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si el usuario no existe se responde el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'El usuario no ha sido actualizado'
+ */
+routesUserWeb.put('/:id', convertBase64ToFile, isSuperAdmin, isAdmin, async (request, response) => {
+  const _id = request.params.id
   const data = request.body
   const update = await UserController.update({ _id }, data)
   response.json(update)

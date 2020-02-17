@@ -1,5 +1,6 @@
 'use strict'
 const PromotionModel = require('../models/promotionSchema')
+const SuperMarketModel = require('../models/supermarketSchema')
 
 class Promotion {
   async create (data) {
@@ -32,12 +33,23 @@ class Promotion {
   }
 
   async all (data) {
-    const promotion = await PromotionModel.search({ supermarket: data, isActive: true })
+    const promotion = await PromotionModel.search(data)
     if (promotion.length > 0) {
       return { estado: true, data: promotion, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No existen promociones para este supermercado' }
     }
+  }
+
+  async forSuperMarket (_id) {
+    const superMarket = await SuperMarketModel.get({ idAdmin: _id })
+    const promotions = await PromotionModel.search({ supermarket: superMarket })
+    if (promotions.length > 0) {
+      return { estado: true, data: promotions, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No hay promociones para este supermercado' }
+    }
+    
   }
 
   async count () {

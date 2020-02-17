@@ -71,9 +71,54 @@ routesProductWeb.get('', async (request, response) => {
   response.json(products)
 })
 
-routesProductWeb.get('/forsupermarket/:id', isSuperAdmin, isAdmin, async (request, response) => {
-  const idSupermarket = request.params.id
-  const products = await ProductController.productsSuperMarkets(idSupermarket)
+/**
+ * @swagger
+ * /web/product/forsupermarket:
+ *  get:
+ *    tags:
+ *      - Product
+ *    description: Este endpoint lista los productos de un supermercado
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Si encuentra los productos del supermercado
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: array
+ *              items:
+ *                $ref: '#/definitions/Product'
+ *            mensaje:
+ *              type: string
+ *              example: true
+ *      400:
+ *        description: Si el producto no existe se responde el siguiente json
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                exmaple: "array vacio"
+ *            mensaje:
+ *              type: string
+ *              example: No existen productos para este supermercado
+ */
+routesProductWeb.get('/forsupermarket', isAdmin, async (request, response) => {
+  const _id = request.User.id
+  const products = await ProductController.forSuperMarket(_id)
   response.json(products)
 })
 
