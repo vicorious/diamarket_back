@@ -355,9 +355,58 @@ routesUserWeb.get('/detail', isSuperAdmin, isAdmin, isDomiciliary, async (reques
  *              example: 'El usuario no se encuentra registrado'
  */
 routesUserWeb.get('/usertype/:usertype', async (request, response) => {
-  const rol = request.params.usertyoe
+  const rol = request.params.usertype
   const data = await UserController.all({ rol })
   response.json(data)
+})
+
+/**
+ * @swagger
+ * /web/user/usertype/{usertype}:
+ *  get:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se traen todos los usuarios administradores que no tienen ningun supermercado asignado
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: si se encuentra los usuarios se devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: array
+ *              items:
+ *                $ref: '#/definitions/User'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si el usuario no existe devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'No hay administradores disponibles para asignar'
+ */
+routesUserWeb.get('/administrators', async (request, response) => {
+  const administrators = await UserController.administratorsWithoutSupermarket()
+  response.json(administrators)
 })
 
 routesUserWeb.put('', convertBase64ToFile, isSuperAdmin, isAdmin, isDomiciliary, async (request, response) => {
@@ -740,7 +789,7 @@ routesUserApp.post('/changepassword', async (request, response) => {
  *  get:
  *    tags:
  *      - User
- *    description: En este endpoint se cambia la contraseña
+ *    description: En este endpoint se detalla un usuario
  *    produces:
  *    - applications/json
  *    parameters:
