@@ -77,6 +77,15 @@ class Supermarket {
     const superMarketsFilter = await supermarkets.filter(obj => dateNow === `${obj.dateCreate.getMonth() + 1}-${obj.dateCreate.getFullYear()}`)
     return superMarketsFilter.length
   }
+
+  async marketWithOutAdministrator () {
+    const supermarkets = await SupermarketModel.search({ idAdmin: { $exists: false } })
+    if (supermarkets.length > 0) {
+      return { estado: true, data: supermarkets, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No hay supermercados disponibles para asignar' }
+    }
+  }
 }
 
 module.exports = new Supermarket()

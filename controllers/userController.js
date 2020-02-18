@@ -15,6 +15,13 @@ class User {
     if (!isExist._id) {
       data.verifyCode = await makeCode()
       if (data.rol === 'domiciliary' || data.rol === 'administrator' || data.rol === 'superadministrator') {
+        if (data.supermarket) {
+          const supermarket = await SuperMarketSchema.get({ _id: data.supermarket })
+          data.isActive = true
+          const user = await UserModel.create(data)
+          await SuperMarketSchema.update(supermarket._id, { idAdmin: user._id })
+          return { estado: true, data: user, mensaje: null }
+        }
         data.isActive = true
         const user = await UserModel.create(data)
         return { estado: true, data: user, mensaje: null }

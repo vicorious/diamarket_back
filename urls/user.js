@@ -32,6 +32,8 @@ const { convertBase64ToFile } = require('../middleware/convertBase64File')
  *            type: string
  *          password:
  *            type: string
+ *          supermarket:
+ *            type: string
  *    responses:
  *      200:
  *        description: Si el usuario se crea correctamente
@@ -524,7 +526,7 @@ routesUserWeb.get('/domiciliaryforsupermarket', isAdmin, async (request, respons
  *      required: true
  *    - in: path
  *      name: id
- *      required: trie
+ *      required: true
  *    - in: body
  *      name: body
  *      schema:

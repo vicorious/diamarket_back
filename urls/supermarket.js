@@ -225,6 +225,54 @@ routesSupermarketWeb.get('/detail/:id', async (request, response) => {
 
 /**
  * @swagger
+ * /web/supermarket/withoutadmin:
+ *  get:
+ *    tags:
+ *      - Supermarket
+ *    description: Este endpoint lista los supermercados sin administrador
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Responde el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: array
+ *              items:
+ *                $ref: '#/definitions/Supermarket'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si no hay supermercados
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              example: array vacio
+ *            mensaje:
+ *              type: string
+ *              example: "No se ha encontrado supermercados"
+ */
+routesSupermarketWeb.get('/withoutadmin', async (request, response) => {
+  const supermarkets = await supermarketController.marketWithOutAdministrator()
+  response.json(supermarkets)
+})
+
+/**
+ * @swagger
  * /app/supermarket/rate/{id}:
  *  put:
  *    tags:
