@@ -11,33 +11,80 @@ const uuid = require('node-uuid')
 
 class User {
   async create (data) {
-    const isExist = await UserModel.get({ email: data.email })
-    if (!isExist._id) {
-      data.verifyCode = await makeCode()
-      if (data.rol === 'domiciliary' || data.rol === 'administrator' || data.rol === 'superadministrator') {
-        if (data.supermarket) {
+    const isExists = await UserModel.get({ email: data.email })
+    data.verifyCode = await makeCode()
+    if (!isExists._id) {
+      switch (data.rol) {
+        case 'domiciliary': {
+          const supermarket = await SuperMarketSchema.get({ idAdmin: data.idAdmin })
+          data.workingSupermarket = supermarket._id
+          data.isActive = true
+          const user = await UserModel.create(data)
+          return { estado: true, data: user, mensaje: null }
+        }
+
+        case 'administrator': {
           const supermarket = await SuperMarketSchema.get({ _id: data.supermarket })
           data.isActive = true
           const user = await UserModel.create(data)
           await SuperMarketSchema.update(supermarket._id, { idAdmin: user._id })
           return { estado: true, data: user, mensaje: null }
         }
-        data.isActive = true
-        const user = await UserModel.create(data)
-        return { estado: true, data: user, mensaje: null }
-      } else {
-        const user = await UserModel.create(data)
-        if (user._id) {
-          await sendSms(data.cellPhone, data.verifyCode)
+
+        case 'superadministrador': {
+          data.isActive = true
+          const user = await UserModel.create(data)
           return { estado: true, data: user, mensaje: null }
-        } else {
-          return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
+        }
+
+        case 'client': {
+          const user = await UserModel.create(data)
+          if (user._id) {
+            await sendSms(data.cellPhone, data.verifyCode)
+            return { estado: true, data: user, mensaje: null }
+          } else {
+            return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
+          }
         }
       }
     } else {
       return { estado: false, data: [], mensaje: 'El usuario ya se encuentra registrado en el sistema' }
     }
   }
+
+  // async create (data) {
+  //   const isExist = await UserModel.get({ email: data.email })
+  //   if (!isExist._id) {
+  //     data.verifyCode = await makeCode()
+  //     if (data.rol === 'domiciliary' || data.rol === 'administrator' || data.rol === 'superadministrator') {
+  //       if (data.supermarket) {
+  //         const supermarket = await SuperMarketSchema.get({ _id: data.supermarket })
+  //         data.isActive = true
+  //         const user = await UserModel.create(data)
+  //         await SuperMarketSchema.update(supermarket._id, { idAdmin: user._id })
+  //         return { estado: true, data: user, mensaje: null }
+  //       } else if (data.idAdmin) {
+  //         const supermarket = await SuperMarketSchema.get({ idAdmin: data.idAdmin })
+  //         data.workingSupermarket = supermarket._id
+  //         const user = await UserModel.create(data)
+  //         return { estado: true, data: user, mensaje: null }
+  //       }
+  //       data.isActive = true
+  //       const user = await UserModel.create(data)
+  //       return { estado: true, data: user, mensaje: null }
+  //     } else {
+  //       const user = await UserModel.create(data)
+  //       if (user._id) {
+  //         await sendSms(data.cellPhone, data.verifyCode)
+  //         return { estado: true, data: user, mensaje: null }
+  //       } else {
+  //         return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
+  //       }
+  //     }
+  //   } else {
+  //     return { estado: false, data: [], mensaje: 'El usuario ya se encuentra registrado en el sistema' }
+  //   }
+  // }
 
   async createSocial (data) {
     const isExist = await UserModel.get({ email: data.email })

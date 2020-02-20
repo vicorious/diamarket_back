@@ -2,15 +2,15 @@
 
 module.exports = function (data) {
   const obj = {
-    test: true,
-    language: 'es',
-    command: 'TRANSACTION_RESPONSE_DETAIL',
+    test: false,
+    language: 'en',
+    command: 'ORDER_DETAIL_BY_REFERENCE_CODE',
     merchant: {
       apiLogin: 'pRRXKOl8ikMmt9u',
       apiKey: '4Vj8eK4rloUd272L48hsrarnUA'
     },
     details: {
-      transactionId: data.transactionId
+      referenceCode: data.referenceCode
     }
   }
   return obj

@@ -52,10 +52,12 @@ const Schema = new mongoose.Schema({
     required: [true, 'El valor es requerido']
   },
   credits: {
-    type: Types.Number
+    type: Types.Number,
+    default: 0
   },
   discount: {
-    type: Types.Number
+    type: Types.Number,
+    default: 0
   },
   image: [{
     type: Types.String,
@@ -71,7 +73,7 @@ class Promotion extends Base {
     super()
     this.sort = { name: 1 }
     this.model = mongoose.model('Promotion', Schema)
-    this.fields = 'name supermarket products value discount image isActive'
+    this.fields = 'name supermarket products value discount credits image isActive'
     this.populate = [{
       path: 'supermarket',
       select: 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules dateCreate',
