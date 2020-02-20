@@ -77,6 +77,49 @@ routesPromotionWeb.get('', isSuperAdmin, async (request, response) => {
   response.json(promotions)
 })
 
+/**
+ * @swagger
+ * /web/promotion/forsupermarket:
+ *  get:
+ *    tags:
+ *      - Promotion
+ *    description: En este endpoint lista todas las promociones que tiene asignadas un supermercado
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Se listan todas las promociones registradas en la base de datos
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: array
+ *              items:
+ *                $ref : '#/definitions/Promotion'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si no existen promociones se devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              example: array vacio
+ *            mensaje:
+ *              type: string
+ *              example: No hay promociones para este supermercado
+ */
 routesPromotionWeb.get('/forsupermarket', isAdmin, async (request, response) => {
   const _id = request.User.id
   const promotions = await PromotionController.forSuperMarket(_id)

@@ -17,6 +17,7 @@ class Base {
       response = await model.save()
       response = { _id: response._id }
     } catch (error) {
+      console.log(error)
       response = makeErrors(error.errors)
     }
     return response
@@ -48,6 +49,7 @@ class Base {
       }
       return objects
     } catch (error) {
+      console.log(error)
       return makeErrors(error.errors)
     }
   }

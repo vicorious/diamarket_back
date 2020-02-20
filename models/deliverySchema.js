@@ -27,6 +27,7 @@ const Types = mongoose.Schema.Types
  *        $ref: '#/definitions/User'
  */
 
+// status: 0:
 const Schema = new mongoose.Schema({
   orderId: {
     type: Types.ObjectId,
@@ -39,11 +40,6 @@ const Schema = new mongoose.Schema({
   status: {
     type: Types.String,
     required: [true, 'El estado es requerido']
-  },
-  description: {
-    type: Types.String,
-    lowercase: true,
-    required: [true, 'La descripción es requerida']
   },
   clientId: {
     type: Types.ObjectId,

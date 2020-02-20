@@ -16,7 +16,7 @@ class PayU {
   async findTransaction (data) {
     const transaction = await MakeTransactionPayU(data)
     const response = await axios.post(MakeUrlPayU, transaction)
-    return response
+    return response.data.result.payload
   }
 }
 

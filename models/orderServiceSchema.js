@@ -60,12 +60,15 @@ const Types = mongoose.Schema.Types
  *              example: id
  *            quantity:
  *              type: number
+ *      referenceCode:
+ *        type: string
  *      user:
  *        $ref: '#/definitions/User'
  *      dateCreate:
  *        type: string
  */
 
+// status = 0 : pendiente, 1: aceptado: 2: asignada 3: proceso 4: finalizada 5: cancelada
 const Schema = new mongoose.Schema({
   value: {
     type: Types.Number,
@@ -97,6 +100,15 @@ const Schema = new mongoose.Schema({
     type: Types.ObjectId,
     required: [true, 'El usuario es requerido']
   },
+  description: {
+    type: Types.String,
+    lowercase: true,
+    default: 'No Asignada'
+  },
+  referenceCode: {
+    type: Types.String,
+    required: [true, 'La referencia de pago es obligatoria']
+  },
   dateCreate: {
     type: Types.Date,
     default: Date.now
@@ -115,12 +127,12 @@ class OrderService extends Base {
         model: 'Supermarket'
       },
       {
-        path: 'products',
+        path: 'products.product',
         select: 'idPos name description category defaultprice image',
         model: 'Product'
       },
       {
-        path: 'promotions',
+        path: 'promotions.promotion',
         select: 'name supermarket products value image isActive',
         model: 'Promotion'
       },

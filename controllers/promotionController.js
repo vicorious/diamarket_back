@@ -49,7 +49,6 @@ class Promotion {
     } else {
       return { estado: false, data: [], mensaje: 'No hay promociones para este supermercado' }
     }
-    
   }
 
   async count () {

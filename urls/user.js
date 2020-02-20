@@ -205,6 +205,7 @@ routesUserWeb.post('/administrator', isSuperAdmin, async (request, response) => 
 
 routesUserWeb.post('/domiciliary', isSuperAdmin, isAdmin, async (request, response) => {
   request.body.rol = 'domiciliary'
+  request.body.idAdmin = request.User.id
   const data = request.body
   const create = await UserController.create(data)
   response.json(create)
