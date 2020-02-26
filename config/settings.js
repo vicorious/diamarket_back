@@ -1,10 +1,22 @@
 'use strict'
 
 const DATABASES = {
-  default: {
+  mongodb: {
     NAME: process.env.NODE_ENV || 'diamarket',
     HOST: process.env.HOST || 'localhost'
+  },
+  sqlServer: {
+    user: 'zuluagasoto',
+    password: 'Zuluagasoto$12$%',
+    server: '169.55.75.48',
+    port: 20446,
+    database: 'UnoEE'
   }
 }
+// SQL_DB_HOST=169.55.75.48
+// SQL_DB_PORT=20446
+// SQL_DB_DATABASE=UnoEE
+// SQL_DB_USERNAME=zuluagasoto
+// SQL_DB_PASSWORD=Zuluagasoto$12$%
 
 module.exports = { DATABASES }
