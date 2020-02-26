@@ -46,6 +46,10 @@ class User {
             return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
           }
         }
+
+        default: {
+          return { estado: false, data: [], mensaje: 'El rol no existe' }
+        }
       }
     } else {
       return { estado: false, data: [], mensaje: 'El usuario ya se encuentra registrado en el sistema' }
@@ -146,6 +150,7 @@ class User {
     const user = await UserModel.get({ verifyCode: data.code })
     if (user._id) {
       const passwordCrypt = await makePassword(data.password)
+      console.log(passwordCrypt)
       const update = await UserModel.update(user._id, { password: passwordCrypt, verifyCode: codeRandom })
       return update
     } else {
