@@ -30,6 +30,8 @@ const Types = mongoose.Schema.Types
  *        type: array
  *        items:
  *          type: string
+ *      offert:
+ *        type: number
  */
 const Schema = new mongoose.Schema({
   idPos: {

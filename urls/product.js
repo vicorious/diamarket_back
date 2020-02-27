@@ -46,7 +46,23 @@ routesProductWeb.put('/:id', convertBase64ToFile, isSuperAdmin, isAdmin, async (
  *            data:
  *              type: array
  *              items:
- *                $ref: '#/definitions/Product'
+ *                properties:
+ *                  isActive:
+ *                    type: boolean
+ *                    example: true
+ *                  _id:
+ *                    type: string
+ *                    example: id de mongo
+ *                  idSupermarket:
+ *                    $ref: '#/definitions/Supermarket'
+ *                  idProduct:
+ *                    $ref: '#/definitions/Product'
+ *                  quantity:
+ *                    type: number
+ *                    example: 4333
+ *                  price:
+ *                    type: number
+ *                    example: 3444
  *            mensaje:
  *              type: string
  *              example: true
