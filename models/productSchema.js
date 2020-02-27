@@ -57,7 +57,11 @@ const Schema = new mongoose.Schema({
   image: [{
     type: Types.String,
     require: [true, 'La imagen es requerida']
-  }]
+  }],
+  offert: {
+    type: Types.Number,
+    default: 0
+  }
 })
 
 class Product extends Base {
@@ -65,7 +69,7 @@ class Product extends Base {
     super()
     this.sort = { name: 1 }
     this.model = mongoose.model('Product', Schema)
-    this.fields = 'idPos name description category defaultprice image'
+    this.fields = 'idPos name description category defaultprice image offert'
     this.populate = [
       {
         path: 'category',
