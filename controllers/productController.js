@@ -38,6 +38,7 @@ class Product {
   }
 
   async all (data) {
+    console.log(data)
     const products = []
     const availability = await AvailabilityModel.search(data)
     for (const object of availability) {

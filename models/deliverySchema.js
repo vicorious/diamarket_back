@@ -27,7 +27,7 @@ const Types = mongoose.Schema.Types
  *        $ref: '#/definitions/User'
  */
 
-// status: 0:
+// status: 0: asignado, 1: inicio, 2: llegue, 3: Entregado, 4: cancelar
 const Schema = new mongoose.Schema({
   orderId: {
     type: Types.ObjectId,
