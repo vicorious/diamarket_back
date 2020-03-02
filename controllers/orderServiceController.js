@@ -1,6 +1,7 @@
 const OrderServiceModel = require('../models/orderServiceSchema')
 const UserModel = require('../models/userSchema')
 const SuperMarketSchema = require('../models/supermarketSchema')
+const DeliverySchema = require('../models/deliverySchema')
 const PromotionSchema = require('../models/promotionSchema')
 
 class OrderService {
@@ -42,15 +43,19 @@ class OrderService {
   async edit (_id, data) {
     switch (data.status) {
       case 1: {
-        
+        // Notificacion al cliente de que se ha aceptado la solicitud por el supermercado
+        return OrderServiceModel.update(_id, { status: 1 })
       }
 
       case 2: {
-
+        // notificacion para el domiciliario
+        const order = await OrderServiceModel.get({ _id })
+        await DeliverySchema.create({ orderId: _id, idUser: data.idUser, status: 0, clientId: order.user._id })
+        return OrderServiceModel.update(_id, { status: 2 })
       }
 
       case 3: {
-
+        //Notificacion para el cliente
       }
 
       case 4: {

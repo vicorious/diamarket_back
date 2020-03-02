@@ -83,8 +83,21 @@ routesProductWeb.put('/:id', convertBase64ToFile, isSuperAdmin, isAdmin, async (
  *              example: no existen productos
  */
 routesProductWeb.get('', async (request, response) => {
-  const products = await ProductController.all({})
-  response.json(products)
+  const query = request.query
+  if (query.idSupermarket && query.category) {
+    const products = await ProductController.productsForCategory(query)
+    response.json(products)
+  } else if (query.name && query.idSupermarket) {
+    query.name = { $regex: query.name, $option: 'i' }
+    const products = await ProductController.productsForName(query)
+    response.json(products)
+  } else if (query.idSupermarket) {
+    const products = await ProductController.all(query)
+    response.json(products)
+  } else {
+    const products = await ProductController.all({})
+    response.json(products)
+  }
 })
 
 /**
