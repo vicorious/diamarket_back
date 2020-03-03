@@ -41,9 +41,14 @@ class Promotion {
     }
   }
 
-  async forSuperMarket (_id) {
+  async forSuperMarket (_id, query) {
+    let promotions
     const superMarket = await SuperMarketModel.get({ idAdmin: _id })
-    const promotions = await PromotionModel.search({ supermarket: superMarket })
+    if (query.name) {
+      promotions = await PromotionModel.search({ supermarket: superMarket, name: { $regex: query.name, $options: 'i' } })
+    } else {
+      promotions = await PromotionModel.search({ supermarket: superMarket })
+    }
     if (promotions.length > 0) {
       return { estado: true, data: promotions, mensaje: null }
     } else {
