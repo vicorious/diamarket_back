@@ -3,6 +3,7 @@ const UserModel = require('../models/userSchema')
 const SuperMarketSchema = require('../models/supermarketSchema')
 const DeliverySchema = require('../models/deliverySchema')
 const PromotionSchema = require('../models/promotionSchema')
+const makeCode = require('../utils/makeCode')
 
 class OrderService {
   async create (data) {
@@ -41,25 +42,42 @@ class OrderService {
   }
 
   async edit (_id, data) {
+    const order = await OrderServiceModel.get({ _id })
     switch (data.status) {
-      case 1: {
+      case parseInt(1): {
         // Notificacion al cliente de que se ha aceptado la solicitud por el supermercado
         return OrderServiceModel.update(_id, { status: 1 })
       }
 
-      case 2: {
-        // notificacion para el domiciliario
-        const order = await OrderServiceModel.get({ _id })
+      case parseInt(2): {
         await DeliverySchema.create({ orderId: _id, idUser: data.idUser, status: 0, clientId: order.user._id })
         return OrderServiceModel.update(_id, { status: 2 })
       }
 
-      case 3: {
-        //Notificacion para el cliente
+      case parseInt(3): {
+        // Notificacion para el cliente de que el domiciliario va en camino
+        await OrderServiceModel.update(_id, data)
+        break
       }
 
-      case 4: {
+      case parseInt(4): {
+        await OrderServiceModel.update(_id, data)
+        break
+      }
 
+      case parseInt(5): {
+        if (!data.codeCancelation) {
+          const codeCancelation = makeCode()
+          return OrderServiceModel.update(_id, { codeCancelation })
+        } else {
+          // Notificacion para el cliente de cancelacion de la orden
+          if (order.codeCancelation === parseInt(data.codeCancelation)) {
+            await OrderServiceModel.update(_id, { status: 5 })
+          } else {
+            return 'error'
+          }
+        }
+        break
       }
     }
   }

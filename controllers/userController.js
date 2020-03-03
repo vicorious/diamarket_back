@@ -192,11 +192,14 @@ class User {
     const user = await UserModel.get(id)
     if (user._id) {
       if (user.rol === 'administrator') {
-        const userWitchSupermarket = user
         const supermarket = await SuperMarketSchema.get({ idAdmin: user._id })
-        userWitchSupermarket.superMarket._id = supermarket._id ? supermarket._id : 'No asignado'
-        userWitchSupermarket.superMarket.name = supermarket.name ? supermarket.name : 'No asignado'
-        return { estado: true, data: userWitchSupermarket, mensaje: null }
+        if (user.superMarket) {
+          user._doc.superMarket._id = supermarket._id
+          user._doc.superMarket.name = supermarket.name
+        } else {
+          user._doc.superMarket = 'No asignado'
+        }
+        return { estado: true, data: user, mensaje: null }
       } else {
         return { estado: true, data: user, mensaje: null }
       }

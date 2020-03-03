@@ -166,9 +166,6 @@ routesUserWeb.post('/administrator', isSuperAdmin, convertBase64ToFile, async (r
  *            type: string
  *          password:
  *            type: string
- *          workingSupermarket:
- *            type: string
- *            example: id del supermercado
  *    responses:
  *      200:
  *        description: Si el usuario se crea correctamente
@@ -256,9 +253,10 @@ routesUserWeb.post('/domiciliary', isSuperAdmin, isAdmin, convertBase64ToFile, a
  *              type: string
  *              example: 'El usuario no se encuentra registrado'
  */
-routesUserWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, response) => {
+routesUserWeb.get('/detail/:id', async (request, response) => {
   const _id = request.params.id
   const data = await UserController.detail({ _id })
+  console.log(data)
   response.json(data)
 })
 
