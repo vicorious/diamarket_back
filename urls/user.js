@@ -253,9 +253,10 @@ routesUserWeb.post('/domiciliary', isSuperAdmin, isAdmin, convertBase64ToFile, a
  *              type: string
  *              example: 'El usuario no se encuentra registrado'
  */
-routesUserWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, response) => {
+routesUserWeb.get('/detail/:id', async (request, response) => {
   const _id = request.params.id
   const data = await UserController.detail({ _id })
+  console.log(data)
   response.json(data)
 })
 

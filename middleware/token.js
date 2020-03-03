@@ -25,8 +25,11 @@ async function isSuperAdmin (request, response, next) {
 }
 
 async function isAdmin (request, response, next) {
+  console.log('HOLAAAAAAAA')
   if (!request.User) {
+    console.log('hola')
     const authorization = request.headers.authorization
+    console.log('autorizacion', authorization)
     if (authorization) {
       const token = authorization.split(' ')[1]
       try {
