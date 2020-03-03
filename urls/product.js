@@ -88,7 +88,7 @@ routesProductWeb.get('', async (request, response) => {
     const products = await ProductController.productsForCategory(query)
     response.json(products)
   } else if (query.name && query.idSupermarket) {
-    query.name = { $regex: query.name, $option: 'i' }
+    query.name = { $regex: query.name, $options: 'i' }
     const products = await ProductController.productsForName(query)
     response.json(products)
   } else if (query.idSupermarket) {

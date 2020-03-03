@@ -72,9 +72,19 @@ routesPromotionWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, res
  *              type: string
  *              example: No existen promociones
  */
-routesPromotionWeb.get('', isSuperAdmin, async (request, response) => {
-  const promotions = await PromotionController.all({})
-  response.json(promotions)
+routesPromotionWeb.get('', async (request, response) => {
+  const query = request.query
+  if (query.supermarket) {
+    const promotions = await PromotionController.all(query)
+    response.json(promotions)
+  } else if (query.name) {
+    query.name = { $regex: query.name, $options: 'i' }
+    const promotions = await PromotionController.all(query)
+    response.json(promotions)
+  } else {
+    const promotions = await PromotionController.all({})
+    response.json(promotions)
+  }
 })
 
 /**

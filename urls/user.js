@@ -68,7 +68,7 @@ const { convertBase64ToFile } = require('../middleware/convertBase64File')
  *              example: 'El usuario ya se encuentra registrado en el sistema'
  */
 
-routesUserWeb.post('/superadministrator', isSuperAdmin, async (request, response) => {
+routesUserWeb.post('/superadministrator', isSuperAdmin, convertBase64ToFile, async (request, response) => {
   request.body.rol = 'superadministrator'
   const data = request.body
   const create = await UserController.create(data)
@@ -134,7 +134,7 @@ routesUserWeb.post('/superadministrator', isSuperAdmin, async (request, response
  *              example: 'El usuario ya se encuentra registrado en el sistema'
  */
 
-routesUserWeb.post('/administrator', isSuperAdmin, async (request, response) => {
+routesUserWeb.post('/administrator', isSuperAdmin, convertBase64ToFile, async (request, response) => {
   request.body.rol = 'administrator'
   const data = request.body
   const create = await UserController.create(data)
@@ -203,7 +203,7 @@ routesUserWeb.post('/administrator', isSuperAdmin, async (request, response) => 
  *              example: 'El usuario ya se encuentra registrado en el sistema'
  */
 
-routesUserWeb.post('/domiciliary', isSuperAdmin, isAdmin, async (request, response) => {
+routesUserWeb.post('/domiciliary', isSuperAdmin, isAdmin, convertBase64ToFile, async (request, response) => {
   request.body.rol = 'domiciliary'
   request.body.idAdmin = request.User.id
   const data = request.body
