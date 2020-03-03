@@ -166,9 +166,6 @@ routesUserWeb.post('/administrator', isSuperAdmin, convertBase64ToFile, async (r
  *            type: string
  *          password:
  *            type: string
- *          workingSupermarket:
- *            type: string
- *            example: id del supermercado
  *    responses:
  *      200:
  *        description: Si el usuario se crea correctamente

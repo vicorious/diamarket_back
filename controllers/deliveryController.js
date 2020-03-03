@@ -1,5 +1,5 @@
 const DeliveryModel = require('../models/deliverySchema')
-const OrderModel = require('../models/orderServiceSchema')
+const OrderServiceController = require('../controllers/orderServiceController')
 
 class Delivery {
   async create (data) {
@@ -7,24 +7,55 @@ class Delivery {
     return { estado: true, data: create, mensaje: null }
   }
 
-  async update (id, data) {
-    const isExist = await DeliveryModel.get(id)
-    if (isExist._id) {
-      const order = await OrderModel.get({ _id: isExist.orderId })
-      const update = await DeliveryModel.update(isExist._id, data)
-      const updateOrder = await OrderModel.update(order._id, { status: data.status })
-      return [update, updateOrder]
+  async all (data) {
+    const orders = await DeliveryModel.search(data)
+    if (orders.length > 0) {
+      return { estado: true, data: orders, mensaje: null }
     } else {
-      return { estado: false, data: [], mensaje: 'No existe esta entrega' }
+      return { estado: false, data: [], mensaje: 'No hay ordenes asociadas' }
     }
   }
 
-  async detail (id) {
-    const isExist = await DeliveryModel.get(id)
-    if (isExist._id) {
-      return { estado: true, data: isExist, mensaje: null }
+  async detail (_id) {
+    const order = await DeliveryModel.get(_id)
+    if (order._id) {
+      return { estado: true, data: order, mensaje: null }
     } else {
-      return { estado: false, data: [], mensaje: 'No existe esta entrega' }
+      return { estado: false, data: [], mensaje: 'No hay ordenes asociadas' }
+    }
+  }
+
+  async edit (_id, data) {
+    const order = await DeliveryModel.get({ _id })
+    switch (data.status) {
+      case parseInt(1): {
+        await OrderServiceController.edit(order.orderId._id, { status: 3 })
+        return DeliveryModel.update(_id, { status: 1 })
+      }
+
+      case parseInt(2): {
+        // Notificacion para el cliente
+        return DeliveryModel.update(_id, { status: 2 })
+      }
+
+      case parseInt(3): {
+        await OrderServiceController.edit(order.orderId._id, { status: 4 })
+        return DeliveryModel.update(_id, { status: 3 })
+      }
+
+      case parseInt(4): {
+        if (!data.codeCancelation) {
+          return OrderServiceController.edit(order.orderId._id, { status: 5 })
+        } else {
+          const cancelation = await OrderServiceController.edit(order.orderId._id, { codeCancelation: data.codeCancelation, status: 5 })
+          console.log(cancelation)
+          if (cancelation === 'error') {
+            return { estado: false, data: [], mensaje: 'El codigo no conside con el de la cancelacion' }
+          } else {
+            return DeliveryModel.update(_id, { status: 4 })
+          }
+        }
+      }
     }
   }
 }

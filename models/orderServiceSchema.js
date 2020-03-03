@@ -109,6 +109,10 @@ const Schema = new mongoose.Schema({
     type: Types.String,
     required: [true, 'La referencia de pago es obligatoria']
   },
+  codeCancelation: {
+    type: Types.Number,
+    default: 0
+  },
   dateCreate: {
     type: Types.Date,
     default: Date.now
@@ -119,7 +123,7 @@ class OrderService extends Base {
     super()
     this.sort = { name: 1 }
     this.model = mongoose.model('OrderService', Schema)
-    this.fields = 'value direction methodPayment status superMarket products promotions user dateCreate '
+    this.fields = 'value direction methodPayment status superMarket products promotions user dateCreate codeCancelation'
     this.populate = [
       {
         path: 'superMarket',
