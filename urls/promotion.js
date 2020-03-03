@@ -73,8 +73,18 @@ routesPromotionWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, res
  *              example: No existen promociones
  */
 routesPromotionWeb.get('', isSuperAdmin, async (request, response) => {
-  const promotions = await PromotionController.all({})
-  response.json(promotions)
+  const query = request.query
+  if (query.supermarket) {
+    const promotions = await PromotionController.all(query)
+    response.json(promotions)
+  } else if (query.name) {
+    query.name = { $regex: query.name, $options: 'i' }
+    const promotions = await PromotionController.all(query)
+    response.json(promotions)
+  } else {
+    const promotions = await PromotionController.all({})
+    response.json(promotions)
+  }
 })
 
 /**
@@ -122,7 +132,8 @@ routesPromotionWeb.get('', isSuperAdmin, async (request, response) => {
  */
 routesPromotionWeb.get('/forsupermarket', isAdmin, async (request, response) => {
   const _id = request.User.id
-  const promotions = await PromotionController.forSuperMarket(_id)
+  const query = request.query
+  const promotions = await PromotionController.forSuperMarket(_id, query)
   response.json(promotions)
 })
 

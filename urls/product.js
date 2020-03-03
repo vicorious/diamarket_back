@@ -82,13 +82,13 @@ routesProductWeb.put('/:id', convertBase64ToFile, isSuperAdmin, isAdmin, async (
  *              type: string
  *              example: no existen productos
  */
-routesProductWeb.get('', async (request, response) => {
+routesProductWeb.get('', isSuperAdmin, async (request, response) => {
   const query = request.query
   if (query.idSupermarket && query.category) {
     const products = await ProductController.productsForCategory(query)
     response.json(products)
   } else if (query.name && query.idSupermarket) {
-    query.name = { $regex: query.name, $option: 'i' }
+    query.name = { $regex: query.name, $options: 'i' }
     const products = await ProductController.productsForName(query)
     response.json(products)
   } else if (query.idSupermarket) {
@@ -146,8 +146,9 @@ routesProductWeb.get('', async (request, response) => {
  *              example: No existen productos para este supermercado
  */
 routesProductWeb.get('/forsupermarket', isAdmin, async (request, response) => {
+  const query = request.query
   const _id = request.User.id
-  const products = await ProductController.forSuperMarket(_id)
+  const products = await ProductController.forSuperMarket(_id, query)
   response.json(products)
 })
 

@@ -90,11 +90,32 @@ class Product {
     }
   }
 
-  async forSuperMarket (_id) {
+  async forSuperMarket (_id, query) {
+    let availability = []
     const superMarket = await SuperMarketModel.get({ idAdmin: _id })
-    const products = AvailabilityModel.search({ idSupermarket: superMarket._id })
-    if (products.length > 0) {
-      return { estado: true, data: products, mensaje: null }
+    if (query.name) {
+      query.name = { $regex: query.name, $options: 'i' }
+      const products = await ProductModel.search(query)
+      for (const object of products) {
+        const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket, idProduct: object._id })
+        if (availabilityProduct._id) {
+          availability.push(availabilityProduct)
+        }
+      }
+    } else if (query.category) {
+      const products = await ProductModel.search(query)
+      for (const object of products) {
+        const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket, idProduct: object._id })
+        if (availabilityProduct._id) {
+          availability.push(availabilityProduct)
+        }
+      }
+    } else {
+      const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket })
+      availability = availabilityProduct
+    }
+    if (availability.length > 0) {
+      return { estado: true, data: availability, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No existen productos para este supermercado' }
     }
