@@ -20,7 +20,10 @@ const Types = mongoose.Schema.Types
  *      supermarket:
  *        $ref: '#/definitions/Supermarket'
  *      products:
- *        $ref: '#/definitions/Product'
+ *        type: array
+ *        items:
+ *          type: string
+ *          example: id de mongo
  *      value:
  *        type: Number
  *      credits:
@@ -33,6 +36,10 @@ const Types = mongoose.Schema.Types
  *          type: string
  *      isActive:
  *        type: boolean
+ *      initDate:
+ *        type: string
+ *      finishDate:
+ *        type: string
  */
 const Schema = new mongoose.Schema({
   name: {
@@ -66,6 +73,12 @@ const Schema = new mongoose.Schema({
   isActive: {
     type: Types.Boolean,
     default: true
+  },
+  initDate: {
+    type: Types.Date
+  },
+  finishDate: {
+    type: Types.Date
   }
 })
 class Promotion extends Base {
@@ -73,7 +86,7 @@ class Promotion extends Base {
     super()
     this.sort = { name: 1 }
     this.model = mongoose.model('Promotion', Schema)
-    this.fields = 'name supermarket products value discount credits image isActive'
+    this.fields = 'name supermarket products value discount credits image isActive initDate finishDate'
     this.populate = [{
       path: 'supermarket',
       select: 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules dateCreate',

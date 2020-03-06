@@ -1,6 +1,6 @@
 'use strict'
 require('./config/MongoDb')
-// require('./config/SqlServer')
+require('./config/SqlServer')
 const express = require('express')
 const asyncify = require('express-asyncify')
 const bodyParser = require('body-parser')
@@ -10,7 +10,6 @@ const morgan = require('morgan')
 const cors = require('cors')
 const routeUser = require('./urls/routes')
 const cookieParser = require('cookie-parser')
-// const SqlServer = require('mssql')
 
 const port = 5002
 const app = asyncify(express())
