@@ -20,7 +20,10 @@ const Types = mongoose.Schema.Types
  *      supermarket:
  *        $ref: '#/definitions/Supermarket'
  *      products:
- *        $ref: '#/definitions/Product'
+ *        type: array
+ *        items:
+ *          type: string
+ *          example: id de mongo
  *      value:
  *        type: Number
  *      credits:
@@ -33,6 +36,10 @@ const Types = mongoose.Schema.Types
  *          type: string
  *      isActive:
  *        type: boolean
+ *      initDate:
+ *        type: string
+ *      finishDate:
+ *        type: string
  */
 const Schema = new mongoose.Schema({
   name: {

@@ -8,7 +8,7 @@ const { convertBase64ToFile } = require('../middleware/convertBase64File')
 const routesProductApp = asyncify(express.Router())
 const routesProductWeb = asyncify(express.Router())
 
-routesProductWeb.post('', convertBase64ToFile, isSuperAdmin, async (request, response) => {
+routesProductWeb.post('', convertBase64ToFile, async (request, response) => {
   const data = request.body
   const create = await ProductController.create(data)
   response.json(create)
