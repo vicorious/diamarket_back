@@ -24,7 +24,7 @@ class Promotion {
   }
 
   async detail (id) {
-    const promotion = await PromotionModel.get({ id, isActive: true })
+    const promotion = await PromotionModel.get(id)
     if (promotion._id) {
       return { estado: true, data: promotion, mensaje: null }
     } else {

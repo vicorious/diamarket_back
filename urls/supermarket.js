@@ -7,6 +7,10 @@ const supermarketController = require('../controllers/supermarketController')
 const { isSuperAdmin, isAdmin, isClient } = require('../middleware/token')
 const { convertBase64ToFile } = require('../middleware/convertBase64File')
 
+routesSupermarketWeb.get('/createpos', async (request, response) => {
+  const supermarkets = await supermarketController.createDataPos()
+  response.json(supermarkets)
+})
 /**
  * @swagger
  * /web/supermarket:

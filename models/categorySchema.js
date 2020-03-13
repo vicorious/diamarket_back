@@ -24,6 +24,9 @@ const Types = mongoose.Schema.Types
  */
 
 const Schema = new mongoose.Schema({
+  idCatPost: {
+    type: Types.String
+  },
   name: {
     type: Types.String,
     lowercase: true,
@@ -35,8 +38,7 @@ const Schema = new mongoose.Schema({
     require: [true, 'La description']
   },
   image: {
-    type: Types.String,
-    require: [true, 'la imagen es requerida']
+    type: Types.String
   },
   isActive: {
     type: Types.Boolean,

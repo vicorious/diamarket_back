@@ -16,11 +16,17 @@ class User {
     if (!isExists._id) {
       switch (data.rol) {
         case 'domiciliary': {
-          const supermarket = await SuperMarketSchema.get({ idAdmin: data.idAdmin })
-          data.workingSupermarket = supermarket._id
-          data.isActive = true
-          const user = await UserModel.create(data)
-          return { estado: true, data: user, mensaje: null }
+          if (data.workingSupermarket) {
+            data.isActive = true
+            const user = await UserModel.create(data)
+            return { estado: true, data: user, mensaje: null }
+          } else {
+            const supermarket = await SuperMarketSchema.get({ idAdmin: data.idAdmin })
+            data.workingSupermarket = supermarket._id
+            data.isActive = true
+            const user = await UserModel.create(data)
+            return { estado: true, data: user, mensaje: null }
+          }
         }
 
         case 'administrator': {

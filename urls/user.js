@@ -2,7 +2,7 @@
 const express = require('express')
 const asyncify = require('express-asyncify')
 const UserController = require('../controllers/userController')
-const { isSuperAdmin, isAdmin, isDomiciliary, isClient } = require('../middleware/token')
+const { isSuperAdmin, isAdmin, isClient, isAdminAndIsSuperAdmin, isSuperAdminAndIsAdminAndIsDomiciliary } = require('../middleware/token')
 const routesUserApp = asyncify(express.Router())
 const routesUserWeb = asyncify(express.Router())
 const { convertBase64ToFile } = require('../middleware/convertBase64File')
@@ -200,12 +200,19 @@ routesUserWeb.post('/administrator', isSuperAdmin, convertBase64ToFile, async (r
  *              example: 'El usuario ya se encuentra registrado en el sistema'
  */
 
-routesUserWeb.post('/domiciliary', isSuperAdmin, isAdmin, convertBase64ToFile, async (request, response) => {
-  request.body.rol = 'domiciliary'
-  request.body.idAdmin = request.User.id
-  const data = request.body
-  const create = await UserController.create(data)
-  response.json(create)
+routesUserWeb.post('/domiciliary', isAdminAndIsSuperAdmin, convertBase64ToFile, async (request, response) => {
+  if (request.User.rol === 'superadministrator') {
+    request.body.rol = 'domiciliary'
+    const data = request.body
+    const create = await UserController.create(data)
+    response.json(create)
+  } else {
+    request.body.rol = 'domiciliary'
+    request.body.idAdmin = request.User.id
+    const data = request.body
+    const create = await UserController.create(data)
+    response.json(create)
+  }
 })
 
 /**
@@ -302,7 +309,7 @@ routesUserWeb.get('/detail/:id', async (request, response) => {
  *              type: string
  *              example: 'El usuario no se encuentra registrado'
  */
-routesUserWeb.get('/detail', isSuperAdmin, isAdmin, isDomiciliary, async (request, response) => {
+routesUserWeb.get('/detail', isSuperAdminAndIsAdminAndIsDomiciliary, async (request, response) => {
   const _id = request.User.id
   const detail = await UserController.detail({ _id })
   response.json(detail)
@@ -563,7 +570,7 @@ routesUserWeb.get('/domiciliaryforsupermarket', isAdmin, async (request, respons
  *              type: string
  *              example: 'El usuario no ha sido actualizado'
  */
-routesUserWeb.put('/:id', convertBase64ToFile, isSuperAdmin, isAdmin, async (request, response) => {
+routesUserWeb.put('/:id', convertBase64ToFile, isAdminAndIsSuperAdmin, async (request, response) => {
   const _id = request.params.id
   const data = request.body
   const update = await UserController.update({ _id }, data)

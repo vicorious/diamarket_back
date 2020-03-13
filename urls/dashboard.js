@@ -68,7 +68,7 @@ const routesDashboardWeb = asyncify(express.Router())
  *              type: string
  *              example: "No se ha encontrado la orden"
  */
-routesDashboardWeb.get('/count', isSuperAdmin, isAdmin, isClient, async (request, response) => {
+routesDashboardWeb.get('/count', async (request, response) => {
   const count = await DashboardController.targetCounter()
   response.json(count)
 })
