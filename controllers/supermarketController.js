@@ -1,7 +1,20 @@
 'use strict'
 const SupermarketModel = require('../models/supermarketSchema')
+const MsSql = require('mssql')
 
 class Supermarket {
+  async createDataPos () {
+    const supermarkets = await MsSql.query`
+    SELECT dbo.t285_co_centro_op.f285_id, dbo.t285_co_centro_op.f285_descripcion, dbo.t015_mm_contactos.f015_direccion1, dbo.t015_mm_contactos.f015_id_depto, dbo.t015_mm_contactos.f015_id_ciudad, dbo.t015_mm_contactos.f015_id_barrio, dbo.t015_mm_contactos.f015_telefono
+    FROM dbo.t285_co_centro_op INNER JOIN dbo.t015_mm_contactos ON dbo.t285_co_centro_op.f285_rowid_contacto = dbo.t015_mm_contactos.f015_rowid
+    WHERE (((dbo.t285_co_centro_op.f285_id)<>'001' And (dbo.t285_co_centro_op.f285_id)<>'002') AND ((dbo.t285_co_centro_op.f285_id_cia)=6) AND ((dbo.t285_co_centro_op.f285_ind_estado)=1));
+    `
+    for (const object of supermarkets.recordset) {
+      await SupermarketModel.create({ supermarketIdPos: object.f285_id, cellPhone: object.f015_telefono, name: object.f285_descripcion, address: object.f015_direccion1, neigborhood: object._id_barrio, locality: object._id_barrio })
+    }
+    return supermarkets
+  }
+
   async create (data) {
     const isExist = await SupermarketModel.get({ address: data.address })
     if (!isExist._id) {

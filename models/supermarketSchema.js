@@ -80,6 +80,9 @@ const Types = mongoose.Schema.Types
  *        type: string
  */
 const Schema = new mongoose.Schema({
+  supermarketIdPos: {
+    type: Types.String
+  },
   status: {
     type: Types.Boolean,
     default: true
@@ -99,8 +102,7 @@ const Schema = new mongoose.Schema({
     type: Types.Number
   }],
   location: {
-    type: Types.Mixed,
-    require: [true, 'La localización es requerida']
+    type: Types.Mixed
   },
   neigborhood: {
     type: Types.String,
@@ -111,16 +113,13 @@ const Schema = new mongoose.Schema({
     require: [true, 'La localidad es requerida']
   },
   email: {
-    type: Types.String,
-    require: [true, 'El email es requerido']
+    type: Types.String
   },
   supermarketType: {
-    type: Types.String,
-    required: [true, 'El tipo de supermercado es requerido']
+    type: Types.String
   },
   logo: {
-    type: Types.String,
-    require: [true, 'El logo es requerido']
+    type: Types.String
   },
   images: [{
     type: Types.String
@@ -130,12 +129,10 @@ const Schema = new mongoose.Schema({
     default: true
   },
   idAdmin: {
-    type: Types.ObjectId,
-    require: [true, 'El id es requerido']
+    type: Types.ObjectId
   },
   schedules: [{
-    type: Types.Mixed,
-    require: [true, 'El horario es requerido']
+    type: Types.Mixed
   }],
   dateCreate: {
     type: Types.Date,

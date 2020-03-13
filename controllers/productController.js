@@ -2,18 +2,24 @@
 const ProductModel = require('../models/productSchema')
 const AvailabilityModel = require('../models/availabilitySchema')
 const SuperMarketModel = require('../models/supermarketSchema')
+const CategoryModel = require('../models/categorySchema')
 const MsSql = require('mssql')
 const { DATABASES } = require('../config/settings')
 
 class Product {
   async create (data) {
     const products = await MsSql.query`
-    SELECT TOP 10 dbo.t126_mc_items_precios.f126_rowid_item as 'IdProduct', dbo.t285_co_centro_op.f285_id, dbo.t285_co_centro_op.f285_descripcion, dbo.t120_mc_items.f120_descripcion,dbo.t126_mc_items_precios.f126_id_unidad_medida,dbo.t126_mc_items_precios.f126_precio FROM (((dbo.t285_co_centro_op INNER JOIN (dbo.t126_mc_items_precios INNER JOIN dbo.t120_mc_items ON dbo.t126_mc_items_precios.f126_rowid_item = dbo.t120_mc_items.f120_rowid) ON (dbo.t285_co_centro_op.f285_id = dbo.t126_mc_items_precios.f126_id_lista_precio) AND (dbo.t285_co_centro_op.f285_id_cia = dbo.t126_mc_items_precios.f126_id_cia)) INNER JOIN dbo.t121_mc_items_extensiones ON dbo.t120_mc_items.f120_rowid = dbo.t121_mc_items_extensiones.f121_rowid_item)  INNER JOIN dbo.t400_cm_existencia ON dbo.t121_mc_items_extensiones.f121_rowid = dbo.t400_cm_existencia.f400_rowid_item_ext) WHERE (((dbo.t285_co_centro_op.f285_id_cia)=6) AND ((dbo.t285_co_centro_op.f285_id)<>'001' And (dbo.t285_co_centro_op.f285_id)<>'002')) ORDER BY dbo.t285_co_centro_op.f285_id;    
+    SELECT TOP 100 dbo.t126_mc_items_precios.f126_rowid_item as 'IdProduct', dbo.t285_co_centro_op.f285_id, dbo.t285_co_centro_op.f285_descripcion, dbo.t120_mc_items.f120_descripcion,dbo.t126_mc_items_precios.f126_id_unidad_medida,dbo.t126_mc_items_precios.f126_precio FROM (((dbo.t285_co_centro_op INNER JOIN (dbo.t126_mc_items_precios INNER JOIN dbo.t120_mc_items ON dbo.t126_mc_items_precios.f126_rowid_item = dbo.t120_mc_items.f120_rowid) ON (dbo.t285_co_centro_op.f285_id = dbo.t126_mc_items_precios.f126_id_lista_precio) AND (dbo.t285_co_centro_op.f285_id_cia = dbo.t126_mc_items_precios.f126_id_cia)) INNER JOIN dbo.t121_mc_items_extensiones ON dbo.t120_mc_items.f120_rowid = dbo.t121_mc_items_extensiones.f121_rowid_item)  INNER JOIN dbo.t400_cm_existencia ON dbo.t121_mc_items_extensiones.f121_rowid = dbo.t400_cm_existencia.f400_rowid_item_ext) WHERE (((dbo.t285_co_centro_op.f285_id_cia)=6) AND ((dbo.t285_co_centro_op.f285_id)<>'001' And (dbo.t285_co_centro_op.f285_id)<>'002')) ORDER BY dbo.t285_co_centro_op.f285_id;    
     `
-    for (const object of products.recordset) {
-      console.log(object)
-    }
-    return result
+
+    const categorys = await MsSql.query`
+    SELECT dbo.t125_mc_items_criterios.f125_rowid_item, dbo.t125_mc_items_criterios.f125_id_plan, dbo.t106_mc_criterios_item_mayores.f106_id, dbo.t106_mc_criterios_item_mayores.f106_descripcion
+FROM dbo.t125_mc_items_criterios INNER JOIN dbo.t106_mc_criterios_item_mayores ON (dbo.t125_mc_items_criterios.f125_id_cia = dbo.t106_mc_criterios_item_mayores.f106_id_cia) AND (dbo.t125_mc_items_criterios.f125_id_criterio_mayor = dbo.t106_mc_criterios_item_mayores.f106_id) AND (dbo.t125_mc_items_criterios.f125_id_plan = dbo.t106_mc_criterios_item_mayores.f106_id_plan)
+WHERE (((dbo.t125_mc_items_criterios.f125_id_plan)='CAT' Or (dbo.t125_mc_items_criterios.f125_id_plan)='SUB') AND ((dbo.t125_mc_items_criterios.f125_id_cia)=6))
+ORDER BY dbo.t125_mc_items_criterios.f125_rowid_item, dbo.t125_mc_items_criterios.f125_id_plan, dbo.t106_mc_criterios_item_mayores.f106_id;
+    `
+
+    return { products, categorys }
     // const isExist = await ProductModel.get({ name: data.name })
     // if (!isExist._id) {
     //   const product = await ProductModel.create(data)

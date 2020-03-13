@@ -4,7 +4,7 @@ const asyncify = require('express-asyncify')
 const routesPromotionWeb = asyncify(express.Router())
 const routesPromotionApp = asyncify(express.Router())
 const PromotionController = require('../controllers/promotionController')
-const { isSuperAdmin, isAdmin, isClient } = require('../middleware/token')
+const { isSuperAdmin, isAdmin, isClient, isAdminAndIsSuperAdmin } = require('../middleware/token')
 const { convertBase64ToFile } = require('../middleware/convertBase64File')
 
 /**
@@ -236,7 +236,7 @@ routesPromotionWeb.put('/:id', isSuperAdmin, convertBase64ToFile, async (request
  *              type: string
  *              example: 'La promocion no se encuentra registrada'
  */
-routesPromotionWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, response) => {
+routesPromotionWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request, response) => {
   const _id = request.params.id
   const detail = await PromotionController.detail({ _id })
   response.json(detail)

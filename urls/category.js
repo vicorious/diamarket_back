@@ -8,6 +8,10 @@ const { isSuperAdmin, isAdmin, isClient } = require('../middleware/token')
 const routesCategoryWeb = asyncify(express.Router())
 const routesCategoryApp = asyncify(express.Router())
 
+routesCategoryWeb.get('/createdatapos', async (request, response) => {
+  const data = await categoryController.createDataPost()
+  response.json(data)
+})
 /**
  * @swagger
  * /web/category:
