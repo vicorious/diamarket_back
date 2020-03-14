@@ -1,7 +1,7 @@
 const express = require('express')
 const asyncify = require('express-asyncify')
 const OrderServiceController = require('../controllers/orderServiceController')
-const { isSuperAdmin, isAdmin, isClient } = require('../middleware/token')
+const { isSuperAdmin, isAdmin, isClient, isAdminAndIsSuperAdmin } = require('../middleware/token')
 const routesOrderServiceApp = asyncify(express.Router())
 const routesOrderServiceWeb = asyncify(express.Router())
 
@@ -98,7 +98,7 @@ routesOrderServiceWeb.get('', isSuperAdmin, async (request, response) => {
  *              type: string
  *              example: La orden no se encuentra registrada
  */
-routesOrderServiceWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, response) => {
+routesOrderServiceWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request, response) => {
   const _id = request.params.id
   const order = await OrderServiceController.detail({ _id })
   response.json(order)
