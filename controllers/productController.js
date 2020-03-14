@@ -113,28 +113,34 @@ ORDER BY dbo.t125_mc_items_criterios.f125_rowid_item, dbo.t125_mc_items_criterio
       const products = await ProductModel.search(query)
       for (const object of products) {
         const category = await CategoryModel.get({ _id : object.category })
+        console.log(category)
         const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket._id, idProduct: object._id })
-        availabilityProduct._doc.idProduct.category = category
+        let data = availabilityProduct
+        data.idProduct.category = category
         if (availabilityProduct._id) {
-          availability.push(availabilityProduct)
+          availability.push(data)
         }
       }
     } else if (query.category) {
       const products = await ProductModel.search(query)
       for (const object of products) {
         const category = await CategoryModel.get({ _id : object.category })
+        console.log(category)
         const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket._id, idProduct: object._id })
-        availabilityProduct._doc.idProduct.category = category
+        let data = availabilityProduct
+        data.idProduct.category = category
         if (availabilityProduct._id) {
-          availability.push(availabilityProduct)
+          availability.push(data)
         }
       }
     } else if (!query.name && !query.category) {
       const availabilityProduct = await AvailabilityModel.search({ idSupermarket: superMarket._id })
       for (const object of availabilityProduct) {
+        let data = object
         const category = await CategoryModel.get({ _id : object.idProduct.category })
-        object._doc.idProduct.category = category
-        availability.push(object)
+        console.log(category)
+        data.idProduct.category = category
+        availability.push(data)
       }
     }
     if (availability.length > 0) {
