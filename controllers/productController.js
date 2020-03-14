@@ -125,9 +125,13 @@ ORDER BY dbo.t125_mc_items_criterios.f125_rowid_item, dbo.t125_mc_items_criterio
           availability.push(availabilityProduct)
         }
       }
-    } else {
+    } else if (!query.name && !query.category) {
+      console.log('SIIIIIIIIII')
       const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket._id })
+      console.log('Ya hizo la consulta')
       availability = availabilityProduct
+      console.log('ESTE YA ES EL ARRAY')
+      console.log(availability)
     }
     if (availability.length > 0) {
       return { estado: true, data: availability, mensaje: null }
