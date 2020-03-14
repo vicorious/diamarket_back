@@ -127,7 +127,7 @@ ORDER BY dbo.t125_mc_items_criterios.f125_rowid_item, dbo.t125_mc_items_criterio
       }
     } else if (!query.name && !query.category) {
       console.log('SIIIIIIIIII')
-      const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket._id })
+      const availabilityProduct = await AvailabilityModel.search({ idSupermarket: superMarket._id })
       console.log('Ya hizo la consulta')
       availability = availabilityProduct
       console.log('ESTE YA ES EL ARRAY')
