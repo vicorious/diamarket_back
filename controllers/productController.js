@@ -112,7 +112,7 @@ ORDER BY dbo.t125_mc_items_criterios.f125_rowid_item, dbo.t125_mc_items_criterio
       query.name = { $regex: query.name, $options: 'i' }
       const products = await ProductModel.search(query)
       for (const object of products) {
-        const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket, idProduct: object._id })
+        const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket._id, idProduct: object._id })
         if (availabilityProduct._id) {
           availability.push(availabilityProduct)
         }
@@ -120,13 +120,13 @@ ORDER BY dbo.t125_mc_items_criterios.f125_rowid_item, dbo.t125_mc_items_criterio
     } else if (query.category) {
       const products = await ProductModel.search(query)
       for (const object of products) {
-        const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket, idProduct: object._id })
+        const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket._id, idProduct: object._id })
         if (availabilityProduct._id) {
           availability.push(availabilityProduct)
         }
       }
     } else {
-      const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket })
+      const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket._id })
       availability = availabilityProduct
     }
     if (availability.length > 0) {
