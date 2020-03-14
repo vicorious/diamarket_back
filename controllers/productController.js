@@ -133,9 +133,9 @@ ORDER BY dbo.t125_mc_items_criterios.f125_rowid_item, dbo.t125_mc_items_criterio
       const availabilityProduct = await AvailabilityModel.search({ idSupermarket: superMarket._id })
       for (const object of availabilityProduct) {
         const category = await CategoryModel.get({ _id : object.idProduct.category })
-        availabilityProduct._doc.idProduct.category = category
+        object._doc.idProduct.category = category
+        availability.push(object)
       }
-      availability = availabilityProduct
     }
     if (availability.length > 0) {
       return { estado: true, data: availability, mensaje: null }
