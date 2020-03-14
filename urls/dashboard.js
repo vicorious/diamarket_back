@@ -2,7 +2,7 @@
 const express = require('express')
 const asyncify = require('express-asyncify')
 const DashboardController = require('../controllers/dashboardController')
-const { isSuperAdmin, isAdmin, isClient } = require('../middleware/token')
+const { isAdminAndIsSuperAdmin } = require('../middleware/token')
 const routesDashboardWeb = asyncify(express.Router())
 
 /**
@@ -68,9 +68,14 @@ const routesDashboardWeb = asyncify(express.Router())
  *              type: string
  *              example: "No se ha encontrado la orden"
  */
-routesDashboardWeb.get('/count', async (request, response) => {
-  const count = await DashboardController.targetCounter()
-  response.json(count)
+routesDashboardWeb.get('/count', isAdminAndIsSuperAdmin, async (request, response) => {
+  if (request.User.rol === 'superadministrator') {
+    const count = await DashboardController.targetCounter()
+    response.json(count)
+  } else {
+    const count = await DashboardController.targetCounter()
+    response.json(count)
+  }
 })
 
 routesDashboardWeb.post('/countorder', async (request, response) => {

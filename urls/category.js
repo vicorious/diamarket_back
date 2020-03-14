@@ -4,7 +4,7 @@ const express = require('express')
 const asyncify = require('express-asyncify')
 const categoryController = require('../controllers/categoryController')
 const { convertBase64ToFile } = require('../middleware/convertBase64File')
-const { isSuperAdmin, isAdmin, isClient } = require('../middleware/token')
+const { isSuperAdmin, isAdmin, isClient, isAdminAndIsSuperAdmin } = require('../middleware/token')
 const routesCategoryWeb = asyncify(express.Router())
 const routesCategoryApp = asyncify(express.Router())
 
@@ -118,13 +118,13 @@ routesCategoryWeb.put('/:id', convertBase64ToFile, isSuperAdmin, async (request,
   response.json(update)
 })
 
-routesCategoryWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, response) => {
+routesCategoryWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request, response) => {
   const _id = request.params.id
   const detail = await categoryController.detail(_id)
   response.json(detail)
 })
 
-routesCategoryWeb.get('', isSuperAdmin, isAdmin, async (request, response) => {
+routesCategoryWeb.get('', isAdminAndIsSuperAdmin, async (request, response) => {
   const all = await categoryController.all()
   response.json(all)
 })
