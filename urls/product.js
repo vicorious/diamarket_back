@@ -3,7 +3,7 @@
 const express = require('express')
 const asyncify = require('express-asyncify')
 const ProductController = require('../controllers/productController')
-const { isAdmin, isClient, isSuperAdmin } = require('../middleware/token')
+const { isAdmin, isClient, isSuperAdmin, isAdminAndIsSuperAdmin } = require('../middleware/token')
 const { convertBase64ToFile } = require('../middleware/convertBase64File')
 const routesProductApp = asyncify(express.Router())
 const routesProductWeb = asyncify(express.Router())
@@ -158,7 +158,7 @@ routesProductWeb.post('/forcategory', isAdmin, async (request, response) => {
   response.json(products)
 })
 
-routesProductWeb.get('/detail/:id', isSuperAdmin, isAdmin, async (request, response) => {
+routesProductWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request, response) => {
   const _id = request.params.id
   const detail = await ProductController.detail({ _id })
   response.json(detail)
