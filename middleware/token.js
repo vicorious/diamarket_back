@@ -90,7 +90,7 @@ async function isClient (request, response, next) {
 }
 
 async function isAdminAndIsSuperAdmin (request, response, next) {
-  if (!request.User) {
+  if (!request.User) {
     const authorization = request.headers.authorization
     if (authorization) {
       const token = authorization.split(' ')[1]

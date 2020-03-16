@@ -106,41 +106,35 @@ ORDER BY dbo.t125_mc_items_criterios.f125_rowid_item, dbo.t125_mc_items_criterio
   }
 
   async forSuperMarket (_id, query) {
-    let availability = []
+    const availability = []
     const superMarket = await SuperMarketModel.get({ idAdmin: _id })
     if (query.name) {
       query.name = { $regex: query.name, $options: 'i' }
       const products = await ProductModel.search(query)
       for (const object of products) {
-        const category = await CategoryModel.get({ _id : object.category })
-        console.log(category)
+        const category = await CategoryModel.get({ _id: object.category })
         const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket._id, idProduct: object._id })
-        let data = availabilityProduct
-        data.idProduct.category = category
+        object._doc.idProduct._doc.category = category
         if (availabilityProduct._id) {
-          availability.push(data)
+          availability.push(object)
         }
       }
     } else if (query.category) {
       const products = await ProductModel.search(query)
       for (const object of products) {
-        const category = await CategoryModel.get({ _id : object.category })
-        console.log(category)
+        const category = await CategoryModel.get({ _id: object.category })
         const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket._id, idProduct: object._id })
-        let data = availabilityProduct
-        data.idProduct.category = category
+        object._doc.idProduct._doc.category = category
         if (availabilityProduct._id) {
-          availability.push(data)
+          availability.push(object)
         }
       }
     } else if (!query.name && !query.category) {
       const availabilityProduct = await AvailabilityModel.search({ idSupermarket: superMarket._id })
       for (const object of availabilityProduct) {
-        let data = object
-        const category = await CategoryModel.get({ _id : object.idProduct.category })
-        console.log(category)
-        data.idProduct.category = category
-        availability.push(data)
+        const category = await CategoryModel.get({ _id: object.idProduct.category })
+        object._doc.idProduct._doc.category = category
+        availability.push(object)
       }
     }
     if (availability.length > 0) {
