@@ -62,40 +62,6 @@ class User {
     }
   }
 
-  // async create (data) {
-  //   const isExist = await UserModel.get({ email: data.email })
-  //   if (!isExist._id) {
-  //     data.verifyCode = await makeCode()
-  //     if (data.rol === 'domiciliary' || data.rol === 'administrator' || data.rol === 'superadministrator') {
-  //       if (data.supermarket) {
-  //         const supermarket = await SuperMarketSchema.get({ _id: data.supermarket })
-  //         data.isActive = true
-  //         const user = await UserModel.create(data)
-  //         await SuperMarketSchema.update(supermarket._id, { idAdmin: user._id })
-  //         return { estado: true, data: user, mensaje: null }
-  //       } else if (data.idAdmin) {
-  //         const supermarket = await SuperMarketSchema.get({ idAdmin: data.idAdmin })
-  //         data.workingSupermarket = supermarket._id
-  //         const user = await UserModel.create(data)
-  //         return { estado: true, data: user, mensaje: null }
-  //       }
-  //       data.isActive = true
-  //       const user = await UserModel.create(data)
-  //       return { estado: true, data: user, mensaje: null }
-  //     } else {
-  //       const user = await UserModel.create(data)
-  //       if (user._id) {
-  //         await sendSms(data.cellPhone, data.verifyCode)
-  //         return { estado: true, data: user, mensaje: null }
-  //       } else {
-  //         return { estado: false, data: [], mensaje: 'Error al almacenar los datos' }
-  //       }
-  //     }
-  //   } else {
-  //     return { estado: false, data: [], mensaje: 'El usuario ya se encuentra registrado en el sistema' }
-  //   }
-  // }
-
   async createSocial (data) {
     const isExist = await UserModel.get({ email: data.email })
     if (!isExist._id) {
@@ -199,9 +165,8 @@ class User {
     if (user._id) {
       if (user.rol === 'administrator') {
         const supermarket = await SuperMarketSchema.get({ idAdmin: user._id })
-        if (user.superMarket) {
-          user._doc.superMarket._id = supermarket._id
-          user._doc.superMarket.name = supermarket.name
+        if (supermarket._id) {
+          user._doc.superMarket = supermarket
         } else {
           user._doc.superMarket = 'No asignado'
         }
@@ -280,6 +245,25 @@ class User {
     } else {
       return { estado: false, data: [], mensaje: 'Este supermercado no tiene domiciliarios' }
     }
+  }
+
+  async countClientsForSuperMarket (supermarket) {
+    const orders = await OrderSchema.search({ superMarket: supermarket })
+    const clients = []
+    if (orders.length > 0) {
+      for (const order of orders) {
+        if (clients.length > 0) {
+          for (const client of clients) {
+            if (client.toString() !== order.user._id.toString()) {
+              clients.push(order.user._id)
+            }
+          }
+        } else {
+          clients.push(order.user._id)
+        }
+      }
+    }
+    return clients.length
   }
 }
 

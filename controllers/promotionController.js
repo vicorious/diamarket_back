@@ -60,6 +60,11 @@ class Promotion {
     const countPromotions = await PromotionModel.count()
     return countPromotions
   }
+
+  async countSupermarket (supermarket) {
+    const countPromotions = await PromotionModel.count({ supermarket: supermarket })
+    return countPromotions
+  }
 }
 
 module.exports = new Promotion()
