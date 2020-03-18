@@ -153,6 +153,66 @@ routesOrderServiceWeb.get('/forsupermarket', isAdmin, async (request, response) 
   response.json(orders)
 })
 
+/**
+ * @swagger
+ * /web/orderservice/{idOrder}:
+ *  put:
+ *    tags:
+ *      - OrderService
+ *    description: en este endpoint solamente resivo dos estados status = 1 para decir que es aceptado, status = 2 junto al idUser = string de mongo de esta forma es asignado al domiciliario
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: idOrder
+ *      type: string
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        type: object
+ *        properties:
+ *          status:
+ *            type: number
+ *            example:  estado 1 para aceptado estado 2 para asignado
+ *          idUser:
+ *            type: string
+ *            example: exte campo solamente se envia cuando se asigne el domiciliario y es el id del domiciliario en string
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Si la orden de servicio se actualiza correctamente se devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                update:
+ *                  type: boolean
+ *                  example: true
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si la promocion no se actualiza se devuelve el siguiente error
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              example: array vacio
+ *            mensaje:
+ *              type: string
+ *              example: No se pudo actualizar la orden
+ */
 routesOrderServiceWeb.put('/:id', async (request, response) => {
   const data = request.body
   const _id = request.params.id

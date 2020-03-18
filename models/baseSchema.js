@@ -76,7 +76,7 @@ class Base {
       await this.model.findByIdAndUpdate(_id, data, { runValidators: true })
       return { estado: true, data: { update: true }, mensaje: null }
     } catch (error) {
-      return { estado: false, data: { update: false }, mensaje: 'Error almacenando los datos' }
+      return { estado: false, data: { update: false }, mensaje: 'Error editando los datos' }
     }
   }
 
