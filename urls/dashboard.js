@@ -70,10 +70,10 @@ const routesDashboardWeb = asyncify(express.Router())
  */
 routesDashboardWeb.get('/count', isAdminAndIsSuperAdmin, async (request, response) => {
   if (request.User.rol === 'superadministrator') {
-    const count = await DashboardController.targetCounter()
+    const count = await DashboardController.targetCounterForSuperAdministrator()
     response.json(count)
   } else {
-    const count = await DashboardController.targetCounter()
+    const count = await DashboardController.targetCounterForAdministrator({ _id: request.User.id })
     response.json(count)
   }
 })

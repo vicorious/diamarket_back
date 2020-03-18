@@ -100,6 +100,14 @@ class OrderService {
     const countOrderWait = await orders.filter(obj => obj.status === 'pendiente')
     return { countOrder, userCount: countsUsers, countOrderFinish: countOrderFinish.length, countOrderWait: countOrderWait.length }
   }
+
+  async countOrdersForSupermarket (supermarket) {
+    const countOrder = await OrderServiceModel.count({ superMarket: supermarket })
+    const orders = await OrderServiceModel.search({ superMarket: supermarket })
+    const countOrderFinish = await orders.filter(obj => parseInt(obj.status) === parseInt(4))
+    const countOrderWait = await orders.filter(obj => parseInt(obj.status) === parseInt(0))
+    return { countOrder, countOrderFinish: countOrderFinish.length, countOrderWait: countOrderWait.length }
+  }
 }
 
 module.exports = new OrderService()
