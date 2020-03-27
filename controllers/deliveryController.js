@@ -19,6 +19,9 @@ class Delivery {
   async detail (_id) {
     const order = await DeliveryModel.get(_id)
     if (order._id) {
+      const orderService = await OrderServiceController.detail({ _id: order.orderId })
+      order._doc.orderId = orderService
+      console.log(order)
       return { estado: true, data: order, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay ordenes asociadas' }
