@@ -14,7 +14,60 @@ routesProductWeb.post('', convertBase64ToFile, async (request, response) => {
   response.json(create)
 })
 
-routesProductWeb.put('/:id', convertBase64ToFile, isSuperAdmin, isAdmin, async (request, response) => {
+/**
+ * @swagger
+ * /web/product/{id}:
+ *  put:
+ *    tags:
+ *      - Product
+ *    description: Este endpoint se actualizan los datos
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    - in : path
+ *      name: id
+ *      type: string
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        $ref: '#/definitions/Product'
+ *    responses:
+ *      200:
+ *        description: Si el producto se actualizo exitosamente se devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                updated:
+ *                  type: boolean
+ *                  example: true
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si el producto no se actualiza se devuelve el siguiente error
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              example: array vacio
+ *            mensaje:
+ *              type: string
+ *              example: No se pudo actualizar el producto
+ */
+routesProductWeb.put('/:id', convertBase64ToFile, isAdminAndIsSuperAdmin, async (request, response) => {
   const _id = request.params.id
   const data = request.body
   const update = await ProductController.update({ _id }, data)
