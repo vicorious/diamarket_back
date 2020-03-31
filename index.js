@@ -1,6 +1,7 @@
 'use strict'
 require('./config/MongoDb')
 require('./config/SqlServer')
+require('./config/firebase')
 const express = require('express')
 const asyncify = require('express-asyncify')
 const bodyParser = require('body-parser')

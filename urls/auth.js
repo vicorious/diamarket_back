@@ -185,7 +185,7 @@ routesAuthWeb.post('/resetpassword', async (request, response) => {
  *  post:
  *    tags:
  *      - Auth
- *    description: En este enpoint se hace la autenticacion del usuario
+ *    description: En este enpoint se hace la autenticacion del usuario o se registra por primera vez
  *    produces:
  *    - applications/json
  *    parameters:
@@ -194,15 +194,15 @@ routesAuthWeb.post('/resetpassword', async (request, response) => {
  *      schema:
  *        type: object
  *        properties:
- *          email:
+ *          token:
  *            type: string
- *            example: nicolas@gmail.com
- *          password:
+ *            example: token de firebase
+ *          tokenCloudingMessagin:
  *            type: string
- *            example: 6150
+ *            example: token para el envio de notificaciones
  *    responses:
  *      200:
- *        description: Si el usuario existe en la base de datos se response el siguiente json
+ *        description: Si el usuario existe en la base de datos o no existe se crea o se actualiza y se responde el siguiente objeto
  *        schema:
  *          properties:
  *            estado:
@@ -219,25 +219,12 @@ routesAuthWeb.post('/resetpassword', async (request, response) => {
  *            mensaje:
  *              type: string
  *              example: null
- *      400:
- *        description: Si el usuario no existe o la contraseña es incorrecta se devuelve el siguiente objeto
- *        schema:
- *          properties:
- *            estado:
- *              type: boolean
- *              example: false
- *            data:
- *              type: array
- *              items:
- *                type: string
- *                example: 'Array vacio'
- *            mensaje:
- *              type: string
- *              example: 'Usuario no validado o usuario y/o contraseña incorrectos'
  */
 routesAuthApp.post('', async (request, response) => {
   const data = request.body
-  const token = await Auth.createToken(data)
+  // data.token = 'ecfXEP7hufQSDqdJeCzQ73ASkVG2'
+  // const tokenGenerate = await FirebaseAdmin.auth().createCustomToken(id)
+  const token = await Auth.createTokenFirebase(data)
   response.json(token)
 })
 
