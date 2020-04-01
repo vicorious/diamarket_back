@@ -1,27 +1,29 @@
 'use strict'
+const crypto = require('crypto')
 
 module.exports = function (data) {
+  const signature = crypto.createHash('md5').update(`4Vj8eK4rloUd272L48hsrarnUA~508029~${data.referenceCode}~${data.value}~COP`).digest('hex')
   const obj = {
     language: 'es',
-    command: 'SUBMIT_TRANSACTION',
+    command: "SUBMIT_TRANSACTION",
     merchant: {
       apiKey: '4Vj8eK4rloUd272L48hsrarnUA',
       apiLogin: 'pRRXKOl8ikMmt9u'
     },
     transaction: {
       order: {
-        accountId: data.user._id,
-        referenceCode: data.reference,
-        description: 'Compra de mercado en Dia Market',
+        accountId: '512321',
+        referenceCode: data.referenceCode,
+        description: data.description,
         language: 'es',
-        signature: data.reference,
+        signature,
         additionalValues: {
           TX_VALUE: {
             value: data.value,
             currency: 'COP'
           },
           TX_TAX: {
-            value: 19000,
+            value: 0,
             currency: 'COP'
           },
           TX_TAX_RETURN_BASE: {
@@ -30,44 +32,19 @@ module.exports = function (data) {
           }
         },
         buyer: {
+          merchantBuyerId: data.user._id,
           fullName: data.user.name,
           emailAddress: data.user.email,
           contactPhone: data.user.cellPhone,
-          dniNumber: data.user.cellPhone,
-          shippingAddress: {
-            street1: data.direction.address,
-            street2: data.direction.address,
-            city: data.direction.address,
-            state: data.direction.address,
-            country: 'CO',
-            postalCode: '000000',
-            phone: data.user.cellPhone
-          }
-        },
-        shippingAddress: {
-          street1: data.direction.address,
-          street2: data.direction.address,
-          city: data.direction.address,
-          state: data.direction.address,
-          country: 'CO',
-          postalCode: '0000000',
-          phone: data.user.cellPhone
+          dniNumber: data.user.identification
         }
       },
       payer: {
+        merchantPayerId: data.user._id,
         fullName: data.user.name,
         emailAddress: data.user.email,
         contactPhone: data.user.cellPhone,
-        dniNumber: data.user.cellPhone,
-        billingAddress: {
-          street1: data.direction.address,
-          street2: data.direction.address,
-          city: data.direction.address,
-          state: data.direction.address,
-          country: 'CO',
-          postalCode: '000000',
-          phone: data.user.cellPhone
-        }
+        dniNumber: data.user.identification
       },
       creditCard: {
         number: data.card.number,
@@ -75,13 +52,11 @@ module.exports = function (data) {
         expirationDate: data.card.expirationDate,
         name: data.card.name
       },
-      type: 'AUTHORIZATION',
+      type: 'AUTHORIZATION_AND_CAPTURE',
       paymentMethod: data.card.type,
-      paymentCountry: 'CO',
-      deviceSessionId: data.deviceSessionId,
-      ipAddress: data.ipAddress,
-      cookie: data.cookie,
-      userAgent: data.userAgent
+      paymentCountry: "CO",
+      deviceSessionId: "vghs6tvkcle931686k1900o6e1",
+      ipAddress: "127.0.0.1"
     },
     test: false
   }
