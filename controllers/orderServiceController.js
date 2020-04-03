@@ -68,22 +68,6 @@ class OrderService {
       await UserModel.update(user._id, { credits })
     }
   }
-  // async create (data) {
-  //   const order = await OrderServiceModel.create(data)
-  //   if (order._id) {
-  //     if (data.promotions) {
-  //       let credits = 0
-  //       for (const object of data.promotions) {
-  //         const promotion = await PromotionSchema.get({ _id: object.promotion })
-  //         credits += promotion.credits ? parseInt(promotion.credits) * parseInt(object.quantity) : 0
-  //       }
-  //       await UserModel.update(data.user, { credits })
-  //     }
-  //     return { estado: true, data: order, mensaje: null }
-  //   } else {
-  //     return { estado: false, data: [], mensaje: 'No se pudo crear la orden de servicio' }
-  //   }
-  // }
 
   async all(data) {
     const orders = await OrderServiceModel.search(data)

@@ -2,17 +2,17 @@
 const crypto = require('crypto')
 
 module.exports = function (data) {
-  const signature = crypto.createHash('md5').update(`4Vj8eK4rloUd272L48hsrarnUA~508029~${data.referenceCode}~${data.value}~COP`).digest('hex')
+  const signature = crypto.createHash('md5').update(`xryKI4712m8RWNd6Y0uda41rnT~839317~${data.referenceCode}~${data.value}~COP`).digest('hex')
   const obj = {
     language: 'es',
     command: "SUBMIT_TRANSACTION",
     merchant: {
-      apiKey: '4Vj8eK4rloUd272L48hsrarnUA',
-      apiLogin: 'pRRXKOl8ikMmt9u'
+      apiKey: 'xryKI4712m8RWNd6Y0uda41rnT',
+      apiLogin: 'g0GIx72ZtuCc0jL'
     },
     transaction: {
       order: {
-        accountId: '512321',
+        accountId: '846775',
         referenceCode: data.referenceCode,
         description: data.description,
         language: 'es',
