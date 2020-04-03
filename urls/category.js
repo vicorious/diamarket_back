@@ -12,6 +12,11 @@ routesCategoryWeb.get('/createdatapos', async (request, response) => {
   const data = await categoryController.createDataPost()
   response.json(data)
 })
+
+routesCategoryWeb.get('/assigncategorypos', async (request, response) => {
+  const data = await categoryController.assignCategoryPos()
+  response.json(data)
+})
 /**
  * @swagger
  * /web/category:
