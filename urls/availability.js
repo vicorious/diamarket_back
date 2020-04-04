@@ -4,6 +4,11 @@ const availabilityController = require('../controllers/availabilityController')
 const { isSuperAdmin, isAdmin } = require('../middleware/token')
 const routesAvailabilityWeb = asyncify(express.Router())
 
+routesAvailabilityWeb.get('/createpos', async (request, response) => {
+  const data = await availabilityController.createPos()
+  response.json(data)
+})
+
 routesAvailabilityWeb.post('', isSuperAdmin, async (request, response) => {
   const data = request.body
   const create = await availabilityController.create(data)

@@ -16,7 +16,8 @@ class Supermarket {
         address: object.f015_direccion1,
         neigborhood: object.f015_id_barrio,
         locality: object.f015_id_barrio,
-        cellPhone: object.f015_telefono
+        cellPhone: object.f015_telefono,
+        idPos: object.f285_id
       }
       await SupermarketModel.create(data)
     }
