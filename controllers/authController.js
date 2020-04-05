@@ -24,8 +24,7 @@ class Auth {
 
   async createTokenFirebase(data) {
     const verifyToken = await AdminFirebase.auth().verifyIdToken(data.token)
-    console.log(verifyToken)
-    const userFirebase = await AdminFirebase.auth().getUser(verifyToken)
+    const userFirebase = await AdminFirebase.auth().getUser(verifyToken.user_id)
     const userDataBase = await UserModel.get({ email: userFirebase.email })
     if (userDataBase._id) {
       await UserModel.update(userDataBase._id, { uidFireBase: userFirebase.uid, tokenAuth: data.token, tokenCloudingMessagin: data.tokenCloudingMessagin })
@@ -37,7 +36,8 @@ class Auth {
         tokenAuth: data.token, 
         tokenCloudingMessagin: data.tokenCloudingMessagin,
         rol: 'client',
-        password: '0000'
+        password: '0000',
+        isActive: true
       }
       userFirebase.phoneNumber ? dataUser.cellPhone = userFirebase.phoneNumber : dataUser.cellPhone = '000000000000'
       userFirebase.photoURL ? dataUser.image = userFirebase.photoURL : dataUser.image = 'no aplica'
