@@ -10,7 +10,16 @@ class Supermarket {
     WHERE (((dbo.t285_co_centro_op.f285_id)<>'001' And (dbo.t285_co_centro_op.f285_id)<>'002') AND ((dbo.t285_co_centro_op.f285_id_cia)=6) AND ((dbo.t285_co_centro_op.f285_ind_estado)=1));
     `
     for (const object of supermarkets.recordset) {
-      await SupermarketModel.create({ supermarketIdPos: object.f285_id, cellPhone: object.f015_telefono, name: object.f285_descripcion, address: object.f015_direccion1, neigborhood: object._id_barrio, locality: object._id_barrio })
+      const data = {
+        supermarketIdPos: object.f285_id,
+        name: object.f285_descripcion,
+        address: object.f015_direccion1,
+        neigborhood: object.f015_id_barrio,
+        locality: object.f015_id_barrio,
+        cellPhone: object.f015_telefono,
+        idPos: object.f285_id
+      }
+      await SupermarketModel.create(data)
     }
     return supermarkets
   }

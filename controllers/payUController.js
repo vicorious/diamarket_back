@@ -1,23 +1,33 @@
 'use strict'
-// Decirle a nestor que el valor de la orden debe ir junto al iba y al iba de la orden
-// const MakeUrlPayU = require('../utils/makeUrlPayU')
-// const MakeObjectPaymen = require('../utils/makeObjectPayment')
-const axios = require('axios')
-const MakeTransactionPayU = require('../utils/makeTransactionPayU')
 const MakeUrlPayU = require('../utils/makeUrlPayU')
+const axios = require('axios')
+const MakeObjectPayment = require('../utils/makeObjectPayment')
+const ValidateResponsePayment = require('../utils/validateResponsePayment')
 
 class PayU {
-  async payCredit () {}
+  async payCredit (data) {
+    const objectPayment = MakeObjectPayment(data)
+    const response = await axios.post(MakeUrlPayU, objectPayment)
+    console.log(response)
+    // switch (response.data.transactionResponse.state) {
+    //   case 'APPROVED': {
+    //     return true
+    //   }
+    //   case 'DECLINED': {
+    //     const validateResponse = await ValidateResponsePayment(response.data.transactionResponse)
+    //     return validateResponse
+    //   }
+
+    //   case 'CANCELLED': {
+    //     const validateResponse = await ValidateResponsePayment(response.data.transactionResponse)
+    //     return validateResponse
+    //   }
+    // }
+  }
 
   async payCash () {}
 
   async payDebit () {}
-
-  async findTransaction (data) {
-    const transaction = await MakeTransactionPayU(data)
-    const response = await axios.post(MakeUrlPayU, transaction)
-    return response.data.result.payload
-  }
 }
 
 module.exports = new PayU()

@@ -3,27 +3,73 @@ const UserModel = require('../models/userSchema')
 const SuperMarketSchema = require('../models/supermarketSchema')
 const DeliverySchema = require('../models/deliverySchema')
 const PromotionSchema = require('../models/promotionSchema')
+const AvailabilitySchema = require('../models/availabilitySchema')
+const PayUController = require('../controllers/payUController')
 const makeCode = require('../utils/makeCode')
 
 class OrderService {
-  async create (data) {
-    const order = await OrderServiceModel.create(data)
-    if (order._id) {
-      if (data.promotions) {
-        let credits = 0
-        for (const object of data.promotions) {
-          const promotion = await PromotionSchema.get({ _id: object.promotion })
-          credits += promotion.credits ? parseInt(promotion.credits) * parseInt(object.quantity) : 0
-        }
-        await UserModel.update(data.user, { credits })
+  async create(data) {
+    const countOrder = await OrderServiceModel.count()
+    const valueProducts = await this.calculateValueProducts(data.products)
+    const valuePromotions = await this.calculateValuePromotions(data.promotions)
+    const user = await UserModel.get({ _id: data.user })
+    data.value = parseInt(valueProducts) + parseInt(valuePromotions)
+    data.user = user
+    // data.referenceCode = 'holaprueba133456'
+    data.methodPayment = data.card.paymentType
+    data.referenceCode = countOrder
+    if (data.card.paymentType.toString() === 'credit') {
+      const paymentResponse = await PayUController.payCredit(data)
+      if (paymentResponse === true) {
+        const order = await OrderServiceModel.create(data)
+        await this.validateOfferOrCreditsPromotions({ _id: user._id }, data.promotions)
+        return { estado: true, data: order, mensaje: null }
+      } else {
+        return paymentResponse
       }
-      return { estado: true, data: order, mensaje: null }
-    } else {
-      return { estado: false, data: [], mensaje: 'No se pudo crear la orden de servicio' }
     }
   }
 
-  async all (data) {
+  async calculateValueProducts(products) {
+    if (products.length > 0) {
+      let value = 0
+      for (const object of products) {
+        const product = await AvailabilitySchema.get({ idProduct: object.product })
+        value += parseInt(product.price) * parseInt(object.quantity)
+      }
+      return value
+    } else {
+      return 0
+    }
+  }
+
+  async calculateValuePromotions(promotions) {
+    if (promotions.length > 0) {
+      let value = 0
+      for (const object of promotions) {
+        const promotion = await PromotionSchema.get({ _id: object.promotion })
+        value += parseInt(promotion.value) * parseInt(object.quantity)
+      }
+      return value
+    } else {
+      return 0
+    }
+  }
+
+  async validateOfferOrCreditsPromotions(_id, promotions) {
+    const user = UserModel.get(_id)
+    let credits = 0
+    parseInt(user.credits) === 0 ? credits = 0 : credits = parseInt(user.credits)
+    if (promotions.length > 0) {
+      for (const object of promotions) {
+        const promotion = await PromotionSchema.get({ _id: object.promotion })
+        credits += promotion.credits ? parseInt(promotion.credits) * parseInt(object.quantity) : 0
+      }
+      await UserModel.update(user._id, { credits })
+    }
+  }
+
+  async all(data) {
     const orders = await OrderServiceModel.search(data)
     if (orders.length > 0) {
       return { estado: true, data: orders, mensaje: null }
@@ -32,7 +78,7 @@ class OrderService {
     }
   }
 
-  async detail (data) {
+  async detail(data) {
     const order = await OrderServiceModel.get(data)
     if (order._id) {
       return { estado: true, data: order, mensaje: null }
@@ -41,7 +87,7 @@ class OrderService {
     }
   }
 
-  async edit (_id, data) {
+  async edit(_id, data) {
     const order = await OrderServiceModel.get({ _id })
     switch (data.status) {
       case parseInt(1): {
@@ -82,7 +128,7 @@ class OrderService {
     }
   }
 
-  async forSupermarket (data) {
+  async forSupermarket(data) {
     const supermarket = await SuperMarketSchema.get(data)
     const orders = await OrderServiceModel.search({ superMarket: supermarket._id })
     if (orders.length > 0) {
@@ -92,7 +138,7 @@ class OrderService {
     }
   }
 
-  async countGeneral () {
+  async countGeneral() {
     const countsUsers = await UserModel.count({ rol: 'client' })
     const countOrder = await OrderServiceModel.count()
     const orders = await OrderServiceModel.search({})
@@ -101,7 +147,7 @@ class OrderService {
     return { countOrder, userCount: countsUsers, countOrderFinish: countOrderFinish.length, countOrderWait: countOrderWait.length }
   }
 
-  async countOrdersForSupermarket (supermarket) {
+  async countOrdersForSupermarket(supermarket) {
     const countOrder = await OrderServiceModel.count({ superMarket: supermarket })
     const orders = await OrderServiceModel.search({ superMarket: supermarket })
     const countOrderFinish = await orders.filter(obj => parseInt(obj.status) === parseInt(4))

@@ -49,16 +49,13 @@ const Schema = new mongoose.Schema({
     require: [true, 'La descripción es requerida']
   },
   category: {
-    type: Types.ObjectId,
-    require: [true, 'La categoria es requerida']
+    type: Types.ObjectId
   },
   defaultPrice: {
-    type: Types.Number,
-    require: [true, 'El precio es requerido']
+    type: Types.Number
   },
   image: [{
-    type: Types.String,
-    require: [true, 'La imagen es requerida']
+    type: Types.String
   }],
   offert: {
     type: Types.Number,

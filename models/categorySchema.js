@@ -43,6 +43,9 @@ const Schema = new mongoose.Schema({
   isActive: {
     type: Types.Boolean,
     default: true
+  },
+  principal: {
+    type: Types.String
   }
 })
 

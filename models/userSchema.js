@@ -150,7 +150,8 @@ const Schema = new mongoose.Schema({
     type: Types.String
   },
   credits: {
-    type: Types.String
+    type: Types.Number,
+    default: 0
   },
   logs: [{
     type: Types.Mixed

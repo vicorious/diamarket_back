@@ -239,9 +239,6 @@ routesOrderServiceWeb.put('/:id', async (request, response) => {
  *      schema:
  *        type: object
  *        properties:
- *          referenceCode:
- *            type: string
- *            example: referencia de pago de payu
  *          direction:
  *            type: object
  *            properties:
@@ -259,9 +256,6 @@ routesOrderServiceWeb.put('/:id', async (request, response) => {
  *                    items:
  *                      type: string
  *                      example: 4.6564955, -74.0652501
- *          methodPayment:
- *            type: string
- *            example: credit
  *          superMarket:
  *            type: string
  *            example: id de mongo del supermercado
@@ -285,9 +279,29 @@ routesOrderServiceWeb.put('/:id', async (request, response) => {
  *                quantity:
  *                  type: number
  *                  example: 1
- *          value:
- *            type: number
- *            example: 412321
+ *          description:
+ *            type: string
+ *          card:
+ *            type: object
+ *            properties:
+ *              type:
+ *                type: string
+ *                example: VISA
+ *              number:
+ *                type: string
+ *                example: 4456529125264266
+ *              securityCode:
+ *                type: string
+ *                example: 457
+ *              expirationDate:
+ *                type: string
+ *                example: 2023/01 primero el año luego el mes
+ *              name: 
+ *                type: string
+ *                example: visa
+ *              paymentType:
+ *                type: string
+ *                example: credit
  *    responses:
  *      200:
  *        description: Se crea la orden de servicio
@@ -316,7 +330,7 @@ routesOrderServiceWeb.put('/:id', async (request, response) => {
  *              example: []
  *            mensaje:
  *              type: string
- *              example: no se ha podido crear la orden de servicio
+ *              example: La red financiera reportó que la transacción fue inválida.
  */
 routesOrderServiceApp.post('', isClient, async (request, response) => {
   const data = request.body

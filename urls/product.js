@@ -1,5 +1,4 @@
 'use strict'
-
 const express = require('express')
 const asyncify = require('express-asyncify')
 const ProductController = require('../controllers/productController')
@@ -8,9 +7,8 @@ const { convertBase64ToFile } = require('../middleware/convertBase64File')
 const routesProductApp = asyncify(express.Router())
 const routesProductWeb = asyncify(express.Router())
 
-routesProductWeb.post('', convertBase64ToFile, async (request, response) => {
-  const data = request.body
-  const create = await ProductController.create(data)
+routesProductWeb.get('/createpos', convertBase64ToFile, async (request, response) => {
+  const create = await ProductController.createPost()
   response.json(create)
 })
 

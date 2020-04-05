@@ -134,6 +134,9 @@ const Schema = new mongoose.Schema({
   schedules: [{
     type: Types.Mixed
   }],
+  idPos: {
+    type: Types.String
+  },
   dateCreate: {
     type: Types.Date,
     default: Date.now
@@ -147,7 +150,7 @@ class Supermarket extends Base {
     super()
     this.sort = { email: 1 }
     this.model = mongoose.model('Supermarket', Schema)
-    this.fields = 'status name address calification location neigborhood cellPhone locality email logo images isActive idAdmin schedules dateCreate'
+    this.fields = 'status name address calification location neigborhood cellPhone locality email logo images isActive idAdmin schedules dateCreate idPos'
     this.populate = [{ path: 'idAdmin', select: '_id name rol directions idetification email ', model: 'User' }]
   }
 }

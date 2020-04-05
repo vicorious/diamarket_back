@@ -24,12 +24,11 @@ class Auth {
 
   async createTokenFirebase(data) {
     const verifyToken = await AdminFirebase.auth().verifyIdToken(data.token)
-    console.log(verifyToken)
-    const userFirebase = await AdminFirebase.auth().getUser(verifyToken)
+    const userFirebase = await AdminFirebase.auth().getUser(verifyToken.user_id)
     const userDataBase = await UserModel.get({ email: userFirebase.email })
     if (userDataBase._id) {
       await UserModel.update(userDataBase._id, { uidFireBase: userFirebase.uid, tokenAuth: data.token, tokenCloudingMessagin: data.tokenCloudingMessagin })
-      const token = jwt.sign({ _id: user._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
+      const token = jwt.sign({ _id: userDataBase._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
       return { estado: true, data: {token: token, user: userDataBase}, mensaje: null }
     }  else {
       const dataUser = {
@@ -37,14 +36,14 @@ class Auth {
         tokenAuth: data.token, 
         tokenCloudingMessagin: data.tokenCloudingMessagin,
         rol: 'client',
-        password: '0000'
+        password: '0000',
+        isActive: true
       }
-      userFirebase.phoneNumber ? dataUser.cellPhone = userFirebase.phoneNumber : data.cellPhone = '000000000000'
-      userFirebase.photoURL ? dataUser.image = userFirebase.photoURL : data.image = 'no aplica'
-      userFirebase.displayName ? data.name = userFirebase.name : data.name = 'Firebase'
-      userFirebase.email ? data.email = userFirebase.email : data.email = 'firebase@firebas.com'
+      userFirebase.phoneNumber ? dataUser.cellPhone = userFirebase.phoneNumber : dataUser.cellPhone = '000000000000'
+      userFirebase.photoURL ? dataUser.image = userFirebase.photoURL : dataUser.image = 'no aplica'
+      userFirebase.displayName ? dataUser.name = userFirebase.name : dataUser.name = 'Firebase'
+      userFirebase.email ? dataUser.email = userFirebase.email : dataUser.email = 'firebase@firebas.com'
       const newUserFirebase =  await UserModel.create(dataUser)
-      console.log(newUserFirebase)
       const userNew = await UserModel.get({ _id: newUserFirebase })
       const token = jwt.sign({ _id: newUserFirebase._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
       return { estado: true, data: {token: token, user: userNew}, mensaje: null }
