@@ -176,7 +176,7 @@ class User extends Base {
     super()
     this.sort = { email: 1 }
     this.model = mongoose.model('User', Schema)
-    this.fields = '_id isActive dateCreate logs cards directions userList order name identification email cellPhone rol supermarketFavorite  birthday credits image workingSupermarket tokenCloudingMessagin tokenAuth uidFireBase'
+    this.fields = '_id isActive dateCreate logs cards directions userList order name identification email cellPhone rol supermarketFavorite  birthday credits image workingSupermarket   '
     this.populate = [{
       path: 'supermarketFavorite',
       select: 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules dateCreate',

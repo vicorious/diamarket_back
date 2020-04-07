@@ -58,7 +58,7 @@ module.exports = function (data) {
       deviceSessionId: "vghs6tvkcle931686k1900o6e1",
       ipAddress: "127.0.0.1"
     },
-    test: false
+    test: true
   }
   return obj
 }
