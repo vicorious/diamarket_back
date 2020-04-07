@@ -26,7 +26,7 @@ class Category {
             description: object.f106_descripcion,
             principal: categoryPrincipal.f106_descripcion
           }
-          const getCategory = CategoryModel.get({ name: object.f106_descripcion })
+          const getCategory = await CategoryModel.get({ name: object.f106_descripcion })
           if (!getCategory._id) {
             const createCategory = await CategoryModel.create(data)
             const h = await productsForCategorySchema.create({category: createCategory._id, idPosProduct: object.f125_rowid_item})

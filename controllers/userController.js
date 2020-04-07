@@ -10,7 +10,7 @@ const SuperMarketSchema = require('../models/supermarketSchema')
 const uuid = require('node-uuid')
 
 class User {
-  async create (data) {
+  async create(data) {
     const isExists = await UserModel.get({ email: data.email })
     data.verifyCode = await makeCode()
     if (!isExists._id) {
@@ -62,7 +62,7 @@ class User {
     }
   }
 
-  async createSocial (data) {
+  async createSocial(data) {
     const isExist = await UserModel.get({ email: data.email })
     if (!isExist._id) {
       const password = await makeCode()
@@ -81,7 +81,7 @@ class User {
     }
   }
 
-  async validate (data) {
+  async validate(data) {
     const isExist = await UserModel.get({ email: data.email, verifyCode: data.code })
     if (isExist._id) {
       const code = await makeCode()
@@ -93,7 +93,7 @@ class User {
     }
   }
 
-  async sendCode (data) {
+  async sendCode(data) {
     const user = await UserModel.get({ cellPhone: data.cellPhone })
     if (user._id) {
       const code = await makeCode()
@@ -105,7 +105,7 @@ class User {
     }
   }
 
-  async sendEmailPassword (email) {
+  async sendEmailPassword(email) {
     const code = await makeCode()
     const isExist = await UserModel.get({ email })
     if (isExist._id) {
@@ -117,7 +117,7 @@ class User {
     }
   }
 
-  async updatePassword (data) {
+  async updatePassword(data) {
     const codeRandom = await makeCode()
     const user = await UserModel.get({ verifyCode: data.code })
     if (user._id) {
@@ -130,7 +130,7 @@ class User {
     }
   }
 
-  async update (id, data) {
+  async update(id, data) {
     const isExist = await UserModel.get({ _id: id })
     if (data.password) {
       const encriptar = await makePassword(data.password)
@@ -144,7 +144,7 @@ class User {
     }
   }
 
-  async createDirection (_id, data) {
+  async createDirection(_id, data) {
     const isExist = await UserModel.get(_id)
     data.uid = uuid.v4()
     if (isExist._id) {
@@ -160,7 +160,7 @@ class User {
     }
   }
 
-  async detail (id) {
+  async detail(id) {
     const user = await UserModel.get(id)
     if (user._id) {
       if (user.rol === 'administrator') {
@@ -179,7 +179,7 @@ class User {
     }
   }
 
-  async all (data) {
+  async all(data) {
     const user = await UserModel.search(data)
     if (user.length > 0) {
       return { estado: true, data: user, mensaje: null }
@@ -188,7 +188,7 @@ class User {
     }
   }
 
-  async clientSupermarket (_id) {
+  async clientSupermarket(_id) {
     const orders = await OrderSchema.search({ superMarket: _id })
     const clients = []
     if (orders.length > 0) {
@@ -208,16 +208,20 @@ class User {
     }
   }
 
-  async administratorsWithoutSupermarket () {
+  async administratorsWithoutSupermarket() {
     const users = await UserModel.search({ rol: 'administrator' })
     const supermarkets = await SuperMarketSchema.search({ idAdmin: { $exists: true } })
     const administrators = []
-    for (const user of users) {
-      for (const supermarket of supermarkets) {
-        if (supermarket.idAdmin !== user._id) {
-          administrators.push(user)
+    if (supermarkets.length > 0) {
+      for (const user of users) {
+        for (const supermarket of supermarkets) {
+          if (supermarket.idAdmin !== user._id) {
+            administrators.push(user)
+          }
         }
       }
+    } else {
+      administrators = users
     }
     if (administrators.length > 0) {
       return { estado: true, data: administrators, mensaje: null }
@@ -226,7 +230,7 @@ class User {
     }
   }
 
-  async clientsForSuperMarket (data) {
+  async clientsForSuperMarket(data) {
     const user = await UserModel.get(data)
     const supermarket = await SuperMarketSchema.get({ idAdmin: user._id })
     const users = await UserModel.search({ supermarketFavorite: supermarket })
@@ -237,7 +241,7 @@ class User {
     }
   }
 
-  async domiciliaryForSuperMarket (_id) {
+  async domiciliaryForSuperMarket(_id) {
     const supermarket = await SuperMarketSchema.get({ idAdmin: _id })
     const users = await UserModel.search({ workingSupermarket: supermarket._id })
     if (users.length > 0) {
@@ -247,7 +251,7 @@ class User {
     }
   }
 
-  async countClientsForSuperMarket (supermarket) {
+  async countClientsForSuperMarket(supermarket) {
     const orders = await OrderSchema.search({ superMarket: supermarket })
     const clients = []
     if (orders.length > 0) {
