@@ -43,9 +43,9 @@ class Base {
 
   async search (data) {
     try {
-      let objects = await this.model.find(data, this.fields).sort(this.sort)
+      let objects = await this.model.find(data, this.fields).sort(this.sort).limit(500)
       if (this.populate) {
-        objects = await this.model.find(data, this.fields).populate(this.populate).sort(this.sort)
+        objects = await this.model.find(data, this.fields).populate(this.populate).sort(this.sort).limit(500)
       }
       return objects
     } catch (error) {
