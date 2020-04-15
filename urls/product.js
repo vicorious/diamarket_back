@@ -410,7 +410,7 @@ routesProductApp.get('/detail/:id', isClient, async (request, response) => {
 
 /**
  * @swagger
- * /app/product/forname:
+ * /app/product/forname/{page}:
  *  post:
  *    tags:
  *      - Product
@@ -421,6 +421,10 @@ routesProductApp.get('/detail/:id', isClient, async (request, response) => {
  *    - in: header
  *      name: Authorization
  *      type: string
+ *      required: true
+ *    - in: path
+ *      name: page
+ *      type: number
  *      required: true
  *    - in: body
  *      name: body
@@ -461,9 +465,11 @@ routesProductApp.get('/detail/:id', isClient, async (request, response) => {
  *              example: "No existe productos cor este nombre"
  */
 
-routesProductApp.post('/forname', isClient, async (request, response) => {
-  const data = request.body
-  const products = await ProductController.productsForName(data)
+routesProductApp.post('/forname/:page', async (request, response) => {
+  const page = request.params.page
+  let data = request.body
+  data.name = { $regex: data.name, $options: 'i' }
+  const products = await ProductController.productsForName(data, 50, page)
   response.json(products)
 })
 
