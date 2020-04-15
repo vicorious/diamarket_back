@@ -19,12 +19,22 @@ class PayU {
           return validateResponse
         }
 
-        case 'CANCELLED': {
+        case 'ERROR': {
+          const validateResponse = await ValidateResponsePayment(response.data.transactionResponse)
+          return validateResponse
+        }
+
+        case 'EXPIRED': {
           const validateResponse = await ValidateResponsePayment(response.data.transactionResponse)
           return validateResponse
         }
 
         case 'PENDING': {
+          const validateResponse = await ValidateResponsePayment(response.data.transactionResponse)
+          return validateResponse
+        }
+        
+        case 'CANCELLED': {
           const validateResponse = await ValidateResponsePayment(response.data.transactionResponse)
           return validateResponse
         }
