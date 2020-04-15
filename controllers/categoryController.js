@@ -41,6 +41,7 @@ class Category {
 
   async assignCategoryPos () {
     const producstForCategory = await productsForCategorySchema.search({})
+    console.log(producstForCategory)
     for (const object of producstForCategory) {
       const product = await ProductModel.get({ idPos: object.idPosProduct })
       if (product._id) {

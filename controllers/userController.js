@@ -211,7 +211,7 @@ class User {
   async administratorsWithoutSupermarket() {
     const users = await UserModel.search({ rol: 'administrator' })
     const supermarkets = await SuperMarketSchema.search({ idAdmin: { $exists: true } })
-    const administrators = []
+    let administrators = []
     if (supermarkets.length > 0) {
       for (const user of users) {
         for (const supermarket of supermarkets) {

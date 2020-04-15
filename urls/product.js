@@ -74,7 +74,7 @@ routesProductWeb.put('/:id', convertBase64ToFile, isAdminAndIsSuperAdmin, async 
 
 /**
  * @swagger
- * /web/product:
+ * /web/product/{quantity}/{page}?idSupermarket=idMongo OR idSupermarket=idMongo&name=nombredelproducto OR idSupermarket=idMongo&&category=idMongo:
  *  get:
  *    tags:
  *      - Product
@@ -133,20 +133,23 @@ routesProductWeb.put('/:id', convertBase64ToFile, isAdminAndIsSuperAdmin, async 
  *              type: string
  *              example: no existen productos
  */
-routesProductWeb.get('', isSuperAdmin, async (request, response) => {
+routesProductWeb.get('/:quantity/:page', isSuperAdmin, async (request, response) => {
+  const page = request.params.page
+  const quantity = request.params.quantity
   const query = request.query
   if (query.idSupermarket && query.category) {
-    const products = await ProductController.productsForCategory(query)
+    console.log(query)
+    const products = await ProductController.productsForCategory(query, quantity, page)
     response.json(products)
   } else if (query.name && query.idSupermarket) {
     query.name = { $regex: query.name, $options: 'i' }
-    const products = await ProductController.productsForName(query)
+    const products = await ProductController.productsForName(query, quantity, page)
     response.json(products)
   } else if (query.idSupermarket) {
-    const products = await ProductController.all(query)
+    const products = await ProductController.all(query, quantity, page)
     response.json(products)
   } else {
-    const products = await ProductController.all({})
+    const products = await ProductController.all({}, quantity, page)
     response.json(products)
   }
 })
@@ -200,6 +203,7 @@ routesProductWeb.get('/forsupermarket', isAdmin, async (request, response) => {
   const query = request.query
   const _id = request.User.id
   const products = await ProductController.forSuperMarket(_id, query)
+  console.log(products)
   response.json(products)
 })
 
@@ -269,9 +273,10 @@ routesProductWeb.post('/forname', isSuperAdmin, isAdmin, async (request, respons
  *              example: "Este supermercado no tiene productos"
  */
 
-routesProductApp.get('/forsupermarket/:id', isClient, async (request, response) => {
+routesProductApp.get('/forsupermarket/:id', async (request, response) => {
   const idSupermarket = request.params.id
   const products = await ProductController.productsSuperMarkets(idSupermarket)
+  console.log(products)
   response.json(products)
 })
 
