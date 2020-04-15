@@ -74,7 +74,7 @@ routesProductWeb.put('/:id', convertBase64ToFile, isAdminAndIsSuperAdmin, async 
 
 /**
  * @swagger
- * /web/product/{quantity}/{page}?idSupermarket=idMongo OR idSupermarket=idMongo&name=nombredelproducto OR idSupermarket=idMongo&&category=idMongo:
+ * /web/product/{quantity}/{page}? OR idSupermarket=idMongo OR idSupermarket=idMongo&name=nombredelproducto OR idSupermarket=idMongo&&category=idMongo:
  *  get:
  *    tags:
  *      - Product
@@ -156,7 +156,7 @@ routesProductWeb.get('/:quantity/:page', isSuperAdmin, async (request, response)
 
 /**
  * @swagger
- * /web/product/forsupermarket:
+ * /web/product/forsupermarket/{quantity}/{page} OR &name=nombredelproductoafiltrar OR category=idmongo:
  *  get:
  *    tags:
  *      - Product
