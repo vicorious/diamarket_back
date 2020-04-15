@@ -146,7 +146,6 @@ routesProductWeb.get('/:quantity/:page', isSuperAdmin, async (request, response)
   const quantity = request.params.quantity
   const query = request.query
   if (query.idSupermarket && query.category) {
-    console.log(query)
     const products = await ProductController.productsForCategory(query, quantity, page)
     response.json(products)
   } else if (query.name && query.idSupermarket) {
@@ -282,7 +281,7 @@ routesProductWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request, resp
  *              example: "Este supermercado no tiene productos"
  */
 
-routesProductApp.get('/forsupermarket/:id/:page', async (request, response) => {
+routesProductApp.get('/forsupermarket/:id/:page', isClient, async (request, response) => {
   const idSupermarket = request.params.id
   const page = request.params.page
   const products = await ProductController.productsSuperMarkets(idSupermarket, page)
@@ -291,7 +290,7 @@ routesProductApp.get('/forsupermarket/:id/:page', async (request, response) => {
 
 /**
  * @swagger
- * /app/product/forcategory:
+ * /app/product/forcategory/{page}:
  *  post:
  *    tags:
  *      - Product
@@ -302,6 +301,10 @@ routesProductApp.get('/forsupermarket/:id/:page', async (request, response) => {
  *    - in: header
  *      name: Authorization
  *      type: string
+ *      required: true
+ *    - in: path
+ *      name: page
+ *      type: number
  *      required: true
  *    - in: body
  *      name: body
@@ -344,9 +347,10 @@ routesProductApp.get('/forsupermarket/:id/:page', async (request, response) => {
  *              example: "Esta categoria no tiene productos"
  */
 
-routesProductApp.post('/forcategory', isClient, async (request, response) => {
+routesProductApp.post('/forcategory/:page', isClient, async (request, response) => {
+  const page = request.params.page
   const data = request.body
-  const products = await ProductController.productsForCategory(data)
+  const products = await ProductController.productsForCategory(data, 50, page)
   response.json(products)
 })
 
