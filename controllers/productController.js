@@ -71,8 +71,9 @@ class Product {
     return { estado: true, data: products, mensaje: null }
   }
 
-  async productsSuperMarkets(idSupermarket) {
-    const products = await AvailabilityModel.search({ idSupermarket, isActive: true })
+  async productsSuperMarkets(idSupermarket, page) {
+    const products = await AvailabilityModel.searchByLimit({ idSupermarket, isActive: true }, page)
+    console.log(products.length)
     if (products.length > 0) {
       return { estado: true, data: products, mensaje: null }
     } else {

@@ -6,7 +6,7 @@ class Base {
     this.model = undefined
     this.populate = undefined
     this.sort = undefined
-    this.perPage = 20
+    this.perPage = 50
     this.fields = undefined
   }
 
@@ -63,6 +63,24 @@ class Base {
       return results
     } else {
       return []
+    }
+  }
+
+  async searchByLimit(data, page) {
+    if (parseInt(page) === 1) {
+      let results = await this.model.find(data, this.fields).skip((50 * page) - 50).sort(this.sort).limit(50).exec()
+      if (this.populate) {
+        results = await this.model.find(data, this.fields).populate(this.populate).skip((50 * page) - 50).sort(this.sort).limit(50).exec()
+      }
+      return results
+    } else if (parseInt(page) === 2) {
+      let results = await this.model.find(data, this.fields).skip((50 * page) - 50).sort(this.sort).exec()
+      if (this.populate) {
+        results = await this.model.find(data, this.fields).populate(this.populate).skip((50 * page) - 50).sort(this.sort).exec()
+      }
+      return results
+    } else {
+      return []
     }
   }
 

@@ -78,13 +78,21 @@ routesProductWeb.put('/:id', convertBase64ToFile, isAdminAndIsSuperAdmin, async 
  *  get:
  *    tags:
  *      - Product
- *    description: Este endpoint lista los productos
+ *    description: Este endpoint lista los productos segun la cantidad solicitada y el paginamiento
  *    produces:
  *    - applications/json
  *    parameters:
  *    - in: header
  *      name: Authorization
  *      type: string
+ *      required: true
+ *    - in: path
+ *      name: quantity
+ *      type: number
+ *      required: true
+ *    - in: path 
+ *      name: page
+ *      type: number
  *      required: true
  *    responses:
  *      200:
@@ -160,13 +168,21 @@ routesProductWeb.get('/:quantity/:page', isSuperAdmin, async (request, response)
  *  get:
  *    tags:
  *      - Product
- *    description: Este endpoint lista los productos de un supermercado
+ *    description: Este endpoint lista los productos de un supermercado segun la cantidad solicitada y la pagina
  *    produces:
  *    - applications/json
  *    parameters:
  *    - in: header
  *      name: Authorization
  *      type: string
+ *      required: true
+ *    - in: path
+ *      name: quantity
+ *      type: number
+ *      requiered: true
+ *    - in: page
+ *      name: page
+ *      type: number
  *      required: true
  *    responses:
  *      200:
@@ -208,31 +224,19 @@ routesProductWeb.get('/forsupermarket/:quantity/:page', isAdmin, async (request,
   response.json(products)
 })
 
-routesProductWeb.post('/forcategory', isAdmin, async (request, response) => {
-  const data = request.body
-  const products = await ProductController.productsForCategory(data)
-  response.json(products)
-})
-
 routesProductWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request, response) => {
   const _id = request.params.id
   const detail = await ProductController.detail({ _id })
   response.json(detail)
 })
 
-routesProductWeb.post('/forname', isSuperAdmin, isAdmin, async (request, response) => {
-  const data = request.body
-  const products = await ProductController.productsForName(data)
-  response.json(products)
-})
-
 /**
  * @swagger
- * /app/product/forsupermarket/{id}:
+ * /app/product/forsupermarket/{id}/{page}:
  *  get:
  *    tags:
  *      - Product
- *    description: Este endpoint lista los productos según el id de el supermercado
+ *    description: Este endpoint lista los productos según el id de el supermercado, si el page es 1 devuelvo 50 productos, si el page es 2 devuelvo el total de los productos restandoles los primeros 50 enviados
  *    produces:
  *    - applications/json
  *    parameters:
@@ -243,6 +247,10 @@ routesProductWeb.post('/forname', isSuperAdmin, isAdmin, async (request, respons
  *    - in: path
  *      name: id
  *      type: string
+ *      required: true
+ *    - in: path
+ *      name: page
+ *      type: number
  *      required: true
  *    responses:
  *      200:
@@ -274,17 +282,17 @@ routesProductWeb.post('/forname', isSuperAdmin, isAdmin, async (request, respons
  *              example: "Este supermercado no tiene productos"
  */
 
-routesProductApp.get('/forsupermarket/:id', async (request, response) => {
+routesProductApp.get('/forsupermarket/:id/:page', async (request, response) => {
   const idSupermarket = request.params.id
-  const products = await ProductController.productsSuperMarkets(idSupermarket)
-  console.log(products)
+  const page = request.params.page
+  const products = await ProductController.productsSuperMarkets(idSupermarket, page)
   response.json(products)
 })
 
 /**
  * @swagger
  * /app/product/forcategory:
- *  get:
+ *  post:
  *    tags:
  *      - Product
  *    description: Este endpoint lista los productos según la categoria y el supermercado
@@ -399,7 +407,7 @@ routesProductApp.get('/detail/:id', isClient, async (request, response) => {
 /**
  * @swagger
  * /app/product/forname:
- *  get:
+ *  post:
  *    tags:
  *      - Product
  *    description: Este endpoint detalla un producto según el nombre y el supermercado
