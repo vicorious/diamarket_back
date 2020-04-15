@@ -56,7 +56,6 @@ class Base {
 
   async searchByPage (data, page) {
     if (page > 0) {
-      console.log(page, this.perPage)
       let results = await this.model.find(data, this.fields).skip((this.perPage * page) - this.perPage).sort(this.sort).limit(this.perPage).exec()
       if (this.populate) {
         results = await this.model.find(data, this.fields).populate(this.populate).skip((this.perPage * page) - this.perPage).sort(this.sort).limit(this.perPage).exec()

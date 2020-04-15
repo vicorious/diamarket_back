@@ -74,7 +74,7 @@ routesProductWeb.put('/:id', convertBase64ToFile, isAdminAndIsSuperAdmin, async 
 
 /**
  * @swagger
- * /web/product/{quantity}/{page}?idSupermarket=idMongo OR idSupermarket=idMongo&name=nombredelproducto OR idSupermarket=idMongo&&category=idMongo:
+ * /web/product/{quantity}/{page}? OR idSupermarket=idMongo OR idSupermarket=idMongo&name=nombredelproducto OR idSupermarket=idMongo&&category=idMongo:
  *  get:
  *    tags:
  *      - Product
@@ -156,7 +156,7 @@ routesProductWeb.get('/:quantity/:page', isSuperAdmin, async (request, response)
 
 /**
  * @swagger
- * /web/product/forsupermarket:
+ * /web/product/forsupermarket/{quantity}/{page} OR &name=nombredelproductoafiltrar OR category=idmongo:
  *  get:
  *    tags:
  *      - Product
@@ -199,11 +199,12 @@ routesProductWeb.get('/:quantity/:page', isSuperAdmin, async (request, response)
  *              type: string
  *              example: No existen productos para este supermercado
  */
-routesProductWeb.get('/forsupermarket', isAdmin, async (request, response) => {
+routesProductWeb.get('/forsupermarket/:quantity/:page', isAdmin, async (request, response) => {
+  const quantity = request.params.quantity
+  const page = request.params.page
   const query = request.query
   const _id = request.User.id
-  const products = await ProductController.forSuperMarket(_id, query)
-  console.log(products)
+  const products = await ProductController.forSuperMarket(_id, query, quantity, page)
   response.json(products)
 })
 

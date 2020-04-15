@@ -7,7 +7,7 @@ const MsSql = require('mssql')
 const { DATABASES } = require('../config/settings')
 
 class Product {
-  async createPost () {
+  async createPost() {
     const products = await MsSql.query`
     SELECT items.f120_rowid as 'id_product', items.f120_descripcion as 'name_product', items.f120_descripcion_corta
     FROM dbo.t120_mc_items as items
@@ -26,7 +26,7 @@ class Product {
     }
   }
 
-  async create (data) {
+  async create(data) {
     const isExist = await ProductModel.get({ name: data.name })
     if (!isExist._id) {
       const product = await ProductModel.create(data)
@@ -40,7 +40,7 @@ class Product {
     }
   }
 
-  async update (id, data) {
+  async update(id, data) {
     const isExist = await ProductModel.get(id)
     if (isExist._id) {
       const update = await ProductModel.update(id, data)
@@ -50,7 +50,7 @@ class Product {
     }
   }
 
-  async detail (id) {
+  async detail(id) {
     const isExist = await ProductModel.get(id)
     if (isExist._id) {
       return { estado: true, data: isExist, mensaje: null }
@@ -59,7 +59,7 @@ class Product {
     }
   }
 
-  async all (data, quantity, page) {
+  async all(data, quantity, page) {
     AvailabilityModel.perPage = parseInt(quantity)
     const products = []
     const availability = await AvailabilityModel.searchByPage(data, page)
@@ -71,7 +71,7 @@ class Product {
     return { estado: true, data: products, mensaje: null }
   }
 
-  async productsSuperMarkets (idSupermarket) {
+  async productsSuperMarkets(idSupermarket) {
     const products = await AvailabilityModel.search({ idSupermarket, isActive: true })
     if (products.length > 0) {
       return { estado: true, data: products, mensaje: null }
@@ -80,7 +80,7 @@ class Product {
     }
   }
 
-  async productsForCategory (data, quantity, page) {
+  async productsForCategory(data, quantity, page) {
     ProductModel.perPage = parseInt(quantity)
     const products = await ProductModel.searchByPage({ category: data.category }, page)
     const arrayProducts = []
@@ -97,7 +97,7 @@ class Product {
     }
   }
 
-  async productsForName (data, quantity, page) {
+  async productsForName(data, quantity, page) {
     AvailabilityModel.perPage = parseInt(quantity)
     const products = await ProductModel.searchByPage({ name: data.name }, page)
     const arrayProducts = []
@@ -114,39 +114,43 @@ class Product {
     }
   }
 
-  async forSuperMarket (_id, query) {
+  async forSuperMarket (_id, query, quantity, page) {
     const availability = []
     const superMarket = await SuperMarketModel.get({ idAdmin: _id })
     if (query.name) {
+      ProductModel.perPage = parseInt(quantity)
       query.name = { $regex: query.name, $options: 'i' }
-      const products = await ProductModel.search(query)
+      const products = await ProductModel.searchByPage(query, page)
       for (const object of products) {
         const category = await CategoryModel.get({ _id: object.category })
         const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket._id, idProduct: object._id })
-        object._doc.idProduct._doc.category = category
         if (availabilityProduct._id) {
-          availability.push(object)
+          availabilityProduct._doc.idProduct._doc.category = category
+          availability.push(availabilityProduct)
         }
       }
     } else if (query.category) {
-      const products = await ProductModel.search(query)
+      ProductModel.perPage = parseInt(quantity)
+      const products = await ProductModel.searchByPage(query, page)
       for (const object of products) {
         const category = await CategoryModel.get({ _id: object.category })
         const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket._id, idProduct: object._id })
-        console.log(availabilityProduct)
-        object._doc.idProduct._doc.category = category
         if (availabilityProduct._id) {
-          availability.push(object)
+          availabilityProduct._doc.idProduct._doc.category = category
+          availability.push(availabilityProduct)
         }
       }
     } else if (!query.name && !query.category) {
-      const availabilityProduct = await AvailabilityModel.search({ idSupermarket: superMarket._id })
+      AvailabilityModel.perPage = parseInt(quantity)
+      const availabilityProduct = await AvailabilityModel.searchByPage({ idSupermarket: superMarket._id }, page)
+      console.log(availabilityProduct)
       for (const object of availabilityProduct) {
         const category = await CategoryModel.get({ _id: object.idProduct.category })
         object._doc.idProduct._doc.category = category
         availability.push(object)
       }
     }
+    console.log(availability.length)
     if (availability.length > 0) {
       return { estado: true, data: availability, mensaje: null }
     } else {
@@ -154,32 +158,32 @@ class Product {
     }
   }
 
-//   async categoryData () {
-//     try {
-//       const categorys = await categoryModel.search({})
-//       let count = 0
-//       for (let r = 0; r <= 20; r++) {
-//         for (const category of categorys) {
-//           count++
-//           const random = await generalController.createCode()
-//           const obj = {
-//             image: ['https://jumbocolombiafood.vteximg.com.br/arquivos/ids/3323070-750-750/7702129075275-1.jpg?v=636670897146530000'],
-//             idPos: random,
-//             name: `Jamón${count}`,
-//             description: 'Descripción de el producto',
-//             category: category.name,
-//             defaultprice: 12300
-//           }
-//           const create = await ProductModel.create(obj)
-//           console.log(create)
-//         }
-//       }
-//       return 'Successful!'
-//     } catch (error) {
-//       console.log(error)
-//       return 'Failure!'
-//     }
-//   }
+    async categoryData () {
+      try {
+        const categorys = await categoryModel.search({})
+        let count = 0
+        for (let r = 0; r <= 20; r++) {
+          for (const category of categorys) {
+            count++
+            const random = await generalController.createCode()
+            const obj = {
+              image: ['https://jumbocolombiafood.vteximg.com.br/arquivos/ids/3323070-750-750/7702129075275-1.jpg?v=636670897146530000'],
+              idPos: random,
+              name: `Jamón${count}`,
+              description: 'Descripción de el producto',
+              category: category.name,
+              defaultprice: 12300
+            }
+            const create = await ProductModel.create(obj)
+            console.log(create)
+          }
+        }
+        return 'Successful!'
+      } catch (error) {
+        console.log(error)
+        return 'Failure!'
+      }
+    }
 }
 
 module.exports = new Product()
