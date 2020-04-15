@@ -244,7 +244,7 @@ routesPromotionWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request, re
 
 /**
  * @swagger
- * /web/promotion:
+ * /web/promotion/{quantity}/{page}:
  *  get:
  *    tags:
  *      - Promotion
@@ -255,6 +255,12 @@ routesPromotionWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request, re
  *    - in: header
  *      name: Authorization
  *      type: string
+ *      required: true
+ *    - in: path
+ *      name: quantity
+ *      required: true
+ *    - in: path
+ *      name: page
  *      required: true
  *    responses:
  *      200:
@@ -285,24 +291,26 @@ routesPromotionWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request, re
  *              type: string
  *              example: No existen promociones
  */
-routesPromotionWeb.get('', isSuperAdmin, async (request, response) => {
+routesPromotionWeb.get('/:quantity/:page', isSuperAdmin, async (request, response) => {
+  const quantity = request.params.quantity
+  const page = request.params.params
   const query = request.query
   if (query.supermarket) {
-    const promotions = await PromotionController.all(query)
+    const promotions = await PromotionController.allPage(query, quantity, page)
     response.json(promotions)
   } else if (query.name) {
     query.name = { $regex: query.name, $options: 'i' }
-    const promotions = await PromotionController.all(query)
+    const promotions = await PromotionController.allPage(query, quantity, page)
     response.json(promotions)
   } else {
-    const promotions = await PromotionController.all({})
+    const promotions = await PromotionController.allPage({}, quantity, page)
     response.json(promotions)
   }
 })
 
 /**
  * @swagger
- * /web/promotion/forsupermarket:
+ * /web/promotion/forsupermarket/{quantity}/{page}:
  *  get:
  *    tags:
  *      - Promotion
@@ -313,6 +321,12 @@ routesPromotionWeb.get('', isSuperAdmin, async (request, response) => {
  *    - in: header
  *      name: Authorization
  *      type: string
+ *      required: true
+ *    - in: path
+ *      name: quantity
+ *      required: true
+ *    - in: path
+ *      name: page
  *      required: true
  *    responses:
  *      200:
@@ -343,16 +357,18 @@ routesPromotionWeb.get('', isSuperAdmin, async (request, response) => {
  *              type: string
  *              example: No hay promociones para este supermercado
  */
-routesPromotionWeb.get('/forsupermarket', isAdmin, async (request, response) => {
+routesPromotionWeb.get('/forsupermarket/:quantity/:page', isAdmin, async (request, response) => {
+  const quantity = request.params.quantity
+  const page = request.params.page
   const _id = request.User.id
   const query = request.query
-  const promotions = await PromotionController.forSuperMarket(_id, query)
+  const promotions = await PromotionController.forSuperMarket(_id, query, quantity, page)
   response.json(promotions)
 })
 
 /**
  * @swagger
- * /app/promotion/all/{supermarket}:
+ * /app/promotion/all/{supermarket}/{page}:
  *  get:
  *    tags:
  *      - Promotion
@@ -366,6 +382,10 @@ routesPromotionWeb.get('/forsupermarket', isAdmin, async (request, response) => 
  *      required: true
  *    - in: path
  *      name: supermarket
+ *      type: string
+ *      required: true
+ *    - in: path
+ *      name: page
  *      type: string
  *      required: true
  *    responses:
@@ -397,10 +417,11 @@ routesPromotionWeb.get('/forsupermarket', isAdmin, async (request, response) => 
  *              type: string
  *              example: No existen promociones para este supermercado
  */
-routesPromotionApp.get('/all/:supermarket', isClient, async (request, response) => {
+routesPromotionApp.get('/all/:supermarket/:page', isClient, async (request, response) => {
+  const page = request.params.page
   const supermarket = request.params.supermarket
   const data = { supermarket: supermarket, isActive: true }
-  const search = await PromotionController.all(data)
+  const search = await PromotionController.all(data, page)
   response.json(search)
 })
 

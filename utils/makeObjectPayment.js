@@ -15,7 +15,7 @@ module.exports = function (data) {
       order: {
         accountId: '846775',
         referenceCode: data.referenceCode,
-        description: data.description,
+        description: 'Compra en diamarket',
         language: 'es',
         signature,
         additionalValues: {

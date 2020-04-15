@@ -32,8 +32,18 @@ class Promotion {
     }
   }
 
-  async all (data) {
-    const promotion = await PromotionModel.search(data)
+  async allPage (data, quantity, page) {
+    PromotionModel.perPage = parseInt(quantity)
+    const promotions = await PromotionModel.searchByPage(data, page)
+    if (promotions.length > 0) {
+      return { estado: true, data: promotion, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No existen promociones para este supermercado' }
+    }
+  }
+
+  async all (data, page) {
+    const promotion = await PromotionModel.searchByPage(data, page)
     if (promotion.length > 0) {
       return { estado: true, data: promotion, mensaje: null }
     } else {
@@ -41,13 +51,14 @@ class Promotion {
     }
   }
 
-  async forSuperMarket (_id, query) {
+  async forSuperMarket (_id, query, quantity, page) {
+    PromotionModel.perPage = parseInt(quantity)
     let promotions
     const superMarket = await SuperMarketModel.get({ idAdmin: _id })
     if (query.name) {
-      promotions = await PromotionModel.search({ supermarket: superMarket, name: { $regex: query.name, $options: 'i' } })
+      promotions = await PromotionModel.searchByPage({ supermarket: superMarket, name: { $regex: query.name, $options: 'i' } }, page)
     } else {
-      promotions = await PromotionModel.search({ supermarket: superMarket })
+      promotions = await PromotionModel.searchByPage({ supermarket: superMarket }, page)
     }
     if (promotions.length > 0) {
       return { estado: true, data: promotions, mensaje: null }

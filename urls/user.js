@@ -317,7 +317,7 @@ routesUserWeb.get('/detail', isSuperAdminAndIsAdminAndIsDomiciliary, async (requ
 
 /**
  * @swagger
- * /web/user/usertype/{usertype}:
+ * /web/user/usertype/{usertype}/{quantity}/{page}:
  *  get:
  *    tags:
  *      - User
@@ -330,6 +330,12 @@ routesUserWeb.get('/detail', isSuperAdminAndIsAdminAndIsDomiciliary, async (requ
  *      required: true
  *    - in: header
  *      name: usertype
+ *      required: true
+ *    - in: header
+ *      name: quantity
+ *      required: true
+ *    - in: header
+ *      name: page
  *      required: true
  *    responses:
  *      200:
