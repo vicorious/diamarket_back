@@ -362,9 +362,11 @@ routesUserWeb.get('/detail', isSuperAdminAndIsAdminAndIsDomiciliary, async (requ
  *              type: string
  *              example: 'El usuario no se encuentra registrado'
  */
-routesUserWeb.get('/usertype/:usertype', async (request, response) => {
+routesUserWeb.get('/usertype/:usertype/:quantity/:page', async (request, response) => {
   const rol = request.params.usertype
-  const data = await UserController.all({ rol })
+  const quantity = request.params.quantity
+  const page = request.params.page
+  const data = await UserController.allPage({ rol }, quantity, page)
   response.json(data)
 })
 

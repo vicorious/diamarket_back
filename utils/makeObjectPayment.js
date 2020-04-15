@@ -2,7 +2,8 @@
 const crypto = require('crypto')
 
 module.exports = function (data) {
-  const signature = crypto.createHash('md5').update(`xryKI4712m8RWNd6Y0uda41rnT~839317~${data.referenceCode}~${data.value}~COP`).digest('hex')
+  console.log(data)
+  const signature = crypto.createHash('md5').update(`xryKI4712m8RWNd6Y0uda41rnT~839317~${data.referenceCode}~10000~COP`).digest('hex')
   const obj = {
     language: 'es',
     command: "SUBMIT_TRANSACTION",
@@ -19,7 +20,7 @@ module.exports = function (data) {
         signature,
         additionalValues: {
           TX_VALUE: {
-            value: data.value,
+            value: 10000,
             currency: 'COP'
           },
           TX_TAX: {

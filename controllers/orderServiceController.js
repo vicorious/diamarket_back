@@ -15,18 +15,23 @@ class OrderService {
     const user = await UserModel.get({ _id: data.user })
     data.value = parseInt(valueProducts) + parseInt(valuePromotions)
     data.user = user
-    // data.referenceCode = 'holaprueba133456'
+    data.referenceCode = 'prueba1'
     data.methodPayment = data.card.paymentType
-    data.referenceCode = countOrder
-    if (data.card.paymentType.toString() === 'credit') {
-      const paymentResponse = await PayUController.payCredit(data)
-      if (paymentResponse === true) {
-        const order = await OrderServiceModel.create(data)
-        await this.validateOfferOrCreditsPromotions({ _id: user._id }, data.promotions)
-        return { estado: true, data: order, mensaje: null }
-      } else {
-        return paymentResponse
+    // data.referenceCode = countOrder
+    console.log(data.value)
+    if (parseInt(data.value) >= 10000) {
+      if (data.card.paymentType.toString() === 'credit') {
+        const paymentResponse = await PayUController.payCredit(data)
+        if (paymentResponse === true) {
+          const order = await OrderServiceModel.create(data)
+          await this.validateOfferOrCreditsPromotions({ _id: user._id }, data.promotions)
+          return { estado: true, data: order, mensaje: null }
+        } else {
+          return paymentResponse
+        }
       }
+    } else {
+      return { estado: false, data: [], mensaje: 'El valor de su solicitud debe ser mayor a $10.000' }
     }
   }
 
@@ -35,6 +40,7 @@ class OrderService {
       let value = 0
       for (const object of products) {
         const product = await AvailabilitySchema.get({ idProduct: object.product })
+        console.log(product)
         value += parseInt(product.price) * parseInt(object.quantity)
       }
       return value

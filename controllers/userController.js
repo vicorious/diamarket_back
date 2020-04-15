@@ -179,6 +179,16 @@ class User {
     }
   }
 
+  async allPage(data, quantity, page) {
+    UserModel.perPage = parseInt(quantity)
+    const users = await UserModel.searchByPage(data, page)
+    if (users.length > 0) {
+      return { estado: true, data: user, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No se encuentran datos' }
+    }
+  }
+
   async all(data) {
     const user = await UserModel.search(data)
     if (user.length > 0) {

@@ -332,10 +332,11 @@ routesOrderServiceWeb.put('/:id', async (request, response) => {
  *              type: string
  *              example: La red financiera reportó que la transacción fue inválida.
  */
-routesOrderServiceApp.post('', isClient, async (request, response) => {
+routesOrderServiceApp.post('', async (request, response) => {
   const data = request.body
   data.status = 0
-  data.user = request.User.id
+  data.user = '5e8bde380ffa72673e9b8572'
+  // data.user = request.User.id
   const order = await OrderServiceController.create(data)
   response.json(order)
 })
