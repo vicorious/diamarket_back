@@ -199,11 +199,12 @@ routesProductWeb.get('/:quantity/:page', isSuperAdmin, async (request, response)
  *              type: string
  *              example: No existen productos para este supermercado
  */
-routesProductWeb.get('/forsupermarket', isAdmin, async (request, response) => {
+routesProductWeb.get('/forsupermarket/:quantity/:page', isAdmin, async (request, response) => {
+  const quantity = request.params.quantity
+  const page = request.params.page
   const query = request.query
   const _id = request.User.id
-  const products = await ProductController.forSuperMarket(_id, query)
-  console.log(products)
+  const products = await ProductController.forSuperMarket(_id, query, quantity, page)
   response.json(products)
 })
 
