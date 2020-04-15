@@ -59,10 +59,10 @@ class Product {
     }
   }
 
-  async all (data) {
-    console.log(data)
+  async all (data, quantity, page) {
+    AvailabilityModel.perPage = parseInt(quantity)
     const products = []
-    const availability = await AvailabilityModel.search(data)
+    const availability = await AvailabilityModel.searchByPage(data, page)
     for (const object of availability) {
       const product = await ProductModel.get({ _id: object.idProduct })
       object._doc.idProduct = product
@@ -80,8 +80,9 @@ class Product {
     }
   }
 
-  async productsForCategory (data) {
-    const products = await ProductModel.search({ category: data.category })
+  async productsForCategory (data, quantity, page) {
+    ProductModel.perPage = parseInt(quantity)
+    const products = await ProductModel.searchByPage({ category: data.category }, page)
     const arrayProducts = []
     for (const product of products) {
       const productsCategory = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
@@ -96,8 +97,9 @@ class Product {
     }
   }
 
-  async productsForName (data) {
-    const products = await ProductModel.search({ name: data.name })
+  async productsForName (data, quantity, page) {
+    AvailabilityModel.perPage = parseInt(quantity)
+    const products = await ProductModel.searchByPage({ name: data.name }, page)
     const arrayProducts = []
     for (const product of products) {
       const productsName = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
@@ -131,6 +133,7 @@ class Product {
       for (const object of products) {
         const category = await CategoryModel.get({ _id: object.category })
         const availabilityProduct = await AvailabilityModel.get({ idSupermarket: superMarket._id, idProduct: object._id })
+        console.log(availabilityProduct)
         object._doc.idProduct._doc.category = category
         if (availabilityProduct._id) {
           availability.push(object)

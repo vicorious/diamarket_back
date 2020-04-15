@@ -6,7 +6,7 @@ class Base {
     this.model = undefined
     this.populate = undefined
     this.sort = undefined
-    this.perPage = 50
+    this.perPage = 20
     this.fields = undefined
   }
 
@@ -43,9 +43,9 @@ class Base {
 
   async search (data) {
     try {
-      let objects = await this.model.find(data, this.fields).sort(this.sort).limit(500)
+      let objects = await this.model.find(data, this.fields).sort(this.sort)
       if (this.populate) {
-        objects = await this.model.find(data, this.fields).populate(this.populate).sort(this.sort).limit(500)
+        objects = await this.model.find(data, this.fields).populate(this.populate).sort(this.sort)
       }
       return objects
     } catch (error) {
@@ -56,6 +56,7 @@ class Base {
 
   async searchByPage (data, page) {
     if (page > 0) {
+      console.log(page, this.perPage)
       let results = await this.model.find(data, this.fields).skip((this.perPage * page) - this.perPage).sort(this.sort).limit(this.perPage).exec()
       if (this.populate) {
         results = await this.model.find(data, this.fields).populate(this.populate).skip((this.perPage * page) - this.perPage).sort(this.sort).limit(this.perPage).exec()
