@@ -63,9 +63,17 @@ const makePassword = require('../utils/makePassword')
  *        items:
  *          type: object
  *          properties:
+ *            uid:
+ *              type: string
  *            number:
  *              type: string
  *            token:
+ *              type: string
+ *            name:
+ *              type: string
+ *            identification:
+ *              type: string
+ *            paymentMethod:
  *              type: string
  *      directions:
  *        type: array

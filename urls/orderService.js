@@ -281,6 +281,9 @@ routesOrderServiceWeb.put('/:id', async (request, response) => {
  *                  example: 1
  *          description:
  *            type: string
+ *          methodPayment:
+ *            type: string
+ *            example: credit
  *          card:
  *            type: object
  *            properties:
@@ -299,9 +302,12 @@ routesOrderServiceWeb.put('/:id', async (request, response) => {
  *              name: 
  *                type: string
  *                example: visa
- *              paymentType:
+ *              identification:
  *                type: string
- *                example: credit
+ *                example: 1013692738
+ *              uid:
+ *                type: string
+ *                example: si es una tarjeta ya registrada msolamente me envian el uid
  *    responses:
  *      200:
  *        description: Se crea la orden de servicio

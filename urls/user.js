@@ -1000,4 +1000,31 @@ routesUserApp.get('/detail', isClient, async (request, response) => {
   response.json(user)
 })
 
+routesUserApp.post('/createcard', isClient, async (request, response) => {
+  const _id = request.User.id
+  const data = request.body
+  const create = await UserController.createCard(data)
+  response.json(create)
+})
+
+routesUserApp.get('/cards', isClient, async (request, response) => {
+  const _id = request.User.id
+  const cards = await UserController.listCards({ _id })
+  response.json(cards)
+})
+
+routesUserApp.get('/detailcard/:uid', isClient, async (request, response) => {
+  const _id = request.User.id
+  const uid = request.params.uid
+  const card = await UserController.detailCard(_id, uid)
+  response.json(card)
+})
+
+routesUserApp.delete('/deletecard/:uid', isClient, async (request, response) => {
+  const _id = request.User.id
+  const uid = request.params.uid
+  const card = await UserController.deleteCard(_id, uid)
+  response.json(card)
+})
+
 module.exports = { routesUserApp, routesUserWeb }

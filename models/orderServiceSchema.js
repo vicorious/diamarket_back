@@ -62,6 +62,9 @@ const Types = mongoose.Schema.Types
  *              type: number
  *      referenceCode:
  *        type: string
+ *      paymentStatus:
+ *        type: number
+ *        example: 0=pago, 1=Pendiente, 2=fallo por pago
  *      user:
  *        $ref: '#/definitions/User'
  *      dateCreate:
@@ -109,6 +112,9 @@ const Schema = new mongoose.Schema({
     type: Types.String,
     required: [true, 'La referencia de pago es obligatoria']
   },
+  paymentStatus: {
+    type: Types.Number
+  },
   codeCancelation: {
     type: Types.Number,
     default: 0
@@ -123,7 +129,7 @@ class OrderService extends Base {
     super()
     this.sort = { name: 1 }
     this.model = mongoose.model('OrderService', Schema)
-    this.fields = 'value direction methodPayment status superMarket products promotions user dateCreate codeCancelation'
+    this.fields = 'value direction methodPayment status superMarket products promotions user dateCreate codeCancelation paymentStatus'
     this.populate = [
       {
         path: 'superMarket',

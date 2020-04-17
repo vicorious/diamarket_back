@@ -7,7 +7,13 @@ const AuthController = require('../controllers/authController')
 const EmailController = require('./emailController')
 const OrderSchema = require('../models/orderServiceSchema')
 const SuperMarketSchema = require('../models/supermarketSchema')
+const MakeObjectToken = require('../utils/makeObjectToken')
+const MakeDeleteObjectToken = require('../utils/makeDeleteObjectToken')
+const MakeUrlPayU = require('../utils/makeUrlPayU')
+const axios = require('axios')
 const uuid = require('node-uuid')
+const secret = 'vmKeS%O!w!%zmVydx5e*t8k%zDIAMARKET#boaTOKEN*h^l^4sYzCARD$xtGYcpT!j5IP8g#5QJrZ4zyUP26ewqIDU90!Z^D2Tzr%0*LH6AXUORtKskMO'
+const crypto = require('crypto')
 
 class User {
   async create(data) {
@@ -278,6 +284,76 @@ class User {
       }
     }
     return clients.length
+  }
+
+  async createCard(data) {
+    const user = await UserModel.get({ _id: data._id })
+    const objectToken = MakeObjectToken(data)
+    const response = await axios.post(MakeUrlPayU, objectToken)
+    if (response.data.code === 'SUCCESS') {
+      const card = {
+        uid: uuid.v4(),
+        number: response.data.creditCardToken.maskedNumber,
+        token: crypto.createCipher('aes-256-ctr', secret).update(response.data.creditCardToken.creditCardTokenId, 'utf8', 'hex'),
+        name: response.data.creditCardToken.name,
+        identification: response.data.creditCardToken.identificationNumber,
+        type: response.data.creditCardToken.paymentMethod,
+        securityCode : crypto.createCipher('aes-256-ctr', secret).update(data.securityCode, 'utf8', 'hex')
+      }
+      const cardUser = user.cards.find(element => element.token === card.token)
+      console.log(cardUser)
+      if (cardUser !== undefined) {
+        return { estado: false, data: [], mensaje: 'La tarjeta ya se encuentra registrada' }
+      } else {
+        await UserModel.update(user._id, { $push: { cards: card } })
+        return { estado: true, data: true, mensaje: null }
+      }
+    } else {
+      return { estado: false, data: [], mensaje: 'No se pudo registrar la tarjeta, por favor vuelva a intentarlo' }
+    }
+  }
+
+  async listCards (_id) {
+    const user = await UserModel.get(_id)
+    if (user.cards.length > 0) {
+      let cards = []
+      for (const card of user.cards) {
+        cards.push({ uid: card.uid, number: card.number, name: card.name, type: card.type  })
+      }
+      return { estado: true, data: cards, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No tiene tarjetas registradas' }
+    }
+  }
+
+  async detailCard (_id, uid) {
+    const user = await UserModel.get({ _id })
+    const card = user.cards.find(element => element.uid === uid)
+    if (card !== undefined) {
+      return { estado: true, data: { uid: card.uid, number: card.number, name: card.name, type: card.type }, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'Esta tarjeta no se encuentra' }
+    }
+  }
+
+  async deleteCard (_id, uid) {
+    const user = await UserModel.get({ _id })
+    let card  = {}
+    await user.cards.find((element, index) => {
+      if (element.uid === uid) {
+        card = element
+        user._doc.cards.splice(index, 1)
+      }
+    })
+    if (card.uid) {
+      const token = crypto.createDecipher('aes-256-ctr', secret).update(card.token, 'hex', 'utf8')
+      const objectDeleteToken = MakeDeleteObjectToken(_id, token)
+      await axios.post(MakeUrlPayU, objectDeleteToken)
+      await UserModel.update(user._id, { cards: user.cards })
+      return { estado: false, data: true, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'Esta tarjeta no se encuentra' }
+    }
   }
 }
 

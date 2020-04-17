@@ -9,38 +9,120 @@ const makeCode = require('../utils/makeCode')
 
 class OrderService {
   async create(data) {
-    const countOrder = await OrderServiceModel.count()
-    const valueProducts = await this.calculateValueProducts(data.products)
-    const valuePromotions = await this.calculateValuePromotions(data.promotions)
-    const user = await UserModel.get({ _id: data.user })
-    data.value = parseInt(valueProducts) + parseInt(valuePromotions)
-    data.user = user
-    data.referenceCode = 'prueba1'
-    data.methodPayment = data.card.paymentType
-    // data.referenceCode = countOrder
-    console.log(data.value)
-    if (parseInt(data.value) >= 10000) {
-      if (data.card.paymentType.toString() === 'credit') {
-        const paymentResponse = await PayUController.payCredit(data)
-        if (paymentResponse === true) {
-          const order = await OrderServiceModel.create(data)
-          await this.validateOfferOrCreditsPromotions({ _id: user._id }, data.promotions)
-          return { estado: true, data: order, mensaje: null }
-        } else {
-          return paymentResponse
+    if (!data.card.uid) {
+      data.card._id = data.user
+      const countOrder = await OrderServiceModel.count()
+      const objectToken = await PayUController.tokenPayU(data.card)
+      data.card.token = objectToken.creditCardToken.creditCardTokenId
+      data.card.securityCode = objectToken.creditCardToken.securityCode
+      const valueProducts = await this.calculateValueProducts(data.products)
+      const valuePromotions = await this.calculateValuePromotions(data.promotions)
+      const user = await UserModel.get({ _id: data.user })
+      data.value = parseInt(valueProducts) + parseInt(valuePromotions)
+      data.user = user
+      data.referenceCode = 'prueba1'
+      // data.referenceCode = countOrder
+      if (parseInt(data.value) >= 10000) {
+        if (data.methodPayment.toLowerCase() === 'credit') {
+          const paymentResponse = await PayUController.payCredit(data)
+          switch (paymentResponse.status) {
+            case 'APPROVED': {
+              data.paymentStatus = 0
+              const order = await OrderServiceModel.create(data)
+              await this.validateOfferOrCreditsPromotions({ _id: user._id }, data.promotions)
+              return { estado: true, data: order, mensaje: null }
+            }
+
+            case 'PENDING': {
+              data.paymentStatus = 1
+              await OrderServiceModel.create(data)
+              delete paymentResponse.status
+              return paymentResponse
+            }
+
+            case 'ERROR': {
+              delete paymentResponse.status
+              return paymentResponse
+            }
+          }
         }
+      } else {
+        return { estado: false, data: [], mensaje: 'El valor de su solicitud debe ser mayor a $10.000' }
       }
     } else {
-      return { estado: false, data: [], mensaje: 'El valor de su solicitud debe ser mayor a $10.000' }
+      const countOrder = await OrderServiceModel.count()
+      const user = await UserModel.get({ _id: data.user })
+      const card = user.cards.find(element => element.uid === data.card.uid)
+      const valueProducts = await this.calculateValueProducts(data.products)
+      const valuePromotions = await this.calculateValuePromotions(data.promotions)
+      data.user = user
+      data.referenceCode = 'prueba1'
+      data.card = card
+      data.value = parseInt(valueProducts) + parseInt(valuePromotions)
+      // data.referenceCode = countOrder
+      if (parseInt(data.value) >= 10000) {
+        if (data.methodPayment.toLowerCase() === 'credit') {
+          const paymentResponse = await PayUController.payCredit(data)
+          console.log(paymentResponse)
+          switch (paymentResponse.status) {
+            case 'APPROVED': {
+              data.paymentStatus = 0
+              const order = await OrderServiceModel.create(data)
+              await this.validateOfferOrCreditsPromotions({ _id: user._id }, data.promotions)
+              return { estado: true, data: order, mensaje: null }
+            }
+
+            case 'PENDING': {
+              data.paymentStatus = 1
+              await OrderServiceModel.create(data)
+              delete paymentResponse.status
+              return paymentResponse
+            }
+
+            case 'ERROR': {
+              delete paymentResponse.status
+              return paymentResponse
+            }
+          }
+        }
+      } else {
+        return { estado: false, data: [], mensaje: 'El valor de su solicitud debe ser mayor a $10.000' }
+      }
     }
   }
+
+  // async create(data) {
+  //   const countOrder = await OrderServiceModel.count()
+  //   const valueProducts = await this.calculateValueProducts(data.products)
+  //   const valuePromotions = await this.calculateValuePromotions(data.promotions)
+  //   const user = await UserModel.get({ _id: data.user })
+  //   data.value = parseInt(valueProducts) + parseInt(valuePromotions)
+  //   data.user = user
+  //   data.referenceCode = 'prueba1'
+  //   data.methodPayment = data.card.paymentType
+  //   // data.referenceCode = countOrder
+  //   console.log(data.value)
+  //   if (parseInt(data.value) >= 10000) {
+  //     if (data.card.paymentType.toString() === 'credit') {
+  //       const paymentResponse = await PayUController.payCredit(data)
+  //       if (paymentResponse === true) {
+  //         const order = await OrderServiceModel.create(data)
+  //         await this.validateOfferOrCreditsPromotions({ _id: user._id }, data.promotions)
+  //         return { estado: true, data: order, mensaje: null }
+  //       } else {
+  //         return paymentResponse
+  //       }
+  //     }
+  //   } else {
+  //     return { estado: false, data: [], mensaje: 'El valor de su solicitud debe ser mayor a $10.000' }
+  //   }
+  // }
 
   async calculateValueProducts(products) {
     if (products.length > 0) {
       let value = 0
       for (const object of products) {
         const product = await AvailabilitySchema.get({ idProduct: object.product })
-        console.log(product)
         value += parseInt(product.price) * parseInt(object.quantity)
       }
       return value
