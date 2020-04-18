@@ -301,7 +301,6 @@ class User {
         securityCode : crypto.createCipher('aes-256-ctr', secret).update(data.securityCode, 'utf8', 'hex')
       }
       const cardUser = user.cards.find(element => element.token === card.token)
-      console.log(cardUser)
       if (cardUser !== undefined) {
         return { estado: false, data: [], mensaje: 'La tarjeta ya se encuentra registrada' }
       } else {

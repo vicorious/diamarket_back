@@ -999,7 +999,49 @@ routesUserApp.get('/detail', isClient, async (request, response) => {
   const user = await UserController.detail({ _id })
   response.json(user)
 })
-
+/**
+ * @swagger
+ * /app/user/createcard:
+ *  post:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se registra una tarjeta
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Si la tarjeta no se encuentra registrada se devuelve el siguinete objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: boolean
+ *              example: true
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si la tarjeta ya se encuentra registrada se devuelve el siguiente error
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: La tarketa ya se encuentra registrada
+ */
 routesUserApp.post('/createcard', isClient, async (request, response) => {
   const _id = request.User.id
   const data = request.body
@@ -1007,12 +1049,123 @@ routesUserApp.post('/createcard', isClient, async (request, response) => {
   response.json(create)
 })
 
+/**
+ * @swagger
+ * /app/user/cards:
+ *  get:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se listan las tarjetas de un usuario
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Listado de tarjetas agregadas al cliente
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: array
+ *              items:
+ *                properties:
+ *                  uid:
+ *                    type: string
+ *                    example: 2312312sdadsf1231
+ *                  number:
+ *                    type: string
+ *                    example: 543123******1234
+ *                  name:
+ *                    type: string
+ *                    example: Nicolas Salazar
+ *                  type:
+ *                    type: string
+ *                    example: MASTERCARD
+ *      400:
+ *        description: Si no tiene tarjetas guardadas
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: array vacio
+ *            mensaje:
+ *              type: string
+ *              example: No tiene tarjetas registradas
+ */
 routesUserApp.get('/cards', isClient, async (request, response) => {
   const _id = request.User.id
   const cards = await UserController.listCards({ _id })
   response.json(cards)
 })
 
+/**
+ * @swagger
+ * /app/user/detailcard/{uid}:
+ *  get:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se detalla una tarjeta
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    - in: path
+ *      name: uid
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: objeto de la tarjeta
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                uid:
+ *                  type: string
+ *                  example: 123123123dfaf121
+ *                number:
+ *                  type: string
+ *                  example: 543123******1234
+ *                name:
+ *                  type: string
+ *                  example: NICOLAS SALAZAR
+ *                type:
+ *                  type: string
+ *                  example: MASTERCARD
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si la tarjeta seleccionada no existe
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: array vacio
+ *            mensaje:
+ *              type: string
+ *              example: Esta tarjeta no se encuentra
+ */
 routesUserApp.get('/detailcard/:uid', isClient, async (request, response) => {
   const _id = request.User.id
   const uid = request.params.uid
@@ -1020,6 +1173,52 @@ routesUserApp.get('/detailcard/:uid', isClient, async (request, response) => {
   response.json(card)
 })
 
+/**
+ * @swagger
+ * /app/user/deletecard/{uid}:
+ *  delete:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se detalla una tarjeta
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    - in: path
+ *      name: uid
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Si la tarjeta se elimina exitosamente
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: boolean
+ *              example: true
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si la tarjeta seleccionada no existe
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: array vacio
+ *            mensaje:
+ *              type: string
+ *              example: Esta tarjeta no se encuentra
+ */
 routesUserApp.delete('/deletecard/:uid', isClient, async (request, response) => {
   const _id = request.User.id
   const uid = request.params.uid
