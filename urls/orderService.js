@@ -222,6 +222,66 @@ routesOrderServiceWeb.put('/:id', async (request, response) => {
 
 /**
  * @swagger
+ * /app/orderservice/calculatevalue:
+ *  post:
+ *    tags:
+ *      - OrderService
+ *    description: En este endpoint se calcula el valor de la orden de servicio
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        type: object
+ *        properties:
+ *          products:
+ *            type: array
+ *            items:
+ *              properties:
+ *                product:
+ *                  type: string
+ *                  example: id de mongo
+ *                quantity:
+ *                  type: number
+ *                  example: 5
+ *          promotions:
+ *            type: array
+ *            items:
+ *              properties:
+ *                promotion:
+ *                  type: string
+ *                  example: id de mongo
+ *                quantity:
+ *                  type: number
+ *                  example: 5
+ *    responses:
+ *      200:
+ *        description: se devuelve el valor calculado
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: number
+ *              example: 1000
+ *            mensaje:
+ *              type: string
+ *              example: null
+ */
+routesOrderServiceApp.post('/calculatevalue', isClient, async (request, response) => {
+  const data = request.body
+  const value = await OrderServiceController.calculateValue(data)
+  response.json(value)
+})
+
+/**
+ * @swagger
  * /app/orderservice:
  *  post:
  *    tags:

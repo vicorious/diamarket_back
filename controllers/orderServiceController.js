@@ -118,6 +118,13 @@ class OrderService {
   //   }
   // }
 
+  async calculateValue (data) {
+    const valueProducts = await this.calculateValueProducts(data.products)
+    const valuePromotions = await this.calculateValuePromotions(data.promotions)
+    const value = (parseInt(valueProducts) + parseInt(valuePromotions.value)) - parseInt(valuePromotions.discount)
+    return { estado: true, data: value, mensaje: null }
+  }
+
   async calculateValueProducts(products) {
     if (products.length > 0) {
       let value = 0
@@ -134,11 +141,13 @@ class OrderService {
   async calculateValuePromotions(promotions) {
     if (promotions.length > 0) {
       let value = 0
+      let discount = 0
       for (const object of promotions) {
         const promotion = await PromotionSchema.get({ _id: object.promotion })
+        promotion.discount > 0 ? discount+= parseInt(promotion.discount) * parseInt(object.quantity) : discount += 0
         value += parseInt(promotion.value) * parseInt(object.quantity)
       }
-      return value
+      return { value, discount }
     } else {
       return 0
     }
