@@ -400,11 +400,10 @@ routesOrderServiceApp.post('/calculatevalue', isClient, async (request, response
  *              type: string
  *              example: La red financiera reportó que la transacción fue inválida.
  */
-routesOrderServiceApp.post('', async (request, response) => {
+routesOrderServiceApp.post('', isClient, async (request, response) => {
   const data = request.body
   data.status = 0
-  data.user = '5e8be159191b1e09c2499ddd'
-  // data.user = request.User.id
+  data.user = request.User.id
   const order = await OrderServiceController.create(data)
   response.json(order)
 })

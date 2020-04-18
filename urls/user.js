@@ -1012,6 +1012,28 @@ routesUserApp.get('/detail', isClient, async (request, response) => {
  *    - in: header
  *      name: Authorization
  *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        properties:
+ *          type:
+ *            type: string
+ *            example: VISA
+ *          number:
+ *            type: number
+ *            example: 31231231231
+ *          securityCode:
+ *            type: number
+ *            example: 213
+ *          expirationDate:
+ *            type: string
+ *            example: 2023/01 primero el año luego el mes
+ *          name:
+ *            type: string
+ *            example: Nicolas
+ *          identification:
+ *            type: number
+ *            example: 12312312312
  *    responses:
  *      200:
  *        description: Si la tarjeta no se encuentra registrada se devuelve el siguinete objeto
@@ -1043,8 +1065,8 @@ routesUserApp.get('/detail', isClient, async (request, response) => {
  *              example: La tarketa ya se encuentra registrada
  */
 routesUserApp.post('/createcard', isClient, async (request, response) => {
-  const _id = request.User.id
-  const data = request.body
+  let data = request.body
+  data._id = request.User.id
   const create = await UserController.createCard(data)
   response.json(create)
 })
