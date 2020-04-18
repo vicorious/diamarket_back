@@ -69,6 +69,8 @@ const Types = mongoose.Schema.Types
  *        $ref: '#/definitions/User'
  *      dateCreate:
  *        type: string
+ *      transactionId:
+ *        type: string
  */
 
 // status = 0 : pendiente, 1: aceptado: 2: asignada 3: proceso 4: finalizada 5: cancelada
@@ -112,6 +114,9 @@ const Schema = new mongoose.Schema({
     type: Types.String,
     required: [true, 'La referencia de pago es obligatoria']
   },
+  transactionId: {
+    type: Types.String
+  },
   paymentStatus: {
     type: Types.Number
   },
@@ -129,7 +134,7 @@ class OrderService extends Base {
     super()
     this.sort = { name: 1 }
     this.model = mongoose.model('OrderService', Schema)
-    this.fields = 'value direction methodPayment status superMarket products promotions user dateCreate codeCancelation paymentStatus'
+    this.fields = 'value direction methodPayment status superMarket products promotions user dateCreate codeCancelation paymentStatus transactionId'
     this.populate = [
       {
         path: 'superMarket',

@@ -15,6 +15,7 @@ class PayU {
     data.card.securityCode = crypto.createDecipher('aes-256-ctr', secret).update(data.card.securityCode, 'hex', 'utf8')
     const objectPayment = MakeObjectPayment(data)
     const response = await axios.post(MakeUrlPayU, objectPayment)
+    console.log(response.data)
     if (response.data.code === 'SUCCESS') {
       switch (response.data.transactionResponse.state) {
         case 'APPROVED': {

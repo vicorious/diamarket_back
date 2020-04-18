@@ -341,6 +341,8 @@ routesOrderServiceApp.post('/calculatevalue', isClient, async (request, response
  *                  example: 1
  *          description:
  *            type: string
+ *          value:
+ *            type: number
  *          methodPayment:
  *            type: string
  *            example: credit
@@ -401,7 +403,7 @@ routesOrderServiceApp.post('/calculatevalue', isClient, async (request, response
 routesOrderServiceApp.post('', async (request, response) => {
   const data = request.body
   data.status = 0
-  data.user = '5e8bde380ffa72673e9b8572'
+  data.user = '5e8be159191b1e09c2499ddd'
   // data.user = request.User.id
   const order = await OrderServiceController.create(data)
   response.json(order)
