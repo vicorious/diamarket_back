@@ -188,8 +188,9 @@ class User {
   async allPage(data, quantity, page) {
     UserModel.perPage = parseInt(quantity)
     const users = await UserModel.searchByPage(data, page)
+    const countUsers = await UserModel.count(data)
     if (users.length > 0) {
-      return { estado: true, data: users, mensaje: null }
+      return { estado: true, data: { page: page, quantity: quantity, total: countUsers, items: users }, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No se encuentran datos' }
     }
