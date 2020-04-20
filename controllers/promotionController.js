@@ -35,8 +35,9 @@ class Promotion {
   async allPage (data, quantity, page) {
     PromotionModel.perPage = parseInt(quantity)
     const promotions = await PromotionModel.searchByPage(data, page)
+    const countPromotions = await PromotionModel.count({})
     if (promotions.length > 0) {
-      return { estado: true, data: promotion, mensaje: null }
+      return { estado: true, data: { page: page, quantity: quantity, total: countPromotions, items: promotions }, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No existen promociones para este supermercado' }
     }
