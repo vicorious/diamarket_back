@@ -52,12 +52,14 @@ class Product {
 
   async detail(id) {
     const isExist = await ProductModel.get(id)
+    console.log(isExist)
     if (isExist._id) {
       return { estado: true, data: isExist, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No existe el producto' }
     }
   }
+
   async all(data, quantity, page) {
     AvailabilityModel.perPage = parseInt(quantity)
     const products = []

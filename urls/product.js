@@ -141,7 +141,7 @@ routesProductWeb.put('/:id', convertBase64ToFile, isAdminAndIsSuperAdmin, async 
  *              type: string
  *              example: no existen productos
  */
-routesProductWeb.get('/:quantity/:page', isSuperAdmin, async (request, response) => {
+routesProductWeb.get('/page/:quantity/:page', isSuperAdmin, async (request, response) => {
   const page = request.params.page
   const quantity = request.params.quantity
   const query = request.query
@@ -225,6 +225,7 @@ routesProductWeb.get('/forsupermarket/:quantity/:page', isAdmin, async (request,
 
 routesProductWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request, response) => {
   const _id = request.params.id
+  console.log(_id)
   const detail = await ProductController.detail({ _id })
   response.json(detail)
 })
