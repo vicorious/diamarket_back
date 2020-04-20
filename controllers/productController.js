@@ -58,17 +58,22 @@ class Product {
       return { estado: false, data: [], mensaje: 'No existe el producto' }
     }
   }
-
   async all(data, quantity, page) {
     AvailabilityModel.perPage = parseInt(quantity)
     const products = []
     const availability = await AvailabilityModel.searchByPage(data, page)
+    const countAvailability = await AvailabilityModel.count({})
     for (const object of availability) {
       const product = await ProductModel.get({ _id: object.idProduct })
       object._doc.idProduct = product
       products.push(object)
     }
-    return { estado: true, data: products, mensaje: null }
+    if (products.length > 0) {
+      return { estado: true, data: { page: page, quantity: quantity, total: countAvailability, items: products }, mensaje: null }
+    } else {
+      return { estado: true, data: [], mensaje: 'No hay productos' }
+    }
+    
   }
 
   async productsSuperMarkets(idSupermarket, page) {
@@ -84,10 +89,27 @@ class Product {
   async productsForCategory(data, quantity, page) {
     ProductModel.perPage = parseInt(quantity)
     const products = await ProductModel.searchByPage({ category: data.category }, page)
+    const countAvailability = await AvailabilityModel.count({})
     const arrayProducts = []
     for (const product of products) {
       const productsCategory = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
       if (productsCategory._id) {
+        arrayProducts.push(productsCategory)
+      }
+    }
+    if (arrayProducts.length > 0) {
+      return { estado: true, data: { page: page, quantity: quantity, total: countAvailability, items: arrayProducts }, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'Esta categoria no tiene productos' }
+    }
+  }
+  
+  async productsForCategoryApp (data, page) {
+    const products = await ProductModel.searchByPage({ category: data.category }, page)
+    const arrayProducts = []
+    for (const product of products) {
+      const productsCategory = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
+      if (productsCategory._id){
         arrayProducts.push(productsCategory)
       }
     }
@@ -101,6 +123,25 @@ class Product {
   async productsForName(data, quantity, page) {
     AvailabilityModel.perPage = parseInt(quantity)
     const products = await ProductModel.searchByPage({ name: data.name }, page)
+    const countAvailability = await AvailabilityModel.count({})
+    const arrayProducts = []
+    for (const product of products) {
+      const productsName = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
+      if (productsName._id) {
+        arrayProducts.push(productsName)
+      }
+    }
+    if (arrayProducts.length > 0) {
+      return { estado: true, data: { page: page, quantity: quantity, total: countAvailability, items: arrayProducts }, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No existe productos cor este nombre' }
+    }
+  }
+
+  async momentWithOutPageProductsForName(data) {
+    console.log(data)
+    const products = await ProductModel.search({ name: data.name })
+    console.log(products)
     const arrayProducts = []
     for (const product of products) {
       const productsName = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
@@ -118,6 +159,7 @@ class Product {
   async forSuperMarket (_id, query, quantity, page) {
     const availability = []
     const superMarket = await SuperMarketModel.get({ idAdmin: _id })
+    const countAvailability = await AvailabilityModel.count({idSupermarket: superMarket._id})
     if (query.name) {
       ProductModel.perPage = parseInt(quantity)
       query.name = { $regex: query.name, $options: 'i' }
@@ -151,9 +193,8 @@ class Product {
         availability.push(object)
       }
     }
-    console.log(availability.length)
     if (availability.length > 0) {
-      return { estado: true, data: availability, mensaje: null }
+      return { estado: true, data: { page: page, quantity: quantity, total: countAvailability, items: availability }, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No existen productos para este supermercado' }
     }

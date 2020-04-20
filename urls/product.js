@@ -350,7 +350,7 @@ routesProductApp.get('/forsupermarket/:id/:page', isClient, async (request, resp
 routesProductApp.post('/forcategory/:page', isClient, async (request, response) => {
   const page = request.params.page
   const data = request.body
-  const products = await ProductController.productsForCategory(data, 50, page)
+  const products = await ProductController.productsForCategoryApp(data, page)
   response.json(products)
 })
 
