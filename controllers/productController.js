@@ -43,6 +43,8 @@ class Product {
   async update(id, data) {
     const isExist = await ProductModel.get(id)
     if (isExist._id) {
+      data.image = data.images
+      delete data.images
       const update = await ProductModel.update(id, data)
       return update
     } else {
@@ -52,7 +54,6 @@ class Product {
 
   async detail(id) {
     const isExist = await ProductModel.get(id)
-    console.log(isExist)
     if (isExist._id) {
       return { estado: true, data: isExist, mensaje: null }
     } else {

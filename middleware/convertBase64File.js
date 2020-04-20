@@ -3,7 +3,6 @@ const uploadFile = require('./uploadFile')
 const uuid = require('node-uuid')
 
 async function convertBase64ToFile(request, response, next) {
-  console.log(request.body)
   if (request.body.logo) {
     const data = request.body.logo.split(',')
     if (data[0] === 'data:image/jpeg;base64' || data[0] === 'data:image/png;base64' || data[0] === 'data:application/pdf;base64') {
@@ -14,7 +13,6 @@ async function convertBase64ToFile(request, response, next) {
   if (request.body.images) {
     if (Array.isArray(request.body.images)) {
       if (request.body.images.length > 0) {
-        console.log('Es mayor a 0')
         const urlImages = []
         for (const document of request.body.images) {
           const data = document.split(',')
