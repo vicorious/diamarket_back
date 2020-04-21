@@ -4,6 +4,7 @@ const SuperMarketModel = require('../models/supermarketSchema')
 
 class Promotion {
   async create (data) {
+    console.log(data)
     const isExist = await PromotionModel.get({ name: data.name, supermarket: data.supermarket })
     if (!isExist._id) {
       const promotion = await PromotionModel.create(data)

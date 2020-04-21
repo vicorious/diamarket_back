@@ -46,10 +46,10 @@ const Schema = new mongoose.Schema({
     type: Types.String,
     required: [true, 'El nombre es requerido']
   },
-  supermarket: {
+  supermarket: [{
     type: Types.ObjectId,
     required: [true, 'El supermercado es requerido']
-  },
+  }],
   products: [{
     type: Types.ObjectId,
     required: [true, 'El producto es requerido']

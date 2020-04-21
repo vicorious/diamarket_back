@@ -188,7 +188,8 @@ routesPromotionWeb.put('/:id', isSuperAdmin, convertBase64ToFile, async (request
   const _id = request.params.id
   const data = request.body
   const update = await PromotionController.update({ _id }, data)
-  response.json(update)
+  response.status(200).json(update)
+  return
 })
 
 /**
@@ -293,7 +294,7 @@ routesPromotionWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request, re
  */
 routesPromotionWeb.get('/:quantity/:page', isSuperAdmin, async (request, response) => {
   const quantity = request.params.quantity
-  const page = request.params.params
+  const page = request.params.page
   const query = request.query
   if (query.supermarket) {
     const promotions = await PromotionController.allPage(query, quantity, page)
@@ -417,7 +418,7 @@ routesPromotionWeb.get('/forsupermarket/:quantity/:page', isAdmin, async (reques
  *              type: string
  *              example: No existen promociones para este supermercado
  */
-routesPromotionApp.get('/all/:supermarket/:page', isClient, async (request, response) => {
+routesPromotionApp.get('/all/:supermarket/:page', async (request, response) => {
   const page = request.params.page
   const supermarket = request.params.supermarket
   const data = { supermarket: supermarket, isActive: true }

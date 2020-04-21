@@ -2,7 +2,7 @@
 const crypto = require('crypto')
 
 module.exports = function (data) {
-  const signature = crypto.createHash('md5').update(`xryKI4712m8RWNd6Y0uda41rnT~839317~${data.referenceCode}~10000~COP`).digest('hex')
+  const signature = crypto.createHash('md5').update(`xryKI4712m8RWNd6Y0uda41rnT~839317~${data.referenceCode}~${data.value}~COP`).digest('hex')
   const obj = {
     language: 'es',
     command: 'SUBMIT_TRANSACTION',
@@ -19,7 +19,7 @@ module.exports = function (data) {
         signature,
         additionalValues: {
           TX_VALUE: {
-            value: 10000,
+            value: data.value,
             currency: 'COP'
           }
         },
@@ -27,9 +27,9 @@ module.exports = function (data) {
           merchantBuyerId: data.user._id,
           fullName: data.user.name,
           emailAddress: data.user.email,
-          contactPhone: data.user.cellPhone ? data.user.cellPhone : 3213213212,
+          contactPhone: '3204698000',
           // dniNumber: data.user.identification ? data.user.identification.toString() : data.user._id.toString()
-          dniNumber: data.user.identification ? data.user.identification: 1013692738,
+          dniNumber: data.user.identification ? data.user.identification : '1013692738',
           shippingAddress: {
             street1: data.direction.address,
             street2: data.direction.address,
@@ -37,7 +37,7 @@ module.exports = function (data) {
             state: 'Bogota',
             country: 'CO',
             postalCode: '000000',
-            phone: data.user.cellPhone ? data.user.cellPhone : 3213213212
+            phone: data.user.cellPhone ? data.user.cellPhone : '3213213212'
           }
         },
         shippingAddress: {
@@ -47,16 +47,16 @@ module.exports = function (data) {
           state: 'Bogota',
           country: 'CO',
           postalCode: '000000',
-          phone: data.user.cellPhone ? data.user.cellPhone : 3213213212
+          phone: '3204698000'
         }
       },
       payer: {
         merchantBuyerId: data.user._id,
         fullName: data.user.name,
         emailAddress: data.user.email,
-        contactPhone: data.user.cellPhone ? data.user.cellPhone : 3213213212,
+        contactPhone: '3204698000',
         // dniNumber: data.user.identification ? data.user.identification.toString() : data.user._id.toString()
-        dniNumber: data.user.identification ? data.user.identification : 1013692738,
+        dniNumber: data.user.identification ? data.user.identification : '1013692738',
         billingAddress: {
           street1: data.direction.address,
           street2: data.direction.address,
@@ -64,8 +64,12 @@ module.exports = function (data) {
           state: 'Bogota',
           country: 'CO',
           postalCode: '000000',
-          phone: data.user.cellPhone ? data.user.cellPhone : 3213213212
+          phone: '3204698000'
         }
+      },
+      creditCard: {
+        securityCode: data.card.securityCode,
+        processWithoutCvv2: false
       },
       creditCardTokenId: data.card.token,
       type: 'AUTHORIZATION_AND_CAPTURE',
