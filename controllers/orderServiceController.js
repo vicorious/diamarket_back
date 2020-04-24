@@ -18,14 +18,16 @@ class OrderService {
       const user = await UserModel.get({ _id: data.user })
       data.user = user
       data.referenceCode = 'prueba1'
-      // data.referenceCode = countOrder
       if (parseInt(data.value) >= 10000) {
+        // data.referenceCode = countOrder
         if (data.methodPayment.toLowerCase() === 'credit') {
           const paymentResponse = await PayUController.payCredit(data)
+          console.log("paymentResponse")
+          console.log(paymentResponse)
           switch (paymentResponse.status) {
             case 'APPROVED': {
               data.paymentStatus = 0
-              data.transactionId = paymentResponse.transactionResponse.transactionId
+             // data.transactionId = paymentResponse.transactionResponse.transactionId
               const order = await OrderServiceModel.create(data)
               await this.validateOfferOrCreditsPromotions({ _id: user._id }, data.promotions)
               return { estado: true, data: order, mensaje: null }
@@ -33,7 +35,7 @@ class OrderService {
 
             case 'PENDING': {
               data.paymentStatus = 1
-              data.transactionId = paymentResponse.transactionResponse.transactionId
+              //data.transactionId = paymentResponse.transactionResponse.transactionId
               await OrderServiceModel.create(data)
               delete paymentResponse.status
               return paymentResponse
@@ -49,6 +51,7 @@ class OrderService {
         return { estado: false, data: [], mensaje: 'El valor de su solicitud debe ser mayor a $10.000' }
       }
     } else {
+      console.log("payu else")
       const countOrder = await OrderServiceModel.count()
       const user = await UserModel.get({ _id: data.user })
       const card = user.cards.find(element => element.uid === data.card.uid)

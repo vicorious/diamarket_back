@@ -12,6 +12,7 @@ const uid = require('node-uuid')
 class PayU {
   async payCredit(data) {
     data.card.token = crypto.createDecipher('aes-256-ctr', secret).update(data.card.token, 'hex', 'utf8')
+    data.referenceCode = "test"
     data.card.securityCode = crypto.createDecipher('aes-256-ctr', secret).update(data.card.securityCode, 'hex', 'utf8')
     const objectPayment = MakeObjectPayment(data)
     const response = await axios.post(MakeUrlPayU, objectPayment)
