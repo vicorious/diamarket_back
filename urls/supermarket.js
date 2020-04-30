@@ -333,11 +333,11 @@ routesSupermarketApp.put('/rate/:id', isClient, async (request, response) => {
 
 /**
  * @swagger
- * /app/supermarket:
+ * /app/supermarket?latitude=4.624675&length=-74.0734763:
  *   get:
  *     tags:
  *       - Supermarket
- *     description: Este endpoint lista todos los supermercados para el usuario
+ *     description: Este endpoint lista los supermercados que estan cerca al usuario
  *     produces:
  *     - applications/json
  *     parameters:
@@ -377,8 +377,9 @@ routesSupermarketApp.put('/rate/:id', isClient, async (request, response) => {
  *               example: "No existen supermercados"
  */
 
-routesSupermarketApp.get('', isClient, async (request, response) => {
-  const all = await supermarketController.all()
+routesSupermarketApp.get('', async (request, response) => {
+  const data = request.query
+  const all = await supermarketController.searchSuperMarketForGeoLocation(data)
   response.json(all)
 })
 

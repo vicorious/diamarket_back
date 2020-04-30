@@ -108,6 +108,15 @@ class Supermarket {
       return { estado: false, data: [], mensaje: 'No hay supermercados disponibles para asignar' }
     }
   }
+
+  async searchSuperMarketForGeoLocation (data) {
+    const supermarkets = await SupermarketModel.search({ location: { $nearSphere: { $geometry: { type: 'Point', coordinates: [ parseFloat(data.latitude), parseFloat(data.length) ] }, $maxDistance: 400 } } })
+    if (supermarkets.length > 0) {
+      return { estado: true, data: supermarkets, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No hay supermercados disponibles cerca de ti' }
+    } 
+  }
 }
 
 module.exports = new Supermarket()
