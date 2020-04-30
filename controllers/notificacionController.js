@@ -9,7 +9,8 @@ class Notification {
         body: data.body
       },
       data: {
-        _id: data._id
+        _id: data._id,
+        state: data.state
       }
     }
     const options = {
