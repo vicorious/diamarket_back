@@ -333,7 +333,7 @@ routesSupermarketApp.put('/rate/:id', isClient, async (request, response) => {
 
 /**
  * @swagger
- * /app/supermarket?latitude=4.624675&length=-74.0734763:
+ * /app/supermarket?lat=4.624675&lng=-74.0734763:
  *   get:
  *     tags:
  *       - Supermarket
@@ -377,7 +377,7 @@ routesSupermarketApp.put('/rate/:id', isClient, async (request, response) => {
  *               example: "No existen supermercados"
  */
 
-routesSupermarketApp.get('', async (request, response) => {
+routesSupermarketApp.get('', isClient, async (request, response) => {
   const data = request.query
   const all = await supermarketController.searchSuperMarketForGeoLocation(data)
   response.json(all)
