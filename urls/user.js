@@ -1248,4 +1248,60 @@ routesUserApp.delete('/deletecard/:uid', isClient, async (request, response) => 
   response.json(card)
 })
 
+/**
+ * @swagger
+ * /app/user/updatetoken:
+ *  put:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se actualiza el token de firebase messaging
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        properties:
+ *          tokenCloudingMessagin:
+ *            type: string
+ *            example: token de firebase
+ *    responses:
+ *      200:
+ *        description: Si el token se actualiza correctamente
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: boolean
+ *              example: true
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si el usuario no existe
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: El usuario no existe
+ */
+routesUserApp.put('/updatetoken', isClient, async (request, response) => {
+  const data = request.body
+  const _id = request.User.id
+  const update = await UserController.updateToken({_id},{ tokenCloudingMessagin: data.tokenCloudingMessagin  })
+  response.json(update)
+})
 module.exports = { routesUserApp, routesUserWeb }

@@ -5,6 +5,7 @@ const DeliverySchema = require('../models/deliverySchema')
 const PromotionSchema = require('../models/promotionSchema')
 const AvailabilitySchema = require('../models/availabilitySchema')
 const PayUController = require('../controllers/payUController')
+const NotificationController = require('../controllers/notificacionController')
 const makeCode = require('../utils/makeCode')
 
 class OrderService {
@@ -160,9 +161,11 @@ class OrderService {
 
   async edit(_id, data) {
     const order = await OrderServiceModel.get({ _id })
+    const user = await UserModel.get({ _id: order.user._id })
     switch (data.status) {
       case parseInt(1): {
         // Notificacion al cliente de que se ha aceptado la solicitud por el supermercado
+        await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden ha sido aceptada por el supermercado', _id: order._id, tokenMessaging: user.tokenCloudingMessagin })
         return OrderServiceModel.update(_id, { status: 1 })
       }
 
@@ -173,6 +176,7 @@ class OrderService {
 
       case parseInt(3): {
         // Notificacion para el cliente de que el domiciliario va en camino
+        await NotificationController.messaging({ title: 'DiaMarket', body: 'El domiciliario va en camino con tu pedido', _id: order._id })
         await OrderServiceModel.update(_id, data)
         break
       }
@@ -189,6 +193,7 @@ class OrderService {
         } else {
           // Notificacion para el cliente de cancelacion de la orden
           if (order.codeCancelation === parseInt(data.codeCancelation)) {
+            await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden de servicio ha sido cancelada', _id: order._id })
             await OrderServiceModel.update(_id, { status: 5 })
           } else {
             return 'error'

@@ -355,6 +355,16 @@ class User {
       return { estado: false, data: [], mensaje: 'Esta tarjeta no se encuentra' }
     }
   }
+
+  async updateToken (_id, data) {
+    const user = await UserModel.get(_id)
+    console.log(data)
+    if (user._id) {
+      await UserModel.update(user._id, data)
+    } else {
+      return { estado: false, data: [], message: 'Este usuario no se encuentra' }
+    }
+  }
 }
 
 module.exports = new User()

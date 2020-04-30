@@ -9,17 +9,19 @@ class Notification {
         body: data.body
       },
       data: {
-        TYPE: data.TYPE,
-        body: data.bodydata
+        _id: data._id
       }
     }
     const options = {
       priority: 'high',
       timeToLive: 60 * 60 * 24
    } 
+   console.log("*****************************")
+   console.log(data, payload, options)
+   console.log("*****************************")
     AdminFirebase
       .messaging()
-      .sendToDevice(data.registrationToken, payload, options)
+      .sendToDevice(data.tokenMessaging, payload, options)
       .then(res => {
         console.log('Successfully sent message:', res)
       })
