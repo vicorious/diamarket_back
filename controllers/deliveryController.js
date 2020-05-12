@@ -37,7 +37,7 @@ class Delivery {
       }
 
       case parseInt(2): {
-        // Notificacion para el cliente
+        await NotificationController.messaging({ title: 'DiaMarket', body: 'El domiciliario va en camino con tu pedido', _id: order._id, status: 3, tokenMessaging: user.tokenCloudingMessagin })
         return DeliveryModel.update(_id, { status: 2 })
       }
 

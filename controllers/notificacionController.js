@@ -9,8 +9,8 @@ class Notification {
         body: data.body
       },
       data: {
-        _id: data._id,
-        state: data.state
+        _id: data._id.toString(),
+        state: data.state.toString()
       }
     }
     const options = {

@@ -161,11 +161,12 @@ class OrderService {
 
   async edit(_id, data) {
     const order = await OrderServiceModel.get({ _id })
+    console.log(order)
     const user = await UserModel.get({ _id: order.user._id })
     switch (data.status) {
       case parseInt(1): {
         // Notificacion al cliente de que se ha aceptado la solicitud por el supermercado
-        await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden ha sido aceptada por el supermercado', _id: order._id, state: 1, tokenMessaging: user.tokenCloudingMessagin })
+        await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden ha sido aceptada por el supermercado', _id: order._id, state: 1, tokenMessaging: 'du4KXqA6f2w:APA91bEcQeZyoj48aeI6w7MHHv0sxAuMp6msxL8tso6r4WLm2_EidmS5rON-JJIzLjDCew-h1yNe47JWzDAAToijYFXVHxUM8TST2LCzRh6CKcg1rQsQimQiQR4ksLG29zeMUqSZ7iEn' })
         return OrderServiceModel.update(_id, { status: 1 })
       }
 
@@ -176,7 +177,7 @@ class OrderService {
 
       case parseInt(3): {
         // Notificacion para el cliente de que el domiciliario va en camino
-        await NotificationController.messaging({ title: 'DiaMarket', body: 'El domiciliario va en camino con tu pedido', _id: order._id, status: 3, tokenMessaging: user.tokenCloudingMessagin })
+        await NotificationController.messaging({ title: 'DiaMarket', body: 'El domiciliario va en camino con tu pedido', _id: order._id, status: 2, tokenMessaging: user.tokenCloudingMessagin })
         await OrderServiceModel.update(_id, data)
         break
       }
@@ -193,7 +194,7 @@ class OrderService {
         } else {
           // Notificacion para el cliente de cancelacion de la orden
           if (order.codeCancelation === parseInt(data.codeCancelation)) {
-            await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden de servicio ha sido cancelada', _id: order._id, state: 5, tokenMessaging: user.tokenCloudingMessagin })
+            await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden de servicio ha sido cancelada', _id: order._id, state: 4, tokenMessaging: user.tokenCloudingMessagin })
             await OrderServiceModel.update(_id, { status: 5 })
           } else {
             return 'error'
