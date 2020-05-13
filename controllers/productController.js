@@ -79,14 +79,22 @@ class Product {
     
   }
 
-  async productsSuperMarkets(idSupermarket, page) {
-    const products = await AvailabilityModel.searchByLimit({ idSupermarket, isActive: true }, page)
-    console.log(products.length)
-    if (products.length > 0) {
-      return { estado: true, data: products, mensaje: null }
-    } else {
-      return { estado: false, data: [], mensaje: 'Este supermercado no tiene productos' }
-    }
+  async productsSuperMarkets(idSupermarket, initQuantity, finishQuantity) {
+    return AvailabilityModel.searchByPageMobile({ idSupermarket, isActive: true }, initQuantity, finishQuantity)
+    return this.validatePage (initQuantity, finishQuantity)
+    // console.log(products.length)
+    // if (products.length > 0) {
+    //   return { estado: true, data: products, mensaje: null }
+    // } else {
+    //   return { estado: false, data: [], mensaje: 'Este supermercado no tiene productos' }
+    // }
+  }
+
+  async validatePage(initQuantity, finishQuantity) {
+    let page = 0
+    let count = 0
+    console.log(initQuantity - finishQuantity)
+    return []
   }
 
   async productsForCategory(data, quantity, page) {

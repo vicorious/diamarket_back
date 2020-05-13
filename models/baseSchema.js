@@ -66,6 +66,15 @@ class Base {
     }
   }
 
+  async searchByPageMobile (data, initQuantity, finishQuantity) {
+    const quantity = parseInt(finishQuantity) - parseInt(initQuantity) 
+    let results = await this.model.find(data, this.fields).skip(parseInt(initQuantity)).limit(parseInt(quantity)).exec()
+    if (this.populate) {
+      results = await this.model.find(data, this.fields).populate(this.populate).skip(parseInt(initQuantity)).limit(parseInt(quantity)).exec()
+    }
+    return results
+  }
+
   async searchByLimit(data, page) {
     if (parseInt(page) === 1) {
       let results = await this.model.find(data, this.fields).skip((50 * page) - 50).sort(this.sort).limit(50).exec()
