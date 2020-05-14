@@ -6,12 +6,13 @@ const bucketName = 'helpmi-s3'
 
 async function uploadFile (image, originalname, type) {
 
-  const ID = 'AKIAJEATWRXNRLPW2OVA'
-  const SECRET = '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'
+  const ID = 'AKIAQKARQNPYDXZ5TPGV'
+  const SECRET = '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'
   const s3 = new AWS.S3({
     accessKeyId: ID,
     secretAccessKey: SECRET
   });
+  console.log(s3)
   const params = {
     Bucket: bucketName,
     /*CreateBucketConfiguration: {
@@ -21,7 +22,7 @@ async function uploadFile (image, originalname, type) {
   };
 
 
-  let name = uuid.v4() + '/tuikit/' + originalname
+  let name = uuid.v4() + '/diamarket/' + originalname
   name = name.replace(/\s+/g, '-')
 
   if (type === 'base64') {
@@ -37,6 +38,7 @@ async function uploadFile (image, originalname, type) {
     params.ACL = 'public-read'
   }
   const file = await s3.upload(params).promise()
+  console.log(file)
   return file.Location
 }
 

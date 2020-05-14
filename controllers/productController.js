@@ -80,21 +80,12 @@ class Product {
   }
 
   async productsSuperMarkets(idSupermarket, initQuantity, finishQuantity) {
-    return AvailabilityModel.searchByPageMobile({ idSupermarket, isActive: true }, initQuantity, finishQuantity)
-    return this.validatePage (initQuantity, finishQuantity)
-    // console.log(products.length)
-    // if (products.length > 0) {
-    //   return { estado: true, data: products, mensaje: null }
-    // } else {
-    //   return { estado: false, data: [], mensaje: 'Este supermercado no tiene productos' }
-    // }
-  }
-
-  async validatePage(initQuantity, finishQuantity) {
-    let page = 0
-    let count = 0
-    console.log(initQuantity - finishQuantity)
-    return []
+    const products = await AvailabilityModel.searchByPageMobile({ idSupermarket, isActive: true }, initQuantity, finishQuantity)
+    if (products.length > 0) {
+      return { estado: true, data: products, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'Este supermercado no tiene productos' }
+    }
   }
 
   async productsForCategory(data, quantity, page) {
@@ -115,8 +106,8 @@ class Product {
     }
   }
   
-  async productsForCategoryApp (data, page) {
-    const products = await ProductModel.searchByPage({ category: data.category }, page)
+  async productsForCategoryApp (data, initQuantity, finishQuantity) {
+    const products = await ProductModel.searchByPageMobile({ category: data.category }, initQuantity, finishQuantity)
     const arrayProducts = []
     for (const product of products) {
       const productsCategory = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
@@ -144,6 +135,22 @@ class Product {
     }
     if (arrayProducts.length > 0) {
       return { estado: true, data: { page: page, quantity: quantity, total: countAvailability, items: arrayProducts }, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No existe productos cor este nombre' }
+    }
+  }
+
+  async productsForNameMobile(data, initQuantity, finishQuantity) {
+    const products = await ProductModel.searchByPageMobile({ name: data.name }, initQuantity, finishQuantity)
+    const arrayProducts = []
+    for (const product of products) {
+      const productsName = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
+      if (productsName._id) {
+        arrayProducts.push(productsName)
+      }
+    }
+    if (arrayProducts.length > 0) {
+      return { estado: true, data: arrayProducts, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No existe productos cor este nombre' }
     }

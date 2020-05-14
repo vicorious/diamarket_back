@@ -44,8 +44,8 @@ class Promotion {
     }
   }
 
-  async all (data, page) {
-    const promotion = await PromotionModel.searchByPage(data, page)
+  async all (data, initQuantity, finishQuantity) {
+    const promotion = await PromotionModel.searchByPageMobile(data, initQuantity, finishQuantity)
     if (promotion.length > 0) {
       return { estado: true, data: promotion, mensaje: null }
     } else {

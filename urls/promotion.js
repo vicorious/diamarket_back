@@ -369,7 +369,7 @@ routesPromotionWeb.get('/forsupermarket/:quantity/:page', isAdmin, async (reques
 
 /**
  * @swagger
- * /app/promotion/all/{supermarket}/{page}:
+ * /app/promotion/all/{supermarket}/{initquantity}/{finishquantity}:
  *  get:
  *    tags:
  *      - Promotion
@@ -386,9 +386,13 @@ routesPromotionWeb.get('/forsupermarket/:quantity/:page', isAdmin, async (reques
  *      type: string
  *      required: true
  *    - in: path
- *      name: page
+ *      name: initquantity
  *      type: string
  *      required: true
+ *    - in: path
+ *      name: finishquantity
+ *      type: string
+ *      requuired: true
  *    responses:
  *      200:
  *        description: Si el id del supermercado tiene promociones se devuelve el siguiente objeto
@@ -418,11 +422,12 @@ routesPromotionWeb.get('/forsupermarket/:quantity/:page', isAdmin, async (reques
  *              type: string
  *              example: No existen promociones para este supermercado
  */
-routesPromotionApp.get('/all/:supermarket/:page', async (request, response) => {
-  const page = request.params.page
+routesPromotionApp.get('/all/:supermarket/:initquantity/:finishquantity', async (request, response) => {
+  const initQuantity = request.params.initquantity
+  const finishQuantity = request.params.finishquantity
   const supermarket = request.params.supermarket
   const data = { supermarket: supermarket, isActive: true }
-  const search = await PromotionController.all(data, page)
+  const search = await PromotionController.all(data, initQuantity, finishQuantity)
   response.json(search)
 })
 

@@ -232,7 +232,7 @@ routesProductWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request, resp
 
 /**
  * @swagger
- * /app/product/forsupermarket/{id}/{page}:
+ * /app/product/forsupermarket/{id}/{initquantity}/{finishquantity}:
  *  get:
  *    tags:
  *      - Product
@@ -249,8 +249,12 @@ routesProductWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request, resp
  *      type: string
  *      required: true
  *    - in: path
- *      name: page
+ *      name: initquantity
  *      type: number
+ *      required: true
+ *    - in: path
+ *      name: finishquantity
+ *      type: required
  *      required: true
  *    responses:
  *      200:
@@ -282,7 +286,7 @@ routesProductWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request, resp
  *              example: "Este supermercado no tiene productos"
  */
 
-routesProductApp.get('/forsupermarket/:id/:initquantity/:finishquantity', async (request, response) => {
+routesProductApp.get('/forsupermarket/:id/:initquantity/:finishquantity', isClient, async (request, response) => {
   const idSupermarket = request.params.id
   const initQuantity = request.params.initquantity
   const finishQuantity = request.params.finishquantity
@@ -292,7 +296,7 @@ routesProductApp.get('/forsupermarket/:id/:initquantity/:finishquantity', async 
 
 /**
  * @swagger
- * /app/product/forcategory/{page}:
+ * /app/product/forcategory/{initquantity}/{finishquantity}:
  *  post:
  *    tags:
  *      - Product
@@ -305,8 +309,12 @@ routesProductApp.get('/forsupermarket/:id/:initquantity/:finishquantity', async 
  *      type: string
  *      required: true
  *    - in: path
- *      name: page
+ *      name: initquantity
  *      type: number
+ *      required: true
+ *    - in: path
+ *      name: finishquantity
+ *      type: required
  *      required: true
  *    - in: body
  *      name: body
@@ -349,10 +357,11 @@ routesProductApp.get('/forsupermarket/:id/:initquantity/:finishquantity', async 
  *              example: "Esta categoria no tiene productos"
  */
 
-routesProductApp.post('/forcategory/:page', isClient, async (request, response) => {
-  const page = request.params.page
+routesProductApp.post('/forcategory/:initquantity/:finishquantity', isClient, async (request, response) => {
+  const initQuantity = request.params.initquantity
+  const finishQuantity = request.params.finishquantity
   const data = request.body
-  const products = await ProductController.productsForCategoryApp(data, page)
+  const products = await ProductController.productsForCategoryApp(data, initQuantity, finishQuantity)
   response.json(products)
 })
 
@@ -412,7 +421,7 @@ routesProductApp.get('/detail/:id', isClient, async (request, response) => {
 
 /**
  * @swagger
- * /app/product/forname/{page}:
+ * /app/product/forname/{initquantity}/{finishquantity}:
  *  post:
  *    tags:
  *      - Product
@@ -425,8 +434,12 @@ routesProductApp.get('/detail/:id', isClient, async (request, response) => {
  *      type: string
  *      required: true
  *    - in: path
- *      name: page
+ *      name: initquantity
  *      type: number
+ *      required: true
+ *    - in: path
+ *      name: finishquantity
+ *      type: string
  *      required: true
  *    - in: body
  *      name: body
@@ -467,11 +480,12 @@ routesProductApp.get('/detail/:id', isClient, async (request, response) => {
  *              example: "No existe productos cor este nombre"
  */
 
-routesProductApp.post('/forname/:page', async (request, response) => {
-  const page = request.params.page
+routesProductApp.post('/forname/:initquantity/:finishquantity', async (request, response) => {
+  const initQuantity = request.params.initquantity
+  const finishQuantity = request.params.finishquantity
   let data = request.body
   data.name = { $regex: data.name, $options: 'i' }
-  const products = await ProductController.productsForName(data, 50, page)
+  const products = await ProductController.productsForNameMobile(data, initQuantity, finishQuantity)
   response.json(products)
 })
 
