@@ -18,7 +18,9 @@ const Types = mongoose.Schema.Types
  *      name:
  *        type: string
  *      supermarket:
- *        $ref: '#/definitions/Supermarket'
+ *        type: array
+ *        items:
+ *          $ref: '#/definitions/Supermarket'
  *      products:
  *        type: array
  *        items:

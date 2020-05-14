@@ -14,6 +14,7 @@ class OrderService {
       data.card._id = data.user
       const countOrder = await OrderServiceModel.count()
       const objectToken = await PayUController.tokenPayU(data.card)
+      console.log(objectToken)
       data.card.token = objectToken.creditCardToken.creditCardTokenId
       data.card.securityCode = objectToken.creditCardToken.securityCode
       const user = await UserModel.get({ _id: data.user })

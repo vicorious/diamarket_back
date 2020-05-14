@@ -26,9 +26,10 @@ const { convertBase64ToFile } = require('../middleware/convertBase64File')
  *            type: string
  *            required: true
  *          supermarket:
- *            type: string
- *            required: true
- *            example: id de mongo
+ *            type: array
+ *            items:
+ *              type: string
+ *              example: id del supermercado
  *          products:
  *            type: array
  *            items:
