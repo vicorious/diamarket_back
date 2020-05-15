@@ -103,7 +103,7 @@ console.log(data.referenceCode)
         'INSTALLMENTS_NUMBER': 1
       },
       'type': 'AUTHORIZATION_AND_CAPTURE',
-      'paymentMethod': 'VISA',
+      'paymentMethod': data.card.type,
       'paymentCountry': 'CO'
     },
     'test': false
