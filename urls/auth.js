@@ -64,6 +64,7 @@ const routesAuthApp = asyncify(express.Router())
  */
 routesAuthWeb.post('', async (request, response) => {
   const data = request.body
+  console.log(data)
   const token = await Auth.createToken(data)
   response.json(token)
 })
@@ -221,8 +222,11 @@ routesAuthWeb.post('/resetpassword', async (request, response) => {
  *              example: null
  */
 routesAuthApp.post('', async (request, response) => {
+  console.log('---------------')
+  console.log('HOLAAAAA')
   const data = request.body
   // const tokenGenerate = await FirebaseAdmin.auth().createCustomToken(id)
+  console.log(data)
   const token = await Auth.createTokenFirebase(data)
   response.json(token)
 })

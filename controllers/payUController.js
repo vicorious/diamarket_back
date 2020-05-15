@@ -12,7 +12,6 @@ const uid = require('node-uuid')
 class PayU {
   async payCredit(data) {
     data.card.token = crypto.createDecipher('aes-256-ctr', secret).update(data.card.token, 'hex', 'utf8')
-    data.referenceCode = "test"
     data.card.securityCode = crypto.createDecipher('aes-256-ctr', secret).update(data.card.securityCode, 'hex', 'utf8')
     const objectPayment = MakeObjectPayment(data)
     const response = await axios.post(MakeUrlPayU, objectPayment)
@@ -66,28 +65,32 @@ class PayU {
   async tokenPayU (data) {
     const objectToken = MakeObjectToken(data)
     const response = await axios.post(MakeUrlPayU, objectToken)
-    response.data.creditCardToken.creditCardTokenId = crypto.createCipher('aes-256-ctr', secret).update(response.data.creditCardToken.creditCardTokenId, 'utf8', 'hex')
-    response.data.creditCardToken.securityCode = crypto.createCipher('aes-256-ctr', secret).update(data.securityCode, 'utf8', 'hex')
-    const user = await UserSchema.get({ _id: data._id })
-    const dataCard = {
-      uid: uid.v4(),
-      number: response.data.creditCardToken.maskedNumber,
-      token: response.data.creditCardToken.creditCardTokenId,
-      name: response.data.creditCardToken.name,
-      identification: response.data.creditCardToken.identificationNumber,
-      type: response.data.creditCardToken.paymentMethod,
-      securityCode : response.data.creditCardToken.securityCode
-    }
-    if (user.cards.length > 0) {
-      for (const card of user.cards) {
-        if (card.token !== response.data.creditCardToken.creditCardTokenId) {
-          await UserSchema.update(user._id, { $push: { cards: dataCard } }) 
-        }
+    if (response.data.code !== 'ERROR') {
+      response.data.creditCardToken.creditCardTokenId = crypto.createCipher('aes-256-ctr', secret).update(response.data.creditCardToken.creditCardTokenId, 'utf8', 'hex')
+      response.data.creditCardToken.securityCode = crypto.createCipher('aes-256-ctr', secret).update(data.securityCode, 'utf8', 'hex')
+      const user = await UserSchema.get({ _id: data._id })
+      const dataCard = {
+        uid: uid.v4(),
+        number: response.data.creditCardToken.maskedNumber,
+        token: response.data.creditCardToken.creditCardTokenId,
+        name: response.data.creditCardToken.name,
+        identification: response.data.creditCardToken.identificationNumber,
+        type: response.data.creditCardToken.paymentMethod,
+        securityCode : response.data.creditCardToken.securityCode
       }
-      return response.data
+      if (user.cards.length > 0) {
+        for (const card of user.cards) {
+          if (card.token !== response.data.creditCardToken.creditCardTokenId) {
+            await UserSchema.update(user._id, { $push: { cards: dataCard } }) 
+          }
+        }
+        return response.data
+      } else {
+        await UserSchema.update(user._id, { $push: { cards: dataCard } }) 
+        return response.data
+      }
     } else {
-      await UserSchema.update(user._id, { $push: { cards: dataCard } }) 
-      return response.data
+      return { estado: false, data: [], mensaje: 'La fecha de expiración de la tarjeta de crédito no es válida' }
     }
   }
 }

@@ -26,6 +26,7 @@ class Auth {
     let user
     const verifyToken = await AdminFirebase.auth().verifyIdToken(data.token)
     const userFirebase = await AdminFirebase.auth().getUser(verifyToken.uid)
+    console.log(userFirebase)
     userFirebase.providerData.forEach(obj => user = obj)
     const userDataBase = await UserModel.get({ email: user.email })
     if (userDataBase._id) {

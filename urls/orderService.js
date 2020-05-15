@@ -277,6 +277,7 @@ routesOrderServiceWeb.put('/:id', async (request, response) => {
 routesOrderServiceApp.post('/calculatevalue', isClient, async (request, response) => {
   const data = request.body
   const value = await OrderServiceController.calculateValue(data)
+  console.log(value)
   response.json(value)
 })
 
@@ -400,12 +401,13 @@ routesOrderServiceApp.post('/calculatevalue', isClient, async (request, response
  *              type: string
  *              example: La red financiera reportó que la transacción fue inválida.
  */
-routesOrderServiceApp.post('', async (request, response) => {
+routesOrderServiceApp.post('', isClient, async (request, response) => {
   const data = request.body
   data.status = 0
-  // data.user = request.User.id
-  data.user = '5e436d7d563c85275c82fc8b'
+  data.user = request.User.id
+  // data.user = '5e436d7d563c85275c82fc8b'
   const order = await OrderServiceController.create(data)
+  console.log(order)
   response.json(order)
 })
 

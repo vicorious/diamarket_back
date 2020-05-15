@@ -6,6 +6,7 @@ const PromotionSchema = require('../models/promotionSchema')
 const AvailabilitySchema = require('../models/availabilitySchema')
 const PayUController = require('../controllers/payUController')
 const NotificationController = require('../controllers/notificacionController')
+const ProductSchema = require('../controllers/productController')
 const makeCode = require('../utils/makeCode')
 
 class OrderService {
@@ -19,7 +20,7 @@ class OrderService {
       data.card.securityCode = objectToken.creditCardToken.securityCode
       const user = await UserModel.get({ _id: data.user })
       data.user = user
-      data.referenceCode = 'prueba1'
+      data.referenceCode = `prueba${countOrder}`
       if (parseInt(data.value) >= 10000) {
         // data.referenceCode = countOrder
         if (data.methodPayment.toLowerCase() === 'credit') {
@@ -58,7 +59,7 @@ class OrderService {
       const user = await UserModel.get({ _id: data.user })
       const card = user.cards.find(element => element.uid === data.card.uid)
       data.user = user
-      data.referenceCode = 'prueba1'
+      data.referenceCode = `prueba${countOrder}`
       data.card = card
       // data.referenceCode = countOrder
       if (parseInt(data.value) >= 10000) {
@@ -95,8 +96,10 @@ class OrderService {
   }
 
   async calculateValue (data) {
+    console.log(data)
     const valueProducts = await this.calculateValueProducts(data.products)
     const valuePromotions = await this.calculateValuePromotions(data.promotions)
+    console.log(valueProducts, valuePromotions)
     const value = (parseInt(valueProducts) + parseInt(valuePromotions.value)) - parseInt(valuePromotions.discount)
     return { estado: true, data: value, mensaje: null }
   }
@@ -104,9 +107,13 @@ class OrderService {
   async calculateValueProducts(products) {
     if (products.length > 0) {
       let value = 0
+      console.log(products)
       for (const object of products) {
-        const product = await AvailabilitySchema.get({ idProduct: object.product })
+        console.log(object)
+        const product = await AvailabilitySchema.get({ idProduct: object.product, idSupermarket: object.supermarket })
+        console.log(product)
         value += parseInt(product.price) * parseInt(object.quantity)
+        console.log(value)
       }
       return value
     } else {
@@ -125,7 +132,7 @@ class OrderService {
       }
       return { value, discount }
     } else {
-      return 0
+      return { value: 0, discount: 0 }
     }
   }
 
@@ -135,7 +142,7 @@ class OrderService {
     parseInt(user.credits) === 0 ? credits = 0 : credits = parseInt(user.credits)
     if (promotions.length > 0) {
       for (const object of promotions) {
-        const promotion = await PromotionSchema.get({ _id: object.promotion })
+        const promotion = await PromotionSchema.get({ _id: object.promotion, supermarket: { $all: [object.supermarket] } })
         credits += promotion.credits ? parseInt(promotion.credits) * parseInt(object.quantity) : 0
       }
       await UserModel.update(user._id, { credits })
@@ -167,7 +174,7 @@ class OrderService {
     switch (data.status) {
       case parseInt(1): {
         // Notificacion al cliente de que se ha aceptado la solicitud por el supermercado
-        await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden ha sido aceptada por el supermercado', _id: order._id, state: 1, tokenMessaging: 'du4KXqA6f2w:APA91bEcQeZyoj48aeI6w7MHHv0sxAuMp6msxL8tso6r4WLm2_EidmS5rON-JJIzLjDCew-h1yNe47JWzDAAToijYFXVHxUM8TST2LCzRh6CKcg1rQsQimQiQR4ksLG29zeMUqSZ7iEn' })
+        await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden ha sido aceptada por el supermercado', _id: order._id, state: 1, tokenMessaging: user.tokenCloudingMessagin })
         return OrderServiceModel.update(_id, { status: 1 })
       }
 
