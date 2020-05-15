@@ -24,9 +24,12 @@ class OrderService {
       if (parseInt(data.value) >= 10000) {
         // data.referenceCode = countOrder
         if (data.methodPayment.toLowerCase() === 'credit') {
-          const paymentResponse = await PayUController.payCredit(data)
-          console.log("paymentResponse")
-          console.log(paymentResponse)
+          // const paymentResponse = await PayUController.payCredit(data)
+          // console.log("paymentResponse")
+          // console.log(paymentResponse)
+          const paymentResponse = {
+            status: 'APPROVED'
+          }
           switch (paymentResponse.status) {
             case 'APPROVED': {
               data.paymentStatus = 0
