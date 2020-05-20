@@ -1,6 +1,7 @@
 const express = require('express')
 const asyncify = require('express-asyncify')
 const OrderServiceController = require('../controllers/orderServiceController')
+const PayUController = require('../controllers/payUController')
 const { isSuperAdmin, isAdmin, isClient, isAdminAndIsSuperAdmin } = require('../middleware/token')
 const routesOrderServiceApp = asyncify(express.Router())
 const routesOrderServiceWeb = asyncify(express.Router())
@@ -401,13 +402,12 @@ routesOrderServiceApp.post('/calculatevalue', isClient, async (request, response
  *              type: string
  *              example: La red financiera reportó que la transacción fue inválida.
  */
-routesOrderServiceApp.post('', isClient, async (request, response) => {
+routesOrderServiceApp.post('', async (request, response) => {
   const data = request.body
   data.status = 0
-  data.user = request.User.id
-  // data.user = '5e436d7d563c85275c82fc8b'
+  // data.user = request.User.id
+  data.user = '5e436d7d563c85275c82fc8b'
   const order = await OrderServiceController.create(data)
-  console.log(order)
   response.json(order)
 })
 
@@ -509,6 +509,17 @@ routesOrderServiceApp.get('/detail/:id', isClient, async (request, response) => 
   const _id = request.params.id
   const order = await OrderServiceController.detail({ _id })
   response.json(order)
+})
+
+routesOrderServiceApp.get('/datapse', async (request, response) => {
+  const banks = await PayUController.dataPse()
+  response.json(banks)
+})
+
+routesOrderServiceWeb.get('/responsepayment', async (request, response) => {
+  const query = request.query
+  console.log(query)
+  response.json(query)
 })
 
 module.exports = { routesOrderServiceApp, routesOrderServiceWeb }

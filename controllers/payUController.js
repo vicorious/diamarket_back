@@ -2,8 +2,10 @@
 const MakeUrlPayU = require('../utils/makeUrlPayU')
 const axios = require('axios')
 const MakeObjectPayment = require('../utils/makeObjectPayment')
+const MakeObjectBanks = require('../utils/makeObjectBanks')
 const ValidateResponsePayment = require('../utils/validateResponsePayment')
 const MakeObjectToken = require('../utils/makeObjectToken')
+const MakeObjectPse = require('../utils/makeObjectPse')
 const UserSchema = require('../models/userSchema')
 const secret = 'vmKeS%O!w!%zmVydx5e*t8k%zDIAMARKET#boaTOKEN*h^l^4sYzCARD$xtGYcpT!j5IP8g#5QJrZ4zyUP26ewqIDU90!Z^D2Tzr%0*LH6AXUORtKskMO'
 const crypto = require('crypto')
@@ -93,6 +95,74 @@ class PayU {
       return { estado: false, data: [], mensaje: 'La fecha de expiración de la tarjeta de crédito no es válida' }
     }
   }
+
+  async dataPse () {
+		const objectBanks = MakeObjectBanks()
+		try {
+			const banks = await axios.post(MakeUrlPayU, objectBanks)
+			const typeClient = [
+				{ value: 'N', label: 'Persona natural' },
+				{ value: 'J', label: 'persona jurídica' }
+			]
+			const typeDocument = [
+				{ value: 'CC', label: 'Cédula de ciudadanía.' },
+				{ value: 'CE', label: 'Cédula de extranjería.' },
+				{ value: 'NIT', label: 'Número de Identificación Tributario.' },
+				{ value: 'TI', label: 'Tarjeta de Identidad.' },
+				{ value: 'PP', label: 'Pasaporte.' },
+				{ value: 'IDC', label: 'Identificador único de cliente, para el caso de ID’s únicos de clientes/usuarios de servicios públicos.' },
+				{ value: 'CEL', label: 'En caso de identificarse a través de la línea del móvil.' },
+				{ value: 'RC', label: 'Registro civil de nacimiento.' },
+				{ value: 'DE', label: 'Documento de identificación extranjero.' }
+			]
+			return { estado: true, data: [ { type: 'typeClient', typeClient },{ type: 'typeDocument', typeDocument },{ type: 'banks', banks: banks.data.banks } ], mensaje: null }
+		} catch (error) {
+			return { estado: false, data: [], mensaje: 'Ha ocurrido un error inesperado' }
+		}		
+	}
+	
+	async pse (data) {
+		const objectPse = MakeObjectPse(data)
+		const responsePse = await axios.post(MakeUrlPayU, objectPse)
+		console.log(responsePse)
+		if (responsePse.data.code === 'SUCCESS') {
+      switch (responsePse.data.transactionResponse.state) {
+        case 'APPROVED': {
+          return {status: 'APPROVED'}
+        }
+        case 'DECLINED': {
+          const validateResponse = await ValidateResponsePayment(responsePse.data.transactionResponse)
+          return validateResponse
+        }
+
+        case 'ERROR': {
+          const validateResponse = await ValidateResponsePayment(responsePse.data.transactionResponse)
+          return validateResponse
+        }
+
+        case 'EXPIRED': {
+          const validateResponse = await ValidateResponsePayment(responsePse.data.transactionResponse)
+          return validateResponse
+        }
+
+        case 'PENDING': {
+          const validateResponse = await ValidateResponsePayment(responsePse.data.transactionResponse)
+          return { validateResponse, status: 'PENDING' }
+        }
+        
+        case 'CANCELLED': {
+          const validateResponse = await ValidateResponsePayment(responsePse.data.transactionResponse)
+          return validateResponse
+        }
+
+        default: {
+          return { estado: false, data: [], mensaje: 'Ocurrió un error general.', status: 'ERROR' }
+        }
+      }
+    } else {
+      return { estado: false, data: [], mensaje: 'Ocurrió un error general.', status: 'ERROR'}
+    }
+	}
 }
 
 module.exports = new PayU()

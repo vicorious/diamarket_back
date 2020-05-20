@@ -10,92 +10,79 @@ const ProductSchema = require('../controllers/productController')
 const makeCode = require('../utils/makeCode')
 
 class OrderService {
-  async create(data) {
-    if (!data.card.uid) {
-      data.card._id = data.user
-      const countOrder = await OrderServiceModel.count()
-      const objectToken = await PayUController.tokenPayU(data.card)
-      console.log(objectToken)
-      data.card.token = objectToken.creditCardToken.creditCardTokenId
-      data.card.securityCode = objectToken.creditCardToken.securityCode
-      const user = await UserModel.get({ _id: data.user })
-      data.user = user
-      data.referenceCode = `prueba${countOrder}`
-      if (parseInt(data.value) >= 10000) {
-        // data.referenceCode = countOrder
-        if (data.methodPayment.toLowerCase() === 'credit') {
-          // const paymentResponse = await PayUController.payCredit(data)
-          // console.log("paymentResponse")
-          // console.log(paymentResponse)
-          const paymentResponse = {
-            status: 'APPROVED'
-          }
-          switch (paymentResponse.status) {
-            case 'APPROVED': {
-              data.paymentStatus = 0
-             // data.transactionId = paymentResponse.transactionResponse.transactionId
-              const order = await OrderServiceModel.create(data)
-              await this.validateOfferOrCreditsPromotions({ _id: user._id }, data.promotions)
-              return { estado: true, data: order, mensaje: null }
-            }
-
-            case 'PENDING': {
-              data.paymentStatus = 1
-              //data.transactionId = paymentResponse.transactionResponse.transactionId
-              await OrderServiceModel.create(data)
-              delete paymentResponse.status
-              return paymentResponse
-            }
-
-            case 'ERROR': {
-              delete paymentResponse.status
-              return paymentResponse
-            }
-          }
+  async create (data) {
+    if (parseInt(data.value) >= 10000) {
+      switch (data.methodPayment.toLowerCase()) {
+        case 'credit': {
+          const order = await this.credit(data)
+          return order
         }
-      } else {
-        return { estado: false, data: [], mensaje: 'El valor de su solicitud debe ser mayor a $10.000' }
+
+        case 'cash': {
+          break
+        }
+
+        case 'pse': {
+          const order = await this.pse(data)
+          return order
+        }
+
+        case 'dataphone': {
+          break
+        }
       }
     } else {
-      console.log("payu else")
-      const countOrder = await OrderServiceModel.count()
-      const user = await UserModel.get({ _id: data.user })
+      return { estado: false, data: [], mensaje: 'El valor de su solicitud debe ser mayor a $10.000' }
+    }
+  }
+
+  async credit (data) {
+    const user = await UserModel.get({ _id: data.user })
+    const countOrder = await OrderServiceModel.count()
+    if (!data.card.uid) {
+      data.card._id = data.user
+      const objectToken = await PayUController.tokenPayU(data.card)
+      data.card.token = objectToken.creditCardToken.creditCardTokenId
+      data.card.securityCode = objectToken.creditCardToken.securityCode
+    } else {
       const card = user.cards.find(element => element.uid === data.card.uid)
-      data.user = user
-      data.referenceCode = `prueba${countOrder}`
       data.card = card
-      // data.referenceCode = countOrder
-      if (parseInt(data.value) >= 10000) {
-        if (data.methodPayment.toLowerCase() === 'credit') {
-          const paymentResponse = await PayUController.payCredit(data)
-          console.log(paymentResponse)
-          switch (paymentResponse.status) {
-            case 'APPROVED': {
-              data.paymentStatus = 0
-              data.transactionId = paymentResponse.transactionResponse.transactionId
-              const order = await OrderServiceModel.create(data)
-              await this.validateOfferOrCreditsPromotions({ _id: user._id }, data.promotions)
-              return { estado: true, data: order, mensaje: null }
-            }
+    }
+    data.user = user
+    data.referenceCode = `prueba${countOrder}`
+    const paymentResponse = await PayUController.payCredit(data)
+    switch (paymentResponse.status) {
+      case 'APPROVED': {
+        data.paymentStatus = 0
+        data.transactionId = paymentResponse.transactionResponse.transactionId
+        const order = await OrderServiceModel.create(data)
+        await this.validateOfferOrCreditsPromotions({ _id: user._id }, data.promotions)
+        return { estado: true, data: order, mensaje: null }
+      }
 
-            case 'PENDING': {
-              data.paymentStatus = 1
-              data.transactionId = paymentResponse.transactionResponse.transactionId
-              await OrderServiceModel.create(data)
-              delete paymentResponse.status
-              return paymentResponse
-            }
+      case 'PENDING': {
+        data.paymentStatus = 1
+        data.transactionId = paymentResponse.transactionResponse.transactionId
+        await OrderServiceModel.create(data)
+        delete paymentResponse.status
+        return paymentResponse
+      }
 
-            case 'ERROR': {
-              delete paymentResponse.status
-              return paymentResponse
-            }
-          }
-        }
-      } else {
-        return { estado: false, data: [], mensaje: 'El valor de su solicitud debe ser mayor a $10.000' }
+      case 'ERROR': {
+        delete paymentResponse.status
+        return paymentResponse
       }
     }
+  }
+
+  async pse (data) {
+    const countOrder = await OrderServiceModel.count()
+    const user = await UserModel.get({ _id: data.user })
+    data.referenceCode = `prueba${countOrder}`
+    data.user = user
+    data.paymetStatus = 1
+    const paymentPse = await PayUController.pse(data)
+    return paymentPse
   }
 
   async calculateValue (data) {

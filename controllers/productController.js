@@ -177,6 +177,7 @@ class Product {
   async forSuperMarket (_id, query, quantity, page) {
     const availability = []
     const superMarket = await SuperMarketModel.get({ idAdmin: _id })
+    console.log(superMarket)
     const countAvailability = await AvailabilityModel.count({idSupermarket: superMarket._id})
     if (query.name) {
       ProductModel.perPage = parseInt(quantity)

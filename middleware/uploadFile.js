@@ -14,11 +14,7 @@ async function uploadFile (image, originalname, type) {
   });
   console.log(s3)
   const params = {
-    Bucket: bucketName,
-    /*CreateBucketConfiguration: {
-      // Set your region here
-      LocationConstraint: "eu-west-1"
-    }*/
+    Bucket: bucketName
   };
 
 
