@@ -379,10 +379,10 @@ routesUserWeb.get('/usertype/:usertype/:quantity/:page', isSuperAdminAndIsAdminA
   } else {
     if(rol === 'client') {
       const admin = await UserController.detail({ _id: request.User.id })
-      console.log(admin)
       const supermarket = await SuperMarketSchema.get({ idAdmin: admin.data._id })
-      console.log(supermarket)
+      console.log("supermarket", supermarket)
       const data = await UserController.allPage({ rol: 'client', supermarketFavorite: supermarket._id }, quantity, page)
+      console.log("data",data)
       response.json(data)  
     } else if (rol === 'domiciliary'){
       const admin = await UserController.detail({ _id: request.User.id })

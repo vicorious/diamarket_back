@@ -275,7 +275,7 @@ routesOrderServiceWeb.put('/:id', async (request, response) => {
  *              type: string
  *              example: null
  */
-routesOrderServiceApp.post('/calculatevalue', isClient, async (request, response) => {
+routesOrderServiceApp.post('/calculatevalue', async (request, response) => {
   const data = request.body
   const value = await OrderServiceController.calculateValue(data)
   console.log(value)
@@ -405,9 +405,10 @@ routesOrderServiceApp.post('/calculatevalue', isClient, async (request, response
 routesOrderServiceApp.post('', isClient, async (request, response) => {
   const data = request.body
   data.status = 0
-  data.user = request.User.id
+  data.user = request.User.id 
   // data.user = '5e436d7d563c85275c82fc8b'
   const order = await OrderServiceController.create(data)
+  console.log("order",order)
   response.json(order)
 })
 

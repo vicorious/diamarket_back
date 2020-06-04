@@ -53,7 +53,7 @@ class OrderService {
       data.card = card
     }
     data.user = user
-    data.referenceCode = `prueba${countOrder}Diamarket26`
+    data.referenceCode = `prueba${countOrder}Diamarket29`
     const paymentResponse = await PayUController.payCredit(data)
     switch (paymentResponse.status) {
       case 'APPROVED': {
@@ -94,23 +94,29 @@ class OrderService {
 
   async calculateValue (data) {
     console.log(data)
-    const valueProducts = await this.calculateValueProducts(data.products)
+    const valueProducts = await this.calculateValueProducts(data.products, data.supermarket)
+    console.log(valueProducts)
     const valuePromotions = await this.calculateValuePromotions(data.promotions)
-    console.log(valueProducts, valuePromotions)
+    console.log(valuePromotions)
     const value = (parseInt(valueProducts) + parseInt(valuePromotions.value)) - parseInt(valuePromotions.discount)
-    return { estado: true, data: value, mensaje: null }
+    console.log(value)
+    if (parseInt(value) >= 35000 && parseInt(value) <= 150000) {
+      return { estado: true, data: { value, delivery: 3000 }, mensaje: null }
+    } else if (parseInt(value) >= 150000) {
+      return { estado: true, data: { value, delivery: 0 }, mensaje: null }
+    } else if (parseInt(value) <= 35000) {
+      return { estado: false, data: { value, delivery: 3000 }, mensaje: 'El valor de la orden debe ser mayor a $35.000' }
+    }
   }
 
-  async calculateValueProducts(products) {
+  async calculateValueProducts(products, supermarket) {
     if (products.length > 0) {
       let value = 0
-      console.log(products)
       for (const object of products) {
-        console.log(object)
-        const product = await AvailabilitySchema.get({ idProduct: object.product, idSupermarket: object.supermarket })
-        console.log(product)
+        console.log(object.product)
+        const product = await AvailabilitySchema.get({ idProduct: object.product, idSupermarket: supermarket })
+        console.log("product", product)
         value += parseInt(product.price) * parseInt(object.quantity)
-        console.log(value)
       }
       return value
     } else {

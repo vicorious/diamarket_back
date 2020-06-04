@@ -19,7 +19,7 @@ module.exports = function (data) {
           description: 'payment test',
           language: 'es',
           signature: signature,
-          notifyUrl: 'http://5210038505cd.ngrok.io/v1/web/orderservice/responsepayment',
+          notifyUrl: 'http://api.diamarket.co/v1/web/orderservice/responsepayment',
           additionalValues: {
              TX_VALUE: {
                 value: data.value,

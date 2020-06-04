@@ -231,11 +231,15 @@ class User {
     let administrators = []
     if (supermarkets.length > 0) {
       for (const user of users) {
-        for (const supermarket of supermarkets) {
-          if (supermarket.idAdmin !== user._id) {
-            administrators.push(user)
-          }
+        const filter = await supermarkets.filter(item => item.idAdmin !== user.id)
+        if (!filter._id) {
+          administrators.push(user)
         }
+        // for (const supermarket of supermarkets) {
+        //   if (supermarket.idAdmin !== user._id ) {
+        //     administrators.push(user)
+        //   }
+        // }
       }
     } else {
       administrators = users
