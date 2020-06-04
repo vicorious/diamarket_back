@@ -516,10 +516,11 @@ routesOrderServiceApp.get('/datapse', async (request, response) => {
   response.json(banks)
 })
 
-routesOrderServiceWeb.get('/responsepayment', async (request, response) => {
-  const query = request.query
-  console.log(query)
-  response.json(query)
+routesOrderServiceWeb.post('/responsepayment', async (request, response) => {
+  console.log("............................")
+  console.log(request)
+  console.log("............................")
+  response.json(true)
 })
 
 module.exports = { routesOrderServiceApp, routesOrderServiceWeb }

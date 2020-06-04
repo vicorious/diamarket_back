@@ -1,5 +1,5 @@
 'use strict'
-const MakeUrlPayU = require('../utils/makeUrlPayU')
+const MakeDatePayU = require('../utils/makeDataPayU')
 const axios = require('axios')
 const MakeObjectPayment = require('../utils/makeObjectPayment')
 const MakeObjectBanks = require('../utils/makeObjectBanks')
@@ -16,15 +16,17 @@ class PayU {
     data.card.token = crypto.createDecipher('aes-256-ctr', secret).update(data.card.token, 'hex', 'utf8')
     data.card.securityCode = crypto.createDecipher('aes-256-ctr', secret).update(data.card.securityCode, 'hex', 'utf8')
     const objectPayment = MakeObjectPayment(data)
-    const response = await axios.post(MakeUrlPayU, objectPayment)
-    console.log("-------------------------------")
+    console.log('----------------------OBJECT PAYMENT CON TOKEN------------------------------------------')
     console.log(objectPayment)
+    console.log('----------------------OBJECT PAYMENT CON TOKEN------------------------------------------')
+    const response = await axios.post(MakeDatePayU.urlFinal, objectPayment)
+    console.log("-------------------------------RESPONSE DE LA PETICION DEL PAGO")
     console.log(response.data)
-    console.log("-------------------------------")
+    console.log("-------------------------------RESPONSE DE LA PETICION DEL PAGO")
     if (response.data.code === 'SUCCESS') {
       switch (response.data.transactionResponse.state) {
         case 'APPROVED': {
-          return {status: 'APPROVED'}
+          return { status: 'APPROVED', transactionResponse: response.data.transactionResponse }
         }
         case 'DECLINED': {
           const validateResponse = await ValidateResponsePayment(response.data.transactionResponse)
@@ -43,7 +45,7 @@ class PayU {
 
         case 'PENDING': {
           const validateResponse = await ValidateResponsePayment(response.data.transactionResponse)
-          return { validateResponse, status: 'PENDING' }
+          return { validateResponse, status: 'PENDING', transactionResponse: response.data.transactionResponse }
         }
         
         case 'CANCELLED': {
@@ -66,7 +68,10 @@ class PayU {
 
   async tokenPayU (data) {
     const objectToken = MakeObjectToken(data)
-    const response = await axios.post(MakeUrlPayU, objectToken)
+    const response = await axios.post(MakeDatePayU.urlFinal, objectToken)
+    console.log('-------------------Token-------------------------------------------')
+    console.log(response.data)
+    console.log('-------------------Token-------------------------------------------')
     if (response.data.code !== 'ERROR') {
       response.data.creditCardToken.creditCardTokenId = crypto.createCipher('aes-256-ctr', secret).update(response.data.creditCardToken.creditCardTokenId, 'utf8', 'hex')
       response.data.creditCardToken.securityCode = crypto.createCipher('aes-256-ctr', secret).update(data.securityCode, 'utf8', 'hex')
@@ -81,18 +86,26 @@ class PayU {
         securityCode : response.data.creditCardToken.securityCode
       }
       if (user.cards.length > 0) {
-        for (const card of user.cards) {
-          if (card.token !== response.data.creditCardToken.creditCardTokenId) {
-            await UserSchema.update(user._id, { $push: { cards: dataCard } }) 
-          }
+        const flagCard = user.cards.filter(element => element.token === response.data.creditCardToken.creditCardTokenId)
+        console.log(flagCard.length)
+        if (flagCard.length === 0) {
+          await UserSchema.update(user._id, { $push: { cards: dataCard }})
         }
+        // for (const card of user.cards) {
+        //   console.log(card.token, response.data.creditCardToken.creditCardTokenId)
+        //   console.log(card.token === response.data.creditCardToken.creditCardTokenId)
+        //   if (card.token !== response.data.creditCardToken.creditCardTokenId) {
+        //     await UserSchema.update(user._id, { $push: { cards: dataCard } }) 
+        //     break
+        //   }
+        // }
         return response.data
       } else {
         await UserSchema.update(user._id, { $push: { cards: dataCard } }) 
         return response.data
       }
     } else {
-      return { estado: false, data: [], mensaje: 'La fecha de expiración de la tarjeta de crédito no es válida' }
+      return { estado: false, data: [], mensaje: response.data.error }
     }
   }
 
@@ -122,14 +135,16 @@ class PayU {
 	}
 	
 	async pse (data) {
-		const objectPse = MakeObjectPse(data)
-		const responsePse = await axios.post(MakeUrlPayU, objectPse)
-		console.log(responsePse)
+    const objectPse = MakeObjectPse(data)
+    console.log('------------OBJECT PSE ------------------------')
+    console.log(objectPse)
+    console.log('------------OBJECT PSE ------------------------')
+    const responsePse = await axios.post(MakeDatePayU.urlFinal, objectPse)
+    console.log('--------------RESPONSE PSE---------------------------------')
+    console.log(responsePse.data)
+    console.log('--------------RESPONSE PSE---------------------------------')
 		if (responsePse.data.code === 'SUCCESS') {
       switch (responsePse.data.transactionResponse.state) {
-        case 'APPROVED': {
-          return {status: 'APPROVED'}
-        }
         case 'DECLINED': {
           const validateResponse = await ValidateResponsePayment(responsePse.data.transactionResponse)
           return validateResponse
@@ -146,8 +161,8 @@ class PayU {
         }
 
         case 'PENDING': {
-          const validateResponse = await ValidateResponsePayment(responsePse.data.transactionResponse)
-          return { validateResponse, status: 'PENDING' }
+          // const validateResponse = await ValidateResponsePayment(responsePse.data.transactionResponse)
+          return { urlBank: responsePse.data.transactionResponse.extraParameters.BANK_URL , status: 'PENDING' }
         }
         
         case 'CANCELLED': {

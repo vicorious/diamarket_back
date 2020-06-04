@@ -9,7 +9,7 @@ const OrderSchema = require('../models/orderServiceSchema')
 const SuperMarketSchema = require('../models/supermarketSchema')
 const MakeObjectToken = require('../utils/makeObjectToken')
 const MakeDeleteObjectToken = require('../utils/makeDeleteObjectToken')
-const MakeUrlPayU = require('../utils/makeUrlPayU')
+const MakeDataPayU = require('../utils/makeDataPayU')
 const axios = require('axios')
 const uuid = require('node-uuid')
 const secret = 'vmKeS%O!w!%zmVydx5e*t8k%zDIAMARKET#boaTOKEN*h^l^4sYzCARD$xtGYcpT!j5IP8g#5QJrZ4zyUP26ewqIDU90!Z^D2Tzr%0*LH6AXUORtKskMO'
@@ -290,7 +290,7 @@ class User {
   async createCard(data) {
     const user = await UserModel.get({ _id: data._id })
     const objectToken = MakeObjectToken(data)
-    const response = await axios.post(MakeUrlPayU, objectToken)
+    const response = await axios.post(MakeDataPayU.urlFinal, objectToken)
     if (response.data.code === 'SUCCESS') {
       const card = {
         uid: uuid.v4(),
@@ -348,7 +348,7 @@ class User {
     if (card.uid) {
       const token = crypto.createDecipher('aes-256-ctr', secret).update(card.token, 'hex', 'utf8')
       const objectDeleteToken = MakeDeleteObjectToken(_id, token)
-      await axios.post(MakeUrlPayU, objectDeleteToken)
+      await axios.post(MakeDataPayU.urlFinal, objectDeleteToken)
       await UserModel.update(user._id, { cards: user.cards })
       return { estado: false, data: true, mensaje: null }
     } else {

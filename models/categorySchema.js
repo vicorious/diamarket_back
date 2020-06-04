@@ -44,8 +44,9 @@ const Schema = new mongoose.Schema({
     type: Types.Boolean,
     default: true
   },
-  principal: {
-    type: Types.String
+  subCategory: {
+    type: Types.Mixed,
+    default: []
   }
 })
 
@@ -54,7 +55,7 @@ class Category extends Base {
     super()
     this.sort = { name: 1 }
     this.model = mongoose.model('Category', Schema)
-    this.fields = 'name description image isActive'
+    this.fields = 'name description image isActive subCategory'
   }
 }
 

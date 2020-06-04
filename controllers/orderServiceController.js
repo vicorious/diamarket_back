@@ -42,14 +42,18 @@ class OrderService {
     if (!data.card.uid) {
       data.card._id = data.user
       const objectToken = await PayUController.tokenPayU(data.card)
-      data.card.token = objectToken.creditCardToken.creditCardTokenId
-      data.card.securityCode = objectToken.creditCardToken.securityCode
+      if(objectToken.estado === false) {
+        return objectToken
+      } else {
+        data.card.token = objectToken.creditCardToken.creditCardTokenId
+        data.card.securityCode = objectToken.creditCardToken.securityCode
+      }
     } else {
       const card = user.cards.find(element => element.uid === data.card.uid)
       data.card = card
     }
     data.user = user
-    data.referenceCode = `prueba${countOrder}`
+    data.referenceCode = `prueba${countOrder}Diamarket26`
     const paymentResponse = await PayUController.payCredit(data)
     switch (paymentResponse.status) {
       case 'APPROVED': {
@@ -61,11 +65,13 @@ class OrderService {
       }
 
       case 'PENDING': {
+        console.log('............')
+        console.log(paymentResponse)
         data.paymentStatus = 1
-        data.transactionId = paymentResponse.transactionResponse.transactionId
+        data.transactionId = paymentResponse.transactionResponse.transactionId 
         await OrderServiceModel.create(data)
-        delete paymentResponse.status
-        return paymentResponse
+        delete paymentResponse.validateResponse.status
+        return paymentResponse.validateResponse
       }
 
       case 'ERROR': {
@@ -78,7 +84,7 @@ class OrderService {
   async pse (data) {
     const countOrder = await OrderServiceModel.count()
     const user = await UserModel.get({ _id: data.user })
-    data.referenceCode = `prueba${countOrder}`
+    data.referenceCode = `prueba${countOrder}DiaMarket6`
     data.user = user
     data.paymetStatus = 1
     const paymentPse = await PayUController.pse(data)
@@ -127,10 +133,11 @@ class OrderService {
   }
 
   async validateOfferOrCreditsPromotions(_id, promotions) {
+    console.log("promotions", promotions)
     const user = UserModel.get(_id)
     let credits = 0
     parseInt(user.credits) === 0 ? credits = 0 : credits = parseInt(user.credits)
-    if (promotions.length > 0) {
+    if (promotions !== undefined && promotions.length > 0) {
       for (const object of promotions) {
         const promotion = await PromotionSchema.get({ _id: object.promotion, supermarket: { $all: [object.supermarket] } })
         credits += promotion.credits ? parseInt(promotion.credits) * parseInt(object.quantity) : 0

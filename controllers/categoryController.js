@@ -3,6 +3,7 @@ const CategoryModel = require('../models/categorySchema')
 const ProductModel = require('../models/productSchema')
 const productsForCategorySchema = require('../models/productsForCategorySchema')
 const MsSql = require('mssql')
+const uid = require('node-uuid')
 
 class Category {
   async createDataPost() {
@@ -14,39 +15,68 @@ class Category {
     WHERE (((dbo.t125_mc_items_criterios.f125_id_cia)=6) AND ((dbo.t125_mc_items_criterios.f125_id_plan)='SUB' Or (dbo.t125_mc_items_criterios.f125_id_plan)='CAT'))
     ORDER BY dbo.t120_mc_items.f120_id, dbo.t125_mc_items_criterios.f125_id_plan ASC;
     `
-    let categoryPrincipal
-    if (category.recordset.length > 0) {
-      for (const object of category.recordset) {
-        if (object.f125_id_plan.toString() === 'CAT') {
-          categoryPrincipal = object
-        } else {
-          const data = {
-            idCatPost: object.f106_id,
-            name: object.f106_descripcion,
-            description: object.f106_descripcion,
-            principal: categoryPrincipal.f106_descripcion
-          }
-          const getCategory = await CategoryModel.get({ name: object.f106_descripcion })
-          if (!getCategory._id) {
-            const createCategory = await CategoryModel.create(data)
-            const h = await productsForCategorySchema.create({category: createCategory._id, idPosProduct: object.f125_rowid_item})
-          } else {
-            const h = await productsForCategorySchema.create({category: getCategory._id, idPosProduct: object.f125_rowid_item})
-          }
+    let nameCategory = ''
+    for (const object of category.recordset) {
+      if (object.f125_id_plan === 'CAT') {
+        const category = await CategoryModel.get({ name: object.f106_descripcion.toLowerCase() })
+        if (!category._id) {
+          await CategoryModel.create({ idCatPost: object.f106_id, name: object.f106_descripcion, description: object.f106_descripcion })
         }
+        nameCategory = object.f106_descripcion
+      } else {
+        console.log(nameCategory)
+        const category = await CategoryModel.get({ name: nameCategory.toLowerCase() })
+        console.log(category)
+        const data = {
+          uid: uid.v1(),
+          name: object.f106_descripcion
+        }
+        if (category.subCategory.length > 0) {
+          category.subCategory.filter(async item => {
+            if (item.name !== object.f106_descripcion) {
+              await CategoryModel.update(category._id, { $push: { subCategory: data } })
+              await productsForCategorySchema.create({ category: data.uid, idPosProduct: object.f125_rowid_item })
+            }
+          })
+        } else {
+          await CategoryModel.update(category._id, { $push: { subCategory: data } })
+        }
+
       }
     }
+    // let categoryPrincipal
+    // if (category.recordset.length > 0) {
+    //   for (const object of category.recordset) {
+    //     if (object.f125_id_plan.toString() === 'CAT') {
+    //       categoryPrincipal = object
+    //     } else {
+    //       const data = {
+    //         idCatPost: object.f106_id,
+    //         name: object.f106_descripcion,
+    //         description: object.f106_descripcion,
+    //         principal: categoryPrincipal.f106_descripcion
+    //       }
+    //       const getCategory = await CategoryModel.get({ name: object.f106_descripcion })
+    //       if (!getCategory._id) {
+    //         const createCategory = await CategoryModel.create(data)
+    //         const h = await productsForCategorySchema.create({category: createCategory._id, idPosProduct: object.f125_rowid_item})
+    //       } else {
+    //         const h = await productsForCategorySchema.create({category: getCategory._id, idPosProduct: object.f125_rowid_item})
+    //       }
+    //     }
+    //   }
+    // }
     return category
   }
 
-  async assignCategoryPos () {
+  async assignCategoryPos() {
     const producstForCategory = await productsForCategorySchema.search({})
     console.log(producstForCategory)
     for (const object of producstForCategory) {
       const product = await ProductModel.get({ idPos: object.idPosProduct })
       if (product._id) {
-        await ProductModel.update(product._id, {category: object.category})
-        productsForCategorySchema.delete({_id: object._id})
+        await ProductModel.update(product._id, { category: object.category })
+        productsForCategorySchema.delete({ _id: object._id })
       }
     }
     return producstForCategory.length

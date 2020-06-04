@@ -1,12 +1,13 @@
 'use strict'
+const MakeDataPayU = require('./makeDataPayU')
 
 module.exports = function (card) {
   const obj = {
 		language: 'es',
 		command: 'CREATE_TOKEN',
 		merchant: {
-			apiLogin: 'g0GIx72ZtuCc0jL',
-			apiKey: 'xryKI4712m8RWNd6Y0uda41rnT'
+			apiLogin: MakeDataPayU.apiLogin,
+			apiKey: MakeDataPayU.apiKey
 		},
 		creditCardToken: {
 			payerId: card._id,
