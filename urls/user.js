@@ -5,6 +5,7 @@ const UserController = require('../controllers/userController')
 const { isSuperAdmin, isAdmin, isClient, isAdminAndIsSuperAdmin, isSuperAdminAndIsAdminAndIsDomiciliary } = require('../middleware/token')
 const routesUserApp = asyncify(express.Router())
 const routesUserWeb = asyncify(express.Router())
+const SuperMarketSchema = require('../models/supermarketSchema')
 const { convertBase64ToFile } = require('../middleware/convertBase64File')
 
 /**
@@ -368,12 +369,31 @@ routesUserWeb.get('/detail', isSuperAdminAndIsAdminAndIsDomiciliary, async (requ
  *              type: string
  *              example: 'El usuario no se encuentra registrado'
  */
-routesUserWeb.get('/usertype/:usertype/:quantity/:page', async (request, response) => {
+routesUserWeb.get('/usertype/:usertype/:quantity/:page', isSuperAdminAndIsAdminAndIsDomiciliary, async (request, response) => {
   const rol = request.params.usertype
   const quantity = request.params.quantity
   const page = request.params.page
-  const data = await UserController.allPage({ rol }, quantity, page)
-  response.json(data)
+  if (request.User.rol === 'superadministrator') {
+    const data = await UserController.allPage({ rol }, quantity, page)
+    response.json(data)
+  } else {
+    if(rol === 'client') {
+      const admin = await UserController.detail({ _id: request.User.id })
+      console.log(admin)
+      const supermarket = await SuperMarketSchema.get({ idAdmin: admin.data._id })
+      console.log(supermarket)
+      const data = await UserController.allPage({ rol: 'client', supermarketFavorite: supermarket._id }, quantity, page)
+      response.json(data)  
+    } else if (rol === 'domiciliary'){
+      const admin = await UserController.detail({ _id: request.User.id })
+      console.log(admin)
+      const supermarket = await SuperMarketSchema.get({ idAdmin: admin.data._id })
+      console.log(supermarket)
+      const data = await UserController.allPage({ rol: 'domiciliary', workingSupermarket: supermarket._id }, quantity, page)
+      response.json(data)  
+    }
+  }
+  
 })
 
 /**

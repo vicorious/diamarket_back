@@ -61,6 +61,7 @@ class OrderService {
         data.transactionId = paymentResponse.transactionResponse.transactionId
         const order = await OrderServiceModel.create(data)
         await this.validateOfferOrCreditsPromotions({ _id: user._id }, data.promotions)
+        await UserModel.update(user._id, { supermarketFavorite: data.superMarket })
         return { estado: true, data: order, mensaje: null }
       }
 

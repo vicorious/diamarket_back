@@ -247,9 +247,7 @@ class User {
     }
   }
 
-  async clientsForSuperMarket(data) {
-    const user = await UserModel.get(data)
-    const supermarket = await SuperMarketSchema.get({ idAdmin: user._id })
+  async clientsForSuperMarket(supermarket) {
     const users = await UserModel.search({ supermarketFavorite: supermarket })
     if (users.length > 0) {
       return { estado: true, data: users, mensaje: null }
