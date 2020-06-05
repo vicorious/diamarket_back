@@ -10,7 +10,7 @@ class Notification {
       },
       data: {
         _id: data._id.toString(),
-        state: data.state.toString()
+        state: data.status ? data.status.toString() : data.state.toString()
       }
     }
     const options = {

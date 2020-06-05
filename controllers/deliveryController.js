@@ -1,5 +1,7 @@
 const DeliveryModel = require('../models/deliverySchema')
 const OrderServiceController = require('../controllers/orderServiceController')
+const NotificationController = require('../controllers/notificacionController')
+const UserModel = require('../models/userSchema')
 
 class Delivery {
   async create (data) {
@@ -30,6 +32,8 @@ class Delivery {
 
   async edit (_id, data) {
     const order = await DeliveryModel.get({ _id })
+    console.log(order.clientId._id)
+    const user = await UserModel.get({ _id: order.clientId._id })
     switch (data.status) {
       case parseInt(1): {
         await OrderServiceController.edit(order.orderId._id, { status: 3 })
@@ -37,6 +41,7 @@ class Delivery {
       }
 
       case parseInt(2): {
+        console.log(user)
         await NotificationController.messaging({ title: 'DiaMarket', body: 'El domiciliario va en camino con tu pedido', _id: order._id, status: 3, tokenMessaging: user.tokenCloudingMessagin })
         return DeliveryModel.update(_id, { status: 2 })
       }
