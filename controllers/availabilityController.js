@@ -26,7 +26,6 @@ class Availability {
   }
 
   async createStockPos (supermarket) {
-    console.log(supermarket)
     const stock = await MsSql.query`
     SELECT dbo.t285_co_centro_op.f285_id, dbo.t285_co_centro_op.f285_descripcion, dbo.t126_mc_items_precios.f126_rowid_item, dbo.t400_cm_existencia.f400_cant_existencia_1, dbo.t126_mc_items_precios.f126_id_unidad_medida, dbo.t126_mc_items_precios.f126_precio
     FROM dbo.t120_mc_items INNER JOIN (dbo.t126_mc_items_precios INNER JOIN (dbo.t285_co_centro_op INNER JOIN ((dbo.t400_cm_existencia INNER JOIN dbo.t121_mc_items_extensiones ON dbo.t400_cm_existencia.f400_rowid_item_ext = dbo.t121_mc_items_extensiones.f121_rowid) INNER JOIN dbo.t150_mc_bodegas ON dbo.t400_cm_existencia.f400_rowid_bodega = dbo.t150_mc_bodegas.f150_rowid) ON (dbo.t285_co_centro_op.f285_id = dbo.t150_mc_bodegas.f150_id_co) AND (dbo.t285_co_centro_op.f285_id_cia = dbo.t150_mc_bodegas.f150_id_cia)) ON dbo.t126_mc_items_precios.f126_rowid_item = dbo.t121_mc_items_extensiones.f121_rowid_item) ON (dbo.t126_mc_items_precios.f126_id_unidad_medida = dbo.t120_mc_items.f120_id_unidad_inventario) AND (dbo.t120_mc_items.f120_rowid = dbo.t126_mc_items_precios.f126_rowid_item)

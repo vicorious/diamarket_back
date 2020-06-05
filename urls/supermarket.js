@@ -377,7 +377,7 @@ routesSupermarketApp.put('/rate/:id', isClient, async (request, response) => {
  *               example: "No existen supermercados"
  */
 
-routesSupermarketApp.get('', isClient, async (request, response) => {
+routesSupermarketApp.get('', async (request, response) => {
   const data = request.query
   const all = await supermarketController.searchSuperMarketForGeoLocation(data)
   response.json(all)

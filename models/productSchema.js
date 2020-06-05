@@ -51,6 +51,9 @@ const Schema = new mongoose.Schema({
   category: {
     type: Types.ObjectId
   },
+  subCategory: {
+    type: Types.String
+  },
   defaultPrice: {
     type: Types.Number
   },
@@ -68,7 +71,7 @@ class Product extends Base {
     super()
     this.sort = { name: 1 }
     this.model = mongoose.model('Product', Schema)
-    this.fields = 'idPos name description category defaultprice image offert'
+    this.fields = 'idPos name description category defaultprice image offert subCategory'
     this.populate = [
       {
         path: 'category',

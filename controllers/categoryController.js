@@ -7,7 +7,7 @@ const uid = require('node-uuid')
 
 class Category {
   async createDataPost() {
-    const category = await MsSql.query`
+    const categorys = await MsSql.query`
     SELECT f125_rowid_item , dbo.t125_mc_items_criterios.f125_id_plan, dbo.t106_mc_criterios_item_mayores.f106_id, dbo.t106_mc_criterios_item_mayores.f106_descripcion
     FROM (dbo.t125_mc_items_criterios INNER JOIN dbo.t120_mc_items ON dbo.t125_mc_items_criterios.f125_rowid_item = dbo.t120_mc_items.f120_rowid)
     INNER JOIN dbo.t106_mc_criterios_item_mayores ON (dbo.t125_mc_items_criterios.f125_id_cia = dbo.t106_mc_criterios_item_mayores.f106_id_cia)
@@ -15,68 +15,62 @@ class Category {
     WHERE (((dbo.t125_mc_items_criterios.f125_id_cia)=6) AND ((dbo.t125_mc_items_criterios.f125_id_plan)='SUB' Or (dbo.t125_mc_items_criterios.f125_id_plan)='CAT'))
     ORDER BY dbo.t120_mc_items.f120_id, dbo.t125_mc_items_criterios.f125_id_plan ASC;
     `
-    let nameCategory = ''
-    for (const object of category.recordset) {
-      if (object.f125_id_plan === 'CAT') {
-        const category = await CategoryModel.get({ name: object.f106_descripcion.toLowerCase() })
+    let category
+    for (const object of categorys.recordset) {
+      if (object.f125_id_plan.toString().toUpperCase() === 'CAT') {
+        category = await CategoryModel.get({ name: object.f106_descripcion.toString().toLowerCase() })
         if (!category._id) {
-          await CategoryModel.create({ idCatPost: object.f106_id, name: object.f106_descripcion, description: object.f106_descripcion })
-        }
-        nameCategory = object.f106_descripcion
-      } else {
-        console.log(nameCategory)
-        const category = await CategoryModel.get({ name: nameCategory.toLowerCase() })
-        console.log(category)
-        const data = {
-          uid: uid.v1(),
-          name: object.f106_descripcion
-        }
-        if (category.subCategory.length > 0) {
-          category.subCategory.filter(async item => {
-            if (item.name !== object.f106_descripcion) {
-              await CategoryModel.update(category._id, { $push: { subCategory: data } })
-              await productsForCategorySchema.create({ category: data.uid, idPosProduct: object.f125_rowid_item })
-            }
+          const create = await CategoryModel.create({
+            idCatPost: object.f106_id,
+            name: object.f106_descripcion,
+            description: object.f106_descripcion,
           })
-        } else {
-          await CategoryModel.update(category._id, { $push: { subCategory: data } })
+          console.log(create)
+          category = create
         }
-
+      } else if (object.f125_id_plan.toString().toUpperCase() === 'SUB') {
+        const sub = {
+          _id: uid.v1(),
+          name: object.f106_descripcion.toString().toLowerCase(),
+          description: object.f106_descripcion.toString().toLowerCase()
+        }
+        if (category._id) {
+          let flagSub = false
+          const categoryBD = await CategoryModel.get({ _id: category._id })
+          for (const item of categoryBD.subCategory) {
+            if (item.name.toString().toLowerCase() === object.f106_descripcion.toString().toLowerCase()) {
+              flagSub = true
+              break
+            } else {
+              flagSub = false
+            }
+          }
+          if (!flagSub) {
+            await CategoryModel.update(category._id, { $push: { subCategory: sub } })
+          }
+          await productsForCategorySchema.create({
+            category: categoryBD._id,
+            subCategory: object.f106_descripcion.toString().toLowerCase(),
+            idPosProduct: object.f125_rowid_item
+          })
+        }
       }
     }
-    // let categoryPrincipal
-    // if (category.recordset.length > 0) {
-    //   for (const object of category.recordset) {
-    //     if (object.f125_id_plan.toString() === 'CAT') {
-    //       categoryPrincipal = object
-    //     } else {
-    //       const data = {
-    //         idCatPost: object.f106_id,
-    //         name: object.f106_descripcion,
-    //         description: object.f106_descripcion,
-    //         principal: categoryPrincipal.f106_descripcion
-    //       }
-    //       const getCategory = await CategoryModel.get({ name: object.f106_descripcion })
-    //       if (!getCategory._id) {
-    //         const createCategory = await CategoryModel.create(data)
-    //         const h = await productsForCategorySchema.create({category: createCategory._id, idPosProduct: object.f125_rowid_item})
-    //       } else {
-    //         const h = await productsForCategorySchema.create({category: getCategory._id, idPosProduct: object.f125_rowid_item})
-    //       }
-    //     }
-    //   }
-    // }
-    return category
+    return categorys
   }
 
   async assignCategoryPos() {
     const producstForCategory = await productsForCategorySchema.search({})
-    console.log(producstForCategory)
     for (const object of producstForCategory) {
       const product = await ProductModel.get({ idPos: object.idPosProduct })
       if (product._id) {
-        await ProductModel.update(product._id, { category: object.category })
-        productsForCategorySchema.delete({ _id: object._id })
+        const category = await CategoryModel.get({ _id: object.category })
+        await category.subCategory.filter(async item => {
+          if (item.name === object.subCategory) {
+            await ProductModel.update(product._id, { subCategory: item._id, category: category._id })
+            productsForCategorySchema.delete({ _id: object._id })
+          }
+        })
       }
     }
     return producstForCategory.length

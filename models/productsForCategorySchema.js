@@ -6,6 +6,9 @@ const Schema = new mongoose.Schema({
   category: {
     type: Types.ObjectId
   },
+  subCategory: {
+    type: Types.String
+  },
   idPosProduct: {
     type: Types.Number
   }
@@ -16,7 +19,7 @@ class CategoryForMoment extends Base {
     super()
     this.sort = { name: 1 }
     this.model = mongoose.model('CategoryForMoment', Schema)
-    this.fields = 'category idPosProduct'
+    this.fields = 'category subCategory idPosProduct'
   }
 }
 
