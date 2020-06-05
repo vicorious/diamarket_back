@@ -49,12 +49,16 @@ const Schema = new mongoose.Schema({
 })
 
 class Availability extends Base {
-  constructor () {
+  constructor() {
     super()
     this.sort = { quantity: 1 }
     this.model = mongoose.model('Availability', Schema)
     this.fields = 'idSupermarket idProduct quantity price isActive'
-    this.populate = [{ path: 'idProduct', select: '', model: 'Product' }, { path: 'idSupermarket', select: '', model: 'Supermarket' }, { path: 'idProduct.category', select: 'name description image isActive', model: 'Category' }]
+    this.populate = [
+      { path: 'idProduct', select: '', model: 'Product' },
+      { path: 'idSupermarket', select: 'status images isActive schedules _id supermarketIdPos name address neigborhood locality cellPhone idPos dateCreate location', model: 'Supermarket' },
+      { path: 'idProduct.category', select: 'name description image isActive', model: 'Category' }
+    ]
   }
 }
 

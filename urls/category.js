@@ -17,6 +17,11 @@ routesCategoryWeb.get('/assigncategorypos', async (request, response) => {
   const data = await categoryController.assignCategoryPos()
   response.json(data)
 })
+
+routesCategoryWeb.get('/migrationnames', async (request, response) => {
+  const data = await categoryController.migrateNamesCategory()
+  response.json(data)
+})
 /**
  * @swagger
  * /web/category:

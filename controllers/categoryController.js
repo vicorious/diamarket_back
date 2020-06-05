@@ -75,6 +75,14 @@ class Category {
     return producstForCategory.length
   }
 
+  async migrateNamesCategory() {
+    const categorys = await CategoryModel.search({})
+    for (const object of categorys) {
+      
+    }
+    return categorys
+  }
+
   async create(data) {
     const isExist = await CategoryModel.get({ name: data.name })
     if (!isExist._id) {

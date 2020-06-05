@@ -108,7 +108,8 @@ class Product {
   }
   
   async productsForCategoryApp (data, initQuantity, finishQuantity) {
-    const products = await ProductModel.searchByPageMobile({ category: data.category }, initQuantity, finishQuantity)
+    const products = await ProductModel.searchByPageMobile({ category: data.category, subCategory: data.subCategory }, initQuantity, finishQuantity)
+    console.log(products)
     const arrayProducts = []
     for (const product of products) {
       const productsCategory = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
