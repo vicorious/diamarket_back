@@ -457,8 +457,15 @@ routesOrderServiceApp.post('', isClient, async (request, response) => {
  */
 routesOrderServiceApp.get('', isClient, async (request, response) => {
   const user = request.User.id
-  const data = await OrderServiceController.all({ user })
-  response.json(data)
+  const { filter } = request.query
+  console.log(filter)
+  if (filter) {
+    const data = await OrderServiceController.all({ $and: [{ user }, { $or: [{ status: 0 }, { status: 1 }, { status: 2 }, { status: 3 }]}]})
+    response.json(data)
+  } else {
+    const data = await OrderServiceController.all({ user })
+    response.json(data)
+  }  
 })
 
 /**

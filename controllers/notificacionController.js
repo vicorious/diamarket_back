@@ -20,15 +20,17 @@ class Notification {
    console.log("*****************************")
    console.log(data, payload, options)
    console.log("*****************************")
-    AdminFirebase
-      .messaging()
-      .sendToDevice(data.tokenMessaging, payload, options)
-      .then(res => {
-        console.log('Successfully sent message:', res)
-      })
-      .catch(err => {
-        console.log('Error sending message:', err)
-      })
+   const message = await AdminFirebase.messaging().sendToDevice(data.tokenMessaging, payload, options)
+   console.log(message)
+    // AdminFirebase
+    //   .messaging()
+    //   .sendToDevice(data.tokenMessaging, payload, options)
+    //   .then(res => {
+    //     console.log('Successfully sent message:', res)
+    //   })
+    //   .catch(err => {
+    //     console.log('Error sending message:', err)
+    //   })
   }
 }
 
