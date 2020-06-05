@@ -183,7 +183,6 @@ class OrderService {
 
   async edit(_id, data) {
     const order = await OrderServiceModel.get({ _id })
-    console.log(order)
     const user = await UserModel.get({ _id: order.user._id })
     switch (data.status) {
       case parseInt(1): {

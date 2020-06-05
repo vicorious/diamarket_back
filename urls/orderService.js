@@ -408,7 +408,6 @@ routesOrderServiceApp.post('', isClient, async (request, response) => {
   data.user = request.User.id 
   // data.user = '5e436d7d563c85275c82fc8b'
   const order = await OrderServiceController.create(data)
-  console.log("order",order)
   response.json(order)
 })
 
@@ -458,7 +457,6 @@ routesOrderServiceApp.post('', isClient, async (request, response) => {
 routesOrderServiceApp.get('', isClient, async (request, response) => {
   const user = request.User.id
   const { filter } = request.query
-  console.log(filter)
   if (filter) {
     const data = await OrderServiceController.all({ $and: [{ user }, { $or: [{ status: 0 }, { status: 1 }, { status: 2 }, { status: 3 }]}]})
     response.json(data)

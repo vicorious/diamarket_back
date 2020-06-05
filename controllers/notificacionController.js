@@ -17,9 +17,6 @@ class Notification {
       priority: 'high',
       timeToLive: 60 * 60 * 24
    } 
-   console.log("*****************************")
-   console.log(data, payload, options)
-   console.log("*****************************")
    const message = await AdminFirebase.messaging().sendToDevice(data.tokenMessaging, payload, options)
    console.log(message)
     // AdminFirebase

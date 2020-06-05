@@ -109,7 +109,6 @@ class Product {
   
   async productsForCategoryApp (data, initQuantity, finishQuantity) {
     const products = await ProductModel.searchByPageMobile({ category: data.category, subCategory: data.subCategory }, initQuantity, finishQuantity)
-    console.log(products)
     const arrayProducts = []
     for (const product of products) {
       const productsCategory = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
@@ -159,9 +158,7 @@ class Product {
   }
 
   async momentWithOutPageProductsForName(data) {
-    console.log(data)
     const products = await ProductModel.search({ name: data.name })
-    console.log(products)
     const arrayProducts = []
     for (const product of products) {
       const productsName = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
@@ -179,7 +176,6 @@ class Product {
   async forSuperMarket (_id, query, quantity, page) {
     const availability = []
     const superMarket = await SuperMarketModel.get({ idAdmin: _id })
-    console.log(superMarket)
     const countAvailability = await AvailabilityModel.count({idSupermarket: superMarket._id})
     if (query.name) {
       ProductModel.perPage = parseInt(quantity)
@@ -207,7 +203,6 @@ class Product {
     } else if (!query.name && !query.category) {
       AvailabilityModel.perPage = parseInt(quantity)
       const availabilityProduct = await AvailabilityModel.searchByPage({ idSupermarket: superMarket._id }, page)
-      console.log(availabilityProduct)
       for (const object of availabilityProduct) {
         const category = await CategoryModel.get({ _id: object.idProduct.category })
         object._doc.idProduct._doc.category = category

@@ -220,7 +220,6 @@ routesProductWeb.get('/forsupermarket/:quantity/:page', isAdmin, async (request,
   const query = request.query
   const _id = request.User.id
   const products = await ProductController.forSuperMarket(_id, query, quantity, page)
-  console.log(products)
   response.json(products)
 })
 
