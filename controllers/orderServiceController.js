@@ -167,13 +167,16 @@ class OrderService {
 
   async detail(data) {
     const order = await OrderServiceModel.get(data)
-    let quantity = 0
-    let calification = 0
-    for (const object of order.superMarket.calification) {
-      calification = parseInt(calification) + parseInt(object)
-      quantity++
+    console.length(order.superMarket.calification)
+    if (order.superMarket.calification) {
+      let quantity = 0
+      let calification = 0
+      for (const object of order.superMarket.calification) {
+        calification = parseInt(calification) + parseInt(object)
+        quantity++
+      }
+      order.superMarket._doc.calification = parseInt(calification) / parseInt(quantity)
     }
-    order.superMarket._doc.calification = parseInt(calification) / parseInt(quantity)
     if (order._id) {
       return { estado: true, data: order, mensaje: null }
     } else {
