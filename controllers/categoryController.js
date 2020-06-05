@@ -25,7 +25,6 @@ class Category {
             name: object.f106_descripcion,
             description: object.f106_descripcion,
           })
-          console.log(create)
           category = create
         }
       } else if (object.f125_id_plan.toString().toUpperCase() === 'SUB') {

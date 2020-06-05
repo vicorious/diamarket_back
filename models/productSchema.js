@@ -38,6 +38,9 @@ const Schema = new mongoose.Schema({
     type: Types.Number,
     require: [true, 'El id es requerido']
   },
+  idImage:{
+    type: Types.Number
+  },
   name: {
     type: Types.String,
     lowercase: true,

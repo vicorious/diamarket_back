@@ -9,7 +9,7 @@ const { DATABASES } = require('../config/settings')
 class Product {
   async createPost() {
     const products = await MsSql.query`
-    SELECT items.f120_rowid as 'id_product', items.f120_descripcion as 'name_product', items.f120_descripcion_corta
+    SELECT items.f120_rowid as 'id_product', items.f120_descripcion as 'name_product', items.f120_descripcion_corta, items.f120_id as 'id_item'
     FROM dbo.t120_mc_items as items
     WHERE items.f120_id_cia = 6 AND items.f120_ind_venta = 1;
   `
@@ -18,7 +18,8 @@ class Product {
         const data = {
           idPos: object.id_product,
           name: object.name_product,
-          description: object.f120_descripcion_corta
+          description: object.f120_descripcion_corta,
+          idImage: object.id_item
         }
         await ProductModel.create(data)
       }
