@@ -301,7 +301,8 @@ class User {
         name: response.data.creditCardToken.name,
         identification: response.data.creditCardToken.identificationNumber,
         type: response.data.creditCardToken.paymentMethod,
-        securityCode : crypto.createCipher('aes-256-ctr', secret).update(data.securityCode, 'utf8', 'hex')
+        securityCode : crypto.createCipher('aes-256-ctr', secret).update(data.securityCode, 'utf8', 'hex'),
+        default: cards.length > 0 ? false : true
       }
       const cardUser = user.cards.find(element => element.token === card.token)
       if (cardUser !== undefined) {
