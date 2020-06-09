@@ -297,7 +297,28 @@ class User {
         const user = await UserModel.get({_id: data._id})
         const objectToken = MakeObjectToken(data)
         const response = await axios.post(MakeDataPayU.urlFinal, objectToken)
+        const cardsUser = user.cards
         if (response.data.code === 'SUCCESS') {
+
+          if(cardsUser.length>0){
+            let newCards = []
+            for (const card of user.cards) {
+              //ESTRUCTURA
+              let cardNew = {
+                uid: card.uid,
+                number: card.number,
+                token: card.token,
+                name: card.name,
+                identification: card.identification,
+                type: card.type,
+                securityCode: card.securityCode,
+                default: false
+              }
+              newCards.push(cardNew)
+            }
+            const response = await UserModel.update({_id: data._id},{cards: newCards})
+          }
+
             const card = {
                 uid: uuid.v4(),
                 number: response.data.creditCardToken.maskedNumber,
@@ -306,7 +327,7 @@ class User {
                 identification: response.data.creditCardToken.identificationNumber,
                 type: response.data.creditCardToken.paymentMethod,
                 securityCode: crypto.createCipher('aes-256-ctr', secret).update(data.securityCode, 'utf8', 'hex'),
-                default: cards.length > 0 ? false : true
+                default: true
             }
             const cardUser = user.cards.find(element => element.token === card.token)
             if (cardUser !== undefined) {
