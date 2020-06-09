@@ -339,33 +339,39 @@ class User {
             newCards.push(cardNew)
         }
         const response = await UserModel.update(_id, {cards: newCards})
-        if(response.data.update){
-          return {estado: true, data: [], mensaje: null}
-        } else{
-          return {estado: false, data: [], mensaje: 'Ocurrio un error'}
+        if (response.data.update) {
+            return {estado: true, data: [], mensaje: null}
+        } else {
+            return {estado: false, data: [], mensaje: 'Ocurrio un error'}
         }
     }
 
 
-  async listCardDefault(_id) {
-    const user = await UserModel.get(_id)
-    if (user.cards.length > 0) {
-      for (const card of user.cards) {
-        if(card.default === true){
-          return {estado: true, data: card, mensaje: null}
+    async listCardDefault(_id) {
+        const user = await UserModel.get(_id)
+        if (user.cards.length > 0) {
+            for (const card of user.cards) {
+                if (card.default === true) {
+                    return {estado: true, data: card, mensaje: null}
+                }
+            }
+        } else {
+            return {estado: false, data: [], mensaje: 'No tiene tarjetas registradas'}
         }
-      }
-    } else {
-      return {estado: false, data: [], mensaje: 'No tiene tarjetas registradas'}
     }
-  }
 
     async listCards(_id) {
         const user = await UserModel.get(_id)
         if (user.cards.length > 0) {
             let cards = []
             for (const card of user.cards) {
-                cards.push({uid: card.uid, number: card.number, name: card.name, type: card.type})
+                cards.push({
+                    uid: card.uid,
+                    number: card.number,
+                    name: card.name,
+                    type: card.type,
+                    default: card.default
+                })
             }
             return {estado: true, data: cards, mensaje: null}
         } else {
@@ -379,7 +385,7 @@ class User {
         if (card !== undefined) {
             return {
                 estado: true,
-                data: {uid: card.uid, number: card.number, name: card.name, type: card.type},
+                data: {uid: card.uid, number: card.number, name: card.name, type: card.type, default: card.default},
                 mensaje: null
             }
         } else {
