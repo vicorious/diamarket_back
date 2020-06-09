@@ -1324,4 +1324,117 @@ routesUserApp.put('/updatetoken', isClient, async (request, response) => {
   const update = await UserController.updateToken({_id},{ tokenCloudingMessagin: data.tokenCloudingMessagin  })
   response.json(update)
 })
+/**
+ * @swagger
+ * /app/user/card/default:
+ *  put:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se actualiza la tarjeta por defecto
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        properties:
+ *          cardId:
+ *            type: string
+ *            example: id card
+ *    responses:
+ *      200:
+ *        description: Si la tarjeta se actualiza correctamente
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: boolean
+ *              example: true
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si ocurre un error
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: Ocurrio un error
+ */
+routesUserApp.put('/card/default',isClient, async (request, response) => {
+  const _id = request.User.id
+  const data = request.body
+  const update = await UserController.updateDefaultCard({ _id }, data)
+  response.json(update)
+})
+
+/**
+ * @swagger
+ * /app/user/card/default:
+ *  get:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se obtiene la tarjeta por defecto
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    - in: body
+ *      name: body
+ *      schema:
+ *        properties:
+ *          userId:
+ *            type: string
+ *            example: id
+ *    responses:
+ *      200:
+ *        description: Si la tarjeta se encuentra retorna los datos de ella
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: boolean
+ *              example: true
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si ocurre un error
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: Ocurrio un error
+ */
+routesUserApp.get('/card/default' /*isClient*/, async (request, response) => {
+  // const _id = request.User.id
+  const _id = "5e436d7d563c85275c82fc8b"
+  const update = await UserController.listCardDefault({ _id })
+  response.json(update)
+})
 module.exports = { routesUserApp, routesUserWeb }
