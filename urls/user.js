@@ -1431,9 +1431,8 @@ routesUserApp.put('/card/default',isClient, async (request, response) => {
  *              type: string
  *              example: Ocurrio un error
  */
-routesUserApp.get('/card/default' /*isClient*/, async (request, response) => {
-  // const _id = request.User.id
-  const _id = "5e436d7d563c85275c82fc8b"
+routesUserApp.get('/card/default',isClient, async (request, response) => {
+  const _id = request.User.id
   const update = await UserController.listCardDefault({ _id })
   response.json(update)
 })
