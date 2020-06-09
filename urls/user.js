@@ -1084,9 +1084,9 @@ routesUserApp.get('/detail', isClient, async (request, response) => {
  *              type: string
  *              example: La tarketa ya se encuentra registrada
  */
-routesUserApp.post('/createcard', async (request, response) => {
+routesUserApp.post('/createcard', isClient(),async (request, response) => {
   let data = request.body
-  data._id = "5e436d7d563c85275c82fc8b"
+  data._id = request.User.id
   const create = await UserController.createCard(data)
   response.json(create)
 })
