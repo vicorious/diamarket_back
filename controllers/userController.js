@@ -312,7 +312,8 @@ class User {
                         identification: card.identification,
                         type: card.type,
                         securityCode: card.securityCode,
-                        default: false
+                        expirationDate: card.expirationDate,
+                        default: false,
                     }
                     newCards.push(cardNew)
                 }
@@ -328,6 +329,7 @@ class User {
                 identification: response.data.creditCardToken.identificationNumber,
                 type: response.data.creditCardToken.paymentMethod,
                 securityCode: crypto.createCipher('aes-256-ctr', secret).update(data.securityCode, 'utf8', 'hex'),
+                expirationDate: data.expirationDate,
                 default: true
             }
             const cardUser = user.cards.find(element => element.token === card.token)
@@ -335,7 +337,7 @@ class User {
                 return {estado: false, data: [], mensaje: 'La tarjeta ya se encuentra registrada'}
             } else {
                 await UserModel.update(user._id, {$push: {cards: card}})
-                return {estado: true, data: {uid:cardId}, mensaje: null}
+                return {estado: true, data: {uid: cardId}, mensaje: null}
             }
         } else {
             return {estado: false, data: [], mensaje: 'No se pudo registrar la tarjeta, por favor vuelva a intentarlo'}
@@ -392,6 +394,7 @@ class User {
                     number: card.number,
                     name: card.name,
                     type: card.type,
+                    expirationDate: card.expirationDate,
                     default: card.default
                 })
             }
@@ -407,7 +410,7 @@ class User {
         if (card !== undefined) {
             return {
                 estado: true,
-                data: {uid: card.uid, number: card.number, name: card.name, type: card.type, default: card.default},
+                data: {uid: card.uid, number: card.number, name: card.name, type: card.type, default: card.default,expirationDate: card.expirationDate},
                 mensaje: null
             }
         } else {
