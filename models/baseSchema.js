@@ -69,11 +69,8 @@ class Base {
   async searchByPageMobile (data, initQuantity, finishQuantity) {
     const quantity = parseInt(finishQuantity) - parseInt(initQuantity) 
     let results = await this.model.find(data, this.fields).skip(parseInt(initQuantity)).limit(parseInt(quantity)).exec()
-    console.log("results", results)
     if (this.populate) {
       results = await this.model.find(data, this.fields).populate(this.populate).skip(parseInt(initQuantity)).limit(parseInt(quantity)).exec()
-    console.log("results11111", results)
-
     }
     return results
   }

@@ -123,6 +123,26 @@ class Product {
     }
   }
 
+  async productsForCategoryAppLimit (data) {
+    const productLength = await ProductModel.count({ subCategory: data.subCategory })
+    const initQuantity = Math.floor(Math.random() * productLength) + 1
+    const finishQuantity = initQuantity + 5
+    console.log(productLength,initQuantity,finishQuantity)
+    const products = await ProductModel.searchByPageMobile({ subCategory: data.subCategory }, initQuantity, finishQuantity)
+    const arrayProducts = []
+    for (const product of products) {
+      const productsCategory = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
+      if (productsCategory._id){
+        arrayProducts.push(productsCategory)
+      }
+    }
+    if (arrayProducts.length > 0) {
+      return { estado: true, data: arrayProducts, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'Esta subcategoria no tiene productos' }
+    }
+  }
+
   async productsForName(data, quantity, page) {
     AvailabilityModel.perPage = parseInt(quantity)
     const products = await ProductModel.searchByPage({ name: data.name }, page)

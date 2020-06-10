@@ -163,6 +163,83 @@ routesProductWeb.get('/page/:quantity/:page', isSuperAdmin, async (request, resp
 
 /**
  * @swagger
+ * /app/product/limit:
+ *  post:
+ *    tags:
+ *      - Product
+ *    description: Este endpoint lista 5 productos por categoria y supermercado
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      type: string
+ *      required: true
+ *    - in: body
+ *      name: idSupermarket
+ *      type: string
+ *      required: true
+ *    - in: body
+ *      name: subCategory
+ *      type: string
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Si encuentra los productos del supermercado y subcategoria
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: array
+ *              items:
+ *                properties:
+ *                  isActive:
+ *                    type: boolean
+ *                    example: true
+ *                  _id:
+ *                    type: string
+ *                    example: id de mongo
+ *                  idSupermarket:
+ *                    $ref: '#/definitions/Supermarket'
+ *                  idProduct:
+ *                    $ref: '#/definitions/Product'
+ *                  quantity:
+ *                    type: number
+ *                    example: 4333
+ *                  price:
+ *                    type: number
+ *                    example: 3444
+ *            mensaje:
+ *              type: string
+ *              example: true
+ *      400:
+ *        description: Si el producto no existe se responde el siguiente json
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                exmaple: "array vacio"
+ *            mensaje:
+ *              type: string
+ *              example: no existen productos
+ */
+routesProductApp.post('/limit',isClient, async (request, response) => {
+  const data = request.body
+  if (data.idSupermarket && data.subCategory) {
+    const products = await ProductController.productsForCategoryAppLimit(data)
+    response.json(products)
+  }
+})
+
+/**
+ * @swagger
  * /web/product/forsupermarket/{quantity}/{page} OR &name=nombredelproductoafiltrar OR category=idmongo:
  *  get:
  *    tags:
