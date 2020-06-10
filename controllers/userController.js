@@ -300,27 +300,28 @@ class User {
         const cardsUser = user.cards
         if (response.data.code === 'SUCCESS') {
 
-          if(cardsUser.length>0){
-            let newCards = []
-            for (const card of user.cards) {
-              //ESTRUCTURA
-              let cardNew = {
-                uid: card.uid,
-                number: card.number,
-                token: card.token,
-                name: card.name,
-                identification: card.identification,
-                type: card.type,
-                securityCode: card.securityCode,
-                default: false
-              }
-              newCards.push(cardNew)
+            if (cardsUser.length > 0) {
+                let newCards = []
+                for (const card of user.cards) {
+                    //ESTRUCTURA
+                    let cardNew = {
+                        uid: card.uid,
+                        number: card.number,
+                        token: card.token,
+                        name: card.name,
+                        identification: card.identification,
+                        type: card.type,
+                        securityCode: card.securityCode,
+                        default: false
+                    }
+                    newCards.push(cardNew)
+                }
+                const response = await UserModel.update({_id: data._id}, {cards: newCards})
             }
-            const response = await UserModel.update({_id: data._id},{cards: newCards})
-          }
 
+            const cardId = uuid.v4()
             const card = {
-                uid: uuid.v4(),
+                uid: cardId,
                 number: response.data.creditCardToken.maskedNumber,
                 token: crypto.createCipher('aes-256-ctr', secret).update(response.data.creditCardToken.creditCardTokenId, 'utf8', 'hex'),
                 name: response.data.creditCardToken.name,
@@ -334,7 +335,7 @@ class User {
                 return {estado: false, data: [], mensaje: 'La tarjeta ya se encuentra registrada'}
             } else {
                 await UserModel.update(user._id, {$push: {cards: card}})
-                return {estado: true, data: true, mensaje: null}
+                return {estado: true, data: {uid:cardId}, mensaje: null}
             }
         } else {
             return {estado: false, data: [], mensaje: 'No se pudo registrar la tarjeta, por favor vuelva a intentarlo'}
