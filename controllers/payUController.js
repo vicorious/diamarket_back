@@ -74,7 +74,7 @@ class PayU {
     console.log('-------------------Token-------------------------------------------')
     if (response.data.code !== 'ERROR') {
       response.data.creditCardToken.creditCardTokenId = crypto.createCipher('aes-256-ctr', secret).update(response.data.creditCardToken.creditCardTokenId, 'utf8', 'hex')
-      response.data.creditCardToken.securityCode = crypto.createCipher('aes-256-ctr', secret).update(data.securityCode, 'utf8', 'hex')
+      response.data.creditCardToken.securityCode = crypto.createCipher('aes-256-ctr', secret).update(data.securityCode.toString(), 'utf8', 'hex')
       const user = await UserSchema.get({ _id: data._id })
       const dataCard = {
         uid: uid.v4(),
