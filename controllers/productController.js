@@ -4,6 +4,9 @@ const AvailabilityModel = require('../models/availabilitySchema')
 const SuperMarketModel = require('../models/supermarketSchema')
 const CategoryModel = require('../models/categorySchema')
 const MsSql = require('mssql')
+const fs = require('fs')
+const path = require('path')
+const uploadFile = require('../middleware/uploadFile')
 const { DATABASES } = require('../config/settings')
 
 class Product {
@@ -25,6 +28,22 @@ class Product {
       }
       return products
     }
+  }
+
+  async assignedImage() {
+    const routeFile = `${path.dirname(__dirname)}/images`
+    const filesImages = await fs.readdirSync(routeFile)
+    for (const item of filesImages) {
+      const nameItem = item.split('.')[0]
+      const product = await ProductModel.get({ idImage: nameItem })
+      if (product._id) {
+        const bitImage = fs.readFileSync(`${routeFile}/${item}`)
+        const base64Image = new Buffer(bitImage).toString('base64')
+        const file = await uploadFile(Buffer.from(base64Image, 'base64'), item, 'base64')
+        await ProductModel.update(product._id, { image: file })
+      }
+    }
+    console.log('Terminidado')
   }
 
   async create(data) {
