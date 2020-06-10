@@ -290,6 +290,7 @@ class User {
   }
 
   async createCard(data) {
+    console.log(data)
     const user = await UserModel.get({ _id: data._id })
     const objectToken = MakeObjectToken(data)
     const response = await axios.post(MakeDataPayU.urlFinal, objectToken)
@@ -301,7 +302,7 @@ class User {
         name: response.data.creditCardToken.name,
         identification: response.data.creditCardToken.identificationNumber,
         type: response.data.creditCardToken.paymentMethod,
-        securityCode : crypto.createCipher('aes-256-ctr', secret).update(data.securityCode, 'utf8', 'hex')
+        securityCode : crypto.createCipher('aes-256-ctr', secret).update(data.securityCode.toString(), 'utf8', 'hex')
       }
       const cardUser = user.cards.find(element => element.token === card.token)
       if (cardUser !== undefined) {
