@@ -172,9 +172,9 @@ class OrderService {
     order.superMarket._doc.calification = parseInt(calification) / parseInt(quantity)
     let newProducts = []
     for (const dataProduct of order.products) {
-      const data = await ProductSchema.get({_id:dataProduct.product})
-      if(data._id){
-        newProducts.push(data)
+      const response = await ProductSchema.detail({_id:dataProduct.product})
+      if(response.data._id){
+        newProducts.push(response.data)
       }
     }
     order.products= newProducts
