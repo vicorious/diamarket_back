@@ -141,16 +141,20 @@ routesProductWeb.put('/:id', convertBase64ToFile, isAdminAndIsSuperAdmin, async 
  *              type: string
  *              example: no existen productos
  */
-routesProductWeb.get('/page/:quantity/:page', isSuperAdmin, async (request, response) => {
+routesProductWeb.get('/page/:quantity/:page', /*isSuperAdmin,*/ async (request, response) => {
   const page = request.params.page
   const quantity = request.params.quantity
   const query = request.query
   if (query.idSupermarket && query.category) {
     const products = await ProductController.productsForCategory(query, quantity, page)
     response.json(products)
+  } else if (query.name) {
+    query.name = { $regex: `${query.name}.`, $options: 'si' }
+    const products = await ProductController.productsForName(query, quantity, page)
+    response.json(products)
   } else if (query.name && query.idSupermarket) {
     query.name = { $regex: query.name, $options: 'i' }
-    const products = await ProductController.productsForName(query, quantity, page)
+    const products = await ProductController.productsForNameSupermarket(query, quantity, page)
     response.json(products)
   } else if (query.idSupermarket) {
     const products = await ProductController.all(query, quantity, page)

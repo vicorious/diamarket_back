@@ -149,6 +149,23 @@ class Product {
     const countAvailability = await AvailabilityModel.count({})
     const arrayProducts = []
     for (const product of products) {
+      const productsName = await AvailabilityModel.get({ idProduct: product._id, isActive: true })
+      if (productsName._id) {
+        arrayProducts.push(productsName)
+      }
+    }
+    if (arrayProducts.length > 0) {
+      return { estado: true, data: { page: page, quantity: quantity, total: countAvailability, items: arrayProducts }, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No se encuentran productos disponibles o el nombre no ha sido encontrado' }
+    }
+  }
+  async productsForNameSupermarket(data, quantity, page) {
+    AvailabilityModel.perPage = parseInt(quantity)
+    const products = await ProductModel.searchByPage({ name: data.name }, page)
+    const countAvailability = await AvailabilityModel.count({})
+    const arrayProducts = []
+    for (const product of products) {
       const productsName = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
       if (productsName._id) {
         arrayProducts.push(productsName)
@@ -157,7 +174,7 @@ class Product {
     if (arrayProducts.length > 0) {
       return { estado: true, data: { page: page, quantity: quantity, total: countAvailability, items: arrayProducts }, mensaje: null }
     } else {
-      return { estado: false, data: [], mensaje: 'No existe productos cor este nombre' }
+      return { estado: false, data: [], mensaje: 'No se encuentran productos disponibles o el nombre no ha sido encontrado' }
     }
   }
 
