@@ -1,5 +1,5 @@
 'use strict'
-const MakeDatePayU = require('../utils/makeDataPayU')
+const MakeDataPayU = require('../utils/makeDataPayU')
 const axios = require('axios')
 const MakeObjectPayment = require('../utils/makeObjectPayment')
 const MakeObjectBanks = require('../utils/makeObjectBanks')
@@ -19,7 +19,7 @@ class PayU {
     console.log('----------------------OBJECT PAYMENT CON TOKEN------------------------------------------')
     console.log(objectPayment)
     console.log('----------------------OBJECT PAYMENT CON TOKEN------------------------------------------')
-    const response = await axios.post(MakeDatePayU.urlFinal, objectPayment)
+    const response = await axios.post(MakeDataPayU.urlFinal, objectPayment)
     console.log("-------------------------------RESPONSE DE LA PETICION DEL PAGO")
     console.log(response.data)
     console.log("-------------------------------RESPONSE DE LA PETICION DEL PAGO")
@@ -68,7 +68,7 @@ class PayU {
 
   async tokenPayU (data) {
     const objectToken = MakeObjectToken(data)
-    const response = await axios.post(MakeDatePayU.urlFinal, objectToken)
+    const response = await axios.post(MakeDataPayU.urlFinal, objectToken)
     console.log('-------------------Token-------------------------------------------')
     console.log(response.data)
     console.log('-------------------Token-------------------------------------------')
@@ -112,7 +112,8 @@ class PayU {
   async dataPse () {
 		const objectBanks = MakeObjectBanks()
 		try {
-			const banks = await axios.post(MakeUrlPayU, objectBanks)
+      const banks = await axios.post(MakeDataPayU.urlFinal, objectBanks)
+      console.log(banks.data)
 			const typeClient = [
 				{ value: 'N', label: 'Persona natural' },
 				{ value: 'J', label: 'persona jurídica' }
@@ -130,6 +131,7 @@ class PayU {
 			]
 			return { estado: true, data: [ { type: 'typeClient', typeClient },{ type: 'typeDocument', typeDocument },{ type: 'banks', banks: banks.data.banks } ], mensaje: null }
 		} catch (error) {
+      console.log(error)
 			return { estado: false, data: [], mensaje: 'Ha ocurrido un error inesperado' }
 		}		
 	}
@@ -139,7 +141,7 @@ class PayU {
     console.log('------------OBJECT PSE ------------------------')
     console.log(objectPse)
     console.log('------------OBJECT PSE ------------------------')
-    const responsePse = await axios.post(MakeDatePayU.urlFinal, objectPse)
+    const responsePse = await axios.post(MakeDataPayU.urlFinal, objectPse)
     console.log('--------------RESPONSE PSE---------------------------------')
     console.log(responsePse.data)
     console.log('--------------RESPONSE PSE---------------------------------')

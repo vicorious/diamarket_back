@@ -12,7 +12,6 @@ async function uploadFile (image, originalname, type) {
     accessKeyId: ID,
     secretAccessKey: SECRET
   });
-  console.log(s3)
   const params = {
     Bucket: bucketName
   };
@@ -34,7 +33,6 @@ async function uploadFile (image, originalname, type) {
     params.ACL = 'public-read'
   }
   const file = await s3.upload(params).promise()
-  console.log(file)
   return file.Location
 }
 

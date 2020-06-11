@@ -2,7 +2,6 @@ const crypto = require('crypto')
 const MakeDataPayU = require('./makeDataPayU')
 
 module.exports = function (data) {
-	console.log(data)
 	const signature = crypto.createHash('md5').update(`${MakeDataPayU.apiKey}~${MakeDataPayU.merchantId}~${data.referenceCode}~${data.value}~COP`).digest('hex')
 	const obj = {
 		language: 'es',
@@ -18,7 +17,7 @@ module.exports = function (data) {
 				description: 'payment test',
 				language: 'es',
 				signature,
-				notifyUrl: 'http://f05aca725448.ngrok.io/v1/web/orderservice/responsepayment',
+				notifyUrl: 'http://f05aca725448.ngrok.io/v1/web/orderservice/responsepaymentpse',
 				additionalValues: {
 					TX_VALUE: {
 						value: data.value,
@@ -32,7 +31,7 @@ module.exports = function (data) {
 				contactPhone: data.user.cellPhone
 			},
 			extraParameters: {
-				RESPONSE_URL: 'http://f05aca725448.ngrok.io/v1/web/orderservice/responsepayment',
+				RESPONSE_URL: 'http://f05aca725448.ngrok.io/v1/web/orderservice/responsepaymentpse',
 				PSE_REFERENCE1: '127.0.0.1',
 				FINANCIAL_INSTITUTION_CODE: data.pseCode,
 				USER_TYPE: data.typeClient,

@@ -529,4 +529,11 @@ routesOrderServiceWeb.post('/responsepayment', async (request, response) => {
   response.json(true)
 })
 
+routesOrderServiceWeb.post('/responsepaymentpse', async (request, response) => {
+  console.log("............................")
+  console.log(request)
+  console.log("............................")
+  response.json(true)
+})
+
 module.exports = { routesOrderServiceApp, routesOrderServiceWeb }

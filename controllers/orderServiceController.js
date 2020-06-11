@@ -53,7 +53,7 @@ class OrderService {
       data.card = card
     }
     data.user = user
-    data.referenceCode = `prueba${countOrder}Diamarket29`
+    data.referenceCode = `prueba${countOrder}Diamarket30`
     const paymentResponse = await PayUController.payCredit(data)
     switch (paymentResponse.status) {
       case 'APPROVED': {
@@ -93,19 +93,15 @@ class OrderService {
   }
 
   async calculateValue (data) {
-    console.log(data)
     const valueProducts = await this.calculateValueProducts(data.products, data.supermarket)
-    console.log(valueProducts)
     const valuePromotions = await this.calculateValuePromotions(data.promotions)
-    console.log(valuePromotions)
     const value = (parseInt(valueProducts) + parseInt(valuePromotions.value)) - parseInt(valuePromotions.discount)
-    console.log(value)
     if (parseInt(value) >= 35000 && parseInt(value) <= 150000) {
-      return { estado: true, data: { value, delivery: 3000 }, mensaje: null }
+      return { estado: true, data: { value, delivery: 3000, minValue: 35000 }, mensaje: null }
     } else if (parseInt(value) >= 150000) {
-      return { estado: true, data: { value, delivery: 0 }, mensaje: null }
+      return { estado: true, data: { value, delivery: 0, minValue: 35000 }, mensaje: null }
     } else if (parseInt(value) <= 35000) {
-      return { estado: false, data: { value, delivery: 3000 }, mensaje: 'El valor de la orden debe ser mayor a $35.000' }
+      return { estado: false, data: { value, delivery: 3000, minValue: 35000 }, mensaje: 'El valor de la orden debe ser mayor a $35.000' }
     }
   }
 
@@ -198,7 +194,7 @@ class OrderService {
 
       case parseInt(3): {
         // Notificacion para el cliente de que el domiciliario va en camino
-        await NotificationController.messaging({ title: 'DiaMarket', body: 'El domiciliario va en camino con tu pedido', _id: order._id, status: 2, tokenMessaging: user.tokenCloudingMessagin })
+        await NotificationController.messaging({ title: 'DiaMarket', body: 'Tu servicio ha sido entregado, por favor califica el supermercado.', _id: order._id, status: 2, tokenMessaging: user.tokenCloudingMessagin })
         await OrderServiceModel.update(_id, data)
         break
       }
