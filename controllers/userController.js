@@ -418,15 +418,15 @@ class User {
         }
     }
 
-    async deleteCard(_id, uid) {
+    async deleteCard(_id, uid) {        
         const user = await UserModel.get({_id})
         let card = {}
-        await user.cards.find((element, index) => {
-            if (element.uid === uid) {
-                card = element
-                user._doc.cards.splice(index, 1)
+        for (const key in user.cards) {
+            if(user.cards[key].uid === uid) {
+                card = user.cards[key]
+                user._doc.cards.splice(key, 1)
             }
-        })
+        }
         if (card.uid) {
             const token = crypto.createDecipher('aes-256-ctr', secret).update(card.token, 'hex', 'utf8')
             const objectDeleteToken = MakeDeleteObjectToken(_id, token)
