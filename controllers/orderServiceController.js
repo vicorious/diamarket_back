@@ -154,6 +154,14 @@ class OrderService {
     if (orders.length > 0) {
       for (const object of orders) {
         object.superMarket._doc.calification = 0
+        let newProducts = []
+        for (const dataProduct of orders.products) {
+          const response = await ProductSchema.detail({_id:dataProduct.product})
+          if(response.data._id){
+            newProducts.push(response.data)
+          }
+        }
+        orders.products= newProducts
       }
       return { estado: true, data: orders, mensaje: null }
     } else {
