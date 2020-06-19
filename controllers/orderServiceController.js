@@ -152,6 +152,7 @@ class OrderService {
   async all(data) {
     const orders = await OrderServiceModel.search(data)
     if (orders.length > 0) {
+      let integer = 0
       for (const object of orders) {
         object.superMarket._doc.calification = 0
         let newProducts = []
@@ -161,7 +162,8 @@ class OrderService {
             newProducts.push(response.data)
           }
         }
-        orders.products= newProducts
+        orders[integer].products= newProducts
+        integer++
       }
       return { estado: true, data: orders, mensaje: null }
     } else {
