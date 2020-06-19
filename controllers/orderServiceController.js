@@ -155,7 +155,7 @@ class OrderService {
       for (const object of orders) {
         object.superMarket._doc.calification = 0
         let newProducts = []
-        for (const dataProduct of orders.products) {
+        for (const dataProduct of object.products) {
           const response = await ProductSchema.detail({_id:dataProduct.product})
           if(response.data._id){
             newProducts.push(response.data)
