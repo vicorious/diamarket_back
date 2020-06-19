@@ -32,7 +32,22 @@ class UserList {
   }
 
   async all (user) {
-    const list = await UserListModel.search(user)
+    let list = await UserListModel.search()
+    console.log(list)
+    console.log(user)
+    for(const data of list){
+      if (data.supermarket.calification.length > 0) {
+        let quantity = 0
+        let calification = 0
+        for (const item of data.supermarket.calification) {
+          calification = calification + item
+          quantity++
+        }
+        data.supermarket.calification = parseInt(calification) / parseInt(quantity)
+      } else {
+        list.supermarket.calification = 0
+      }
+    }
     if (list.length > 0) {
       return { estado: true, data: list, mensaje: null }
     } else {
