@@ -180,9 +180,9 @@ routesUserListApp.put('/:id', isClient, async (request, response) => {
  *              type: string
  *              example: 'No se encuentran listas creadas'
  */
-routesUserListApp.get('', /*isClient,*/ async (request, response) => {
-  // const user = request.User.id
-  const search = await UserListController.all({ user:"5edaaf02fe541f4b5fd97cc9" })
+routesUserListApp.get('', isClient, async (request, response) => {
+  const user = request.User.id
+  const search = await UserListController.all({ user })
   response.json(search)
 })
 
@@ -289,6 +289,62 @@ routesUserListApp.get('/detail/:id', isClient, async (request, response) => {
 routesUserListApp.delete('/:_id', isClient, async (request, response) => {
   const _id = request.params._id
   const userList = await UserListController.delete({ _id })
+  response.json(userList)
+})
+
+/**
+ * @swagger
+ * /app/userlist/{listId}/{productId}):
+ *  delete:
+ *    tags:
+ *      - UserList
+ *    description: En este endpoint se elimina un producto de una lista
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    - in: path
+ *      name: id
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Si la eliminacion de la data fue exitosa se responde con el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                deleted:
+ *                  type: boolean
+ *                  example: true
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si la lista no existe
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'No existe la lista de usuario'
+ */
+routesUserListApp.delete('/:listId/:productId', isClient, async (request, response) => {
+  const listId = request.params._id
+  const productId = request.params._id
+  const userList = await UserListController.deleteForId(listId,productId)
   response.json(userList)
 })
 module.exports = { routesUserListApp }

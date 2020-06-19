@@ -22,6 +22,22 @@ class UserList {
     }
   }
 
+  async deleteForId(_id,productId) {
+    const isExist = await UserListModel.get({ _id })
+    if (isExist._id) {
+      let newProducts = []
+      for (const product of isExist.products){
+        if(product._id!=productId){
+          newProducts.push(product)
+        }
+      }
+      const update = await UserListModel.update(isExist._id, {products:newProducts})
+      return update
+    } else {
+      return { estado: false, data: [], mensaje: 'No exite la lista de usuario' }
+    }
+  }
+
   async detail (_id) {
     const list = await UserListModel.get(_id)
     if (list._id) {
@@ -33,9 +49,35 @@ class UserList {
 
   async all (user) {
     let list = await UserListModel.search()
-    console.log(list)
-    console.log(user)
+    let integer = 0
+    let estructureList = {
+      name : '',
+      supermarket : {},
+      products : [],
+      user: {}
+    }
     for(const data of list){
+      estructureList.name=data.name
+      estructureList.products= data.products
+      estructureList.user = data.user
+      let estructureSupermarket = {
+        _id: data.supermarket._id,
+        status: data.supermarket.status,
+        name: data.supermarket.name,
+        address: data.supermarket.address,
+        calification: 0,
+        location: data.supermarket.location,
+        neigborhood: data.supermarket.neigborhood,
+        cellPhone: data.supermarket.cellPhone,
+        locality: data.supermarket.locality,
+        email: data.supermarket.email,
+        logo: data.supermarket.logo,
+        images: data.supermarket.images,
+        isActive: data.supermarket.isActive,
+        idAdmin: data.supermarket.idAdmin,
+        schedules: data.supermarket.schedules,
+        dateCreate: data.supermarket.dateCreate
+      }
       if (data.supermarket.calification.length > 0) {
         let quantity = 0
         let calification = 0
@@ -43,10 +85,14 @@ class UserList {
           calification = calification + item
           quantity++
         }
-        data.supermarket.calification = parseInt(calification) / parseInt(quantity)
+        estructureSupermarket.calification = parseInt(calification) / parseInt(quantity)
+        estructureList.supermarket = estructureSupermarket
       } else {
-        list.supermarket.calification = 0
+        estructureSupermarket.calification = 0
+        estructureList.supermarket = estructureSupermarket
       }
+      list[integer] = estructureList
+      integer++
     }
     if (list.length > 0) {
       return { estado: true, data: list, mensaje: null }
