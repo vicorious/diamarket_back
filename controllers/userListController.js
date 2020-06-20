@@ -4,6 +4,7 @@ const UserListModel = require('../models/userListSchema')
 class UserList {
   async create (data) {
     const isExist = await UserListModel.get({ name: data.name })
+    console.log(data)
     if (!isExist._id) {
       const list = await UserListModel.create(data)
       return { estado: true, data: list, mensaje: null }
@@ -14,6 +15,7 @@ class UserList {
 
   async update (_id, data) {
     const isExist = await UserListModel.get({ _id })
+    console.log(isExist)
     if (isExist._id) {
       const update = await UserListModel.update(isExist._id, data)
       return update
@@ -24,6 +26,7 @@ class UserList {
 
   async deleteForId(_id,productId) {
     const isExist = await UserListModel.get({ _id })
+    console.log(isExist)
     if (isExist._id) {
       let newProducts = []
       for (const product of isExist.products){
@@ -40,6 +43,7 @@ class UserList {
 
   async detail (_id) {
     const list = await UserListModel.get(_id)
+    console.log(list)
     if (list._id) {
       return { estado: true, data: list, mensaje: null }
     } else {
@@ -48,51 +52,17 @@ class UserList {
   }
 
   async all (user) {
-    let list = await UserListModel.search()
-    let integer = 0
-    let estructureList = {
-      name : '',
-      supermarket : {},
-      products : [],
-      user: {}
-    }
-    for(const data of list){
-      estructureList.name=data.name
-      estructureList.products= data.products
-      estructureList.user = data.user
-      let estructureSupermarket = {
-        _id: data.supermarket._id,
-        status: data.supermarket.status,
-        name: data.supermarket.name,
-        address: data.supermarket.address,
-        calification: 0,
-        location: data.supermarket.location,
-        neigborhood: data.supermarket.neigborhood,
-        cellPhone: data.supermarket.cellPhone,
-        locality: data.supermarket.locality,
-        email: data.supermarket.email,
-        logo: data.supermarket.logo,
-        images: data.supermarket.images,
-        isActive: data.supermarket.isActive,
-        idAdmin: data.supermarket.idAdmin,
-        schedules: data.supermarket.schedules,
-        dateCreate: data.supermarket.dateCreate
-      }
-      if (data.supermarket.calification.length > 0) {
-        let quantity = 0
-        let calification = 0
-        for (const item of data.supermarket.calification) {
-          calification = calification + item
-          quantity++
+    let list = await UserListModel.search(user)
+    for (const object of list) {
+      let calification = 0
+      if(Array.isArray(object.supermarket.calification) && object.supermarket.calification.length > 0) {
+        for (const element of object.supermarket.calification) {
+          calification = parseInt(element) / object.supermarket.calification.length
         }
-        estructureSupermarket.calification = parseInt(calification) / parseInt(quantity)
-        estructureList.supermarket = estructureSupermarket
+        object._doc.supermarket._doc.calification = calification
       } else {
-        estructureSupermarket.calification = 0
-        estructureList.supermarket = estructureSupermarket
+        object._doc.supermarket._doc.calification = 0
       }
-      list[integer] = estructureList
-      integer++
     }
     if (list.length > 0) {
       return { estado: true, data: list, mensaje: null }
