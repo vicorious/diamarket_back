@@ -55,6 +55,7 @@ class UserList {
 
   async all (user) {
     let list = await UserListModel.search(user)
+    let integer = 0
     for (const object of list) {
       let calification = 0
       if(Array.isArray(object.supermarket.calification) && object.supermarket.calification.length > 0) {
