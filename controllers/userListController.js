@@ -54,48 +54,16 @@ class UserList {
   }
 
   async all (user) {
-    let list = await UserListModel.search()
-    let integer = 0
-    let estructureList = {
-      name : '',
-      supermarket : {},
-      products : [],
-      user: {}
-    }
-    for(const data of list){
-      estructureList.name=data.name
-      estructureList.products= data.products
-      estructureList.user = data.user
-      let estructureSupermarket = {
-        _id: data.supermarket._id,
-        status: data.supermarket.status,
-        name: data.supermarket.name,
-        address: data.supermarket.address,
-        calification: 0,
-        location: data.supermarket.location,
-        neigborhood: data.supermarket.neigborhood,
-        cellPhone: data.supermarket.cellPhone,
-        locality: data.supermarket.locality,
-        email: data.supermarket.email,
-        logo: data.supermarket.logo,
-        images: data.supermarket.images,
-        isActive: data.supermarket.isActive,
-        idAdmin: data.supermarket.idAdmin,
-        schedules: data.supermarket.schedules,
-        dateCreate: data.supermarket.dateCreate
-      }
-      if (data.supermarket.calification.length > 0) {
-        let quantity = 0
-        let calification = 0
-        for (const item of data.supermarket.calification) {
-          calification = calification + item
-          quantity++
+    let list = await UserListModel.search(user)
+    for (const object of list) {
+      let calification = 0
+      if(Array.isArray(object.supermarket.calification) && object.supermarket.calification.length > 0) {
+        for (const element of object.supermarket.calification) {
+          calification = parseInt(element) / object.supermarket.calification.length
         }
-        estructureSupermarket.calification = parseInt(calification) / parseInt(quantity)
-        estructureList.supermarket = estructureSupermarket
+        object._doc.supermarket._doc.calification = calification
       } else {
-        estructureSupermarket.calification = 0
-        estructureList.supermarket = estructureSupermarket
+        object._doc.supermarket._doc.calification = 0
       }
       list[integer] = estructureList
       integer++
