@@ -30,7 +30,7 @@ class Auth {
     userFirebase.providerData.forEach(obj => user = obj)
     const userDataBase = await UserModel.get({ email: user.email })
     if (userDataBase._id) {
-      await UserModel.update(userDataBase._id, { uidFireBase: user.uid, tokenAuth: data.token, tokenCloudingMessagin: data.tokenCloudingMessagin })
+      await UserModel.update(userDataBase._id, { uidFireBase: user.uid, tokenAuth: data.token, tokenCloudingMessagin: data.tokenCloudingMessagin, idSocket: data.idSocket })
       const token = jwt.sign({ _id: userDataBase._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
       return { estado: true, data: { token: token, user: userDataBase }, mensaje: null }
     } else {

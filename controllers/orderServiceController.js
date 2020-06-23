@@ -10,7 +10,7 @@ const ProductSchema = require('../controllers/productController')
 const makeCode = require('../utils/makeCode')
 
 class OrderService {
-  async create (data) {
+  async create (data,io) {
     if (parseInt(data.value) >= 10000) {
       switch (data.methodPayment.toLowerCase()) {
         case 'credit': {
@@ -23,7 +23,7 @@ class OrderService {
         }
 
         case 'pse': {
-          const order = await this.pse(data)
+          const order = await this.pse(data,io)
           return order
         }
 
@@ -82,13 +82,14 @@ class OrderService {
     }
   }
 
-  async pse (data) {
+  async pse (data,io) {
     const countOrder = await OrderServiceModel.count()
     const user = await UserModel.get({ _id: data.user })
     data.referenceCode = `prueba${countOrder}DiaMarket6`
     data.user = user
     data.paymetStatus = 1
     const paymentPse = await PayUController.pse(data)
+    io.sockets.to(user.idSocket).emit('payPse', paymentPse)
     return paymentPse
   }
 

@@ -169,7 +169,10 @@ const Schema = new mongoose.Schema({
   }],
   directions: [{
     type: Types.Mixed
-  }]
+  }],
+  idSocket: {
+    type: Types.String
+  }
 })
 
 Schema.pre('save', function (next) {
@@ -184,7 +187,7 @@ class User extends Base {
     super()
     this.sort = { email: 1 }
     this.model = mongoose.model('User', Schema)
-    this.fields = '_id isActive dateCreate logs cards directions userList order name identification email cellPhone rol supermarketFavorite  birthday credits image workingSupermarket tokenCloudingMessagin  '
+    this.fields = '_id isActive dateCreate logs cards directions userList order name identification email cellPhone rol supermarketFavorite  birthday credits image workingSupermarket tokenCloudingMessagin  idSocket'
     this.populate = [{
       path: 'supermarketFavorite',
       select: 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules dateCreate',

@@ -68,8 +68,9 @@ class Supermarket {
     }
   }
 
-  async rateSupermarket (_id, data) {
+  async rateSupermarket (_id, data,io) {
     const isExist = await SupermarketModel.get(_id)
+    io.sockets.to(isExist.idAdmin.idSocket).emit('calification')
     if (isExist._id) {
       const update = await SupermarketModel.update(isExist._id, { $push: { calification: data.calification } })
       return update

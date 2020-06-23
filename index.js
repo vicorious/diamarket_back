@@ -15,6 +15,25 @@ const cookieParser = require('cookie-parser')
 const port = 5002
 const app = asyncify(express())
 const server = http.createServer(app)
+const io = require('socket.io')(server)
+
+let clientId
+io.on('connect', (socket) => {
+  clientId = socket.id
+  socket.on('payPse', function (data) {
+    console.log(data)
+    io.emit('payPse', data);
+  });
+  socket.on('calification', function (data) {
+    console.log(data)
+    io.emit('calification', data);
+  });
+
+})
+app.use((request, response, next) => {
+  request.io = { io, clientId}
+  next()
+})
 
 app.use(cors())
 app.use(morgan('combined'))

@@ -151,7 +151,7 @@ class Supermarket extends Base {
     this.sort = { email: 1 }
     this.model = mongoose.model('Supermarket', Schema)
     this.fields = 'status name address calification location neigborhood cellPhone locality email logo images isActive idAdmin schedules dateCreate idPos'
-    this.populate = [{ path: 'idAdmin', select: '_id name rol directions idetification email ', model: 'User' }]
+    this.populate = [{ path: 'idAdmin', select: '_id name rol directions idetification email idSocket', model: 'User' }]
   }
 }
 

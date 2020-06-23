@@ -59,7 +59,7 @@ class UserList extends Base {
       },
       {
         path: 'products',
-        select: 'idPos name description category defaultprice image price',
+        select: 'idPos name description category defaultprice image',
         model: 'Product'
       },
       {

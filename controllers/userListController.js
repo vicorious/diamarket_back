@@ -1,5 +1,6 @@
 'use strict'
 const UserListModel = require('../models/userListSchema')
+const AvailabilityModel = require('../models/availabilitySchema')
 
 class UserList {
   async create (data) {
@@ -39,9 +40,14 @@ class UserList {
   }
 
   async detail (_id) {
-    const list = await UserListModel.get(_id)
-    if (list._id) {
-      return { estado: true, data: list, mensaje: null }
+    const data = await UserListModel.get(_id)
+    let integer = 0
+    for(const list of data.products){
+      const product = await AvailabilityModel.get({idProduct:list})
+      data.products[integer].defaultPrice=product.price
+    }
+    if (data._id) {
+      return { estado: true, data, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No existe la lista de usuario' }
     }
