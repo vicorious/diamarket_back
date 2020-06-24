@@ -54,7 +54,7 @@ class UserList {
   }
 
   async all (user) {
-    let list = await UserListModel.search()
+    let list = await UserListModel.search(user)
     let integer = 0
     let estructureList = {
       name : '',
