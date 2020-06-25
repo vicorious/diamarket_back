@@ -410,7 +410,14 @@ class User {
         if (card !== undefined) {
             return {
                 estado: true,
-                data: {uid: card.uid, number: card.number, name: card.name, type: card.type, default: card.default,expirationDate: card.expirationDate},
+                data: {
+                    uid: card.uid,
+                    number: card.number,
+                    name: card.name,
+                    type: card.type,
+                    default: card.default,
+                    expirationDate: card.expirationDate
+                },
                 mensaje: null
             }
         } else {
@@ -418,11 +425,11 @@ class User {
         }
     }
 
-    async deleteCard(_id, uid) {        
+    async deleteCard(_id, uid) {
         const user = await UserModel.get({_id})
         let card = {}
         for (const key in user.cards) {
-            if(user.cards[key].uid === uid) {
+            if (user.cards[key].uid === uid) {
                 card = user.cards[key]
                 user._doc.cards.splice(key, 1)
             }
@@ -443,6 +450,22 @@ class User {
         console.log(data)
         if (user._id) {
             await UserModel.update(user._id, data)
+        } else {
+            return {estado: false, data: [], message: 'Este usuario no se encuentra'}
+        }
+    }
+
+    async deleteForId(uid, _id) {
+        const user = await UserModel.get(_id)
+        if (user._id) {
+            let newAddress = []
+            for (const direction of user.directions) {
+                if (uid != direction.uid) {
+                    newAddress.push(direction)
+                }
+            }
+            await UserModel.update(user._id, {directions: newAddress})
+            return {estado: true, data: [], message: 'Datos actualizados correctamente'}
         } else {
             return {estado: false, data: [], message: 'Este usuario no se encuentra'}
         }

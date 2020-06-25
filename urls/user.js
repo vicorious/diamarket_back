@@ -1436,4 +1436,60 @@ routesUserApp.get('/card/default',isClient, async (request, response) => {
   const update = await UserController.listCardDefault({ _id })
   response.json(update)
 })
+
+/**
+ * @swagger
+ * /app/user/address/{uid}):
+ *  delete:
+ *    tags:
+ *      - User
+ *    description: En este endpoint se elimina una direccion
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    - in: path
+ *      name: id
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Si la eliminacion de la data fue exitosa se responde con el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              type: object
+ *              properties:
+ *                deleted:
+ *                  type: boolean
+ *                  example: true
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si la lista no existe
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'No existe la direccion de usuario'
+ */
+routesUserListApp.delete('/address/:uid', isClient, async (request, response) => {
+  const uid = request.params.uid
+  const _id = request.User.id
+  const user = await UserController.deleteForId(uid,_id)
+  response.json(user)
+})
 module.exports = { routesUserApp, routesUserWeb }
