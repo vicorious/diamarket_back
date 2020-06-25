@@ -1486,9 +1486,9 @@ routesUserApp.get('/card/default',isClient, async (request, response) => {
  *              type: string
  *              example: 'No existe la direccion de usuario'
  */
-routesUserApp.delete('/address/:uid', async (request, response) => {
+routesUserApp.delete('/address/:uid', isClient, async (request, response) => {
   const uid = request.params.uid
-  const _id = "5edaaf02fe541f4b5fd97cc9"
+  const _id = request.User.id
   const user = await UserController.deleteForId(uid,_id)
   response.json(user)
 })
