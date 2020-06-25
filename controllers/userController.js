@@ -456,7 +456,7 @@ class User {
     }
 
     async deleteForId(uid, _id) {
-        const user = await UserModel.get(_id)
+        const user = await UserModel.get({_id})
         if (user._id) {
             let newAddress = []
             for (const direction of user.directions) {
