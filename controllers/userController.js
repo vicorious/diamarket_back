@@ -169,6 +169,15 @@ class User {
     async detail(id) {
         const user = await UserModel.get(id)
         if (user._id) {
+
+            let integer = 0
+            for (const direction of user.directions) {
+                let cordinate = direction.location.coordinates[0]
+                cordinate=cordinate.split(', ')
+                user.directions[integer].location.coordinates[0] = cordinate[0]
+                user.directions[integer].location.coordinates[1] = cordinate[1]
+                integer++
+            }
             if (user.rol === 'administrator') {
                 const supermarket = await SuperMarketSchema.get({idAdmin: user._id})
                 if (supermarket._id) {
