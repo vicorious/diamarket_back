@@ -197,6 +197,41 @@ class Product {
     }
   }
 
+  async productsSuggestion (product, category, subCategory, idSupermarket) {
+    const products = await ProductModel.limit({ _id: { $ne: product }, category, subCategory }, 20)
+    const arrayProducts  = []
+    let newProducts = []
+    for (const product of products) {
+      const productsName = await AvailabilityModel.get({ idSupermarket, idProduct: product._id, isActive: true })
+      if (productsName._id) {
+        arrayProducts.push(productsName)
+      }
+    }
+    if (arrayProducts.length > 5) {
+      let selectProduct = { _id: '' }
+      for (let i = 0; i < 5; i++) {
+        const random = Math.floor(Math.random() * Math.floor(arrayProducts.length))
+        const randomProduct = arrayProducts[random]
+        if (selectProduct._id.toString() !== randomProduct._id.toString()) {
+          let calification = 0
+          randomProduct.idSupermarket.calification.forEach(item => calification += parseInt(item))
+          randomProduct.idSupermarket._doc.calification = parseInt(calification) === 0 ? 0:  calification / parseInt(randomProduct.idSupermarket.calification.length)
+          newProducts.push(randomProduct)
+          selectProduct = randomProduct
+        }
+      } 
+      return newProducts
+    } else {
+      newProducts = arrayProducts
+      for (const object of newProducts) {
+        let calification = 0
+        object.idSupermarket.calification.forEach(item => calification += parseInt(item))
+        object.idSupermarket._doc.calification = parseInt(calification) === 0 ? 0 : calification / object.idSupermarket.calification.length
+      }
+      return newProducts
+    }
+  }
+
   async productsForNameMobile(data, initQuantity, finishQuantity) {
     const products = await ProductModel.searchByPageMobile({ name: data.name }, initQuantity, finishQuantity)
     const arrayProducts = []

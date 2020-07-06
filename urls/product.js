@@ -575,4 +575,13 @@ routesProductApp.post('/forname/:initquantity/:finishquantity', async (request, 
   response.json(products)
 })
 
+routesProductApp.get('/suggestion/:product/:category/:subcategory/:supermarket', async(request, response) => {
+  const product = request.params.product
+  const category = request.params.category
+  const subCategory = request.params.subcategory
+  const supermarket = request.params.supermarket
+  const data = await ProductController.productsSuggestion(product, category, subCategory, supermarket)
+  response.json(data)
+})
+
 module.exports = { routesProductApp, routesProductWeb }

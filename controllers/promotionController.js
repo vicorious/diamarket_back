@@ -1,6 +1,7 @@
 'use strict'
 const PromotionModel = require('../models/promotionSchema')
 const SuperMarketModel = require('../models/supermarketSchema')
+const CategoryModel = require('../models/categorySchema')
 
 class Promotion {
   async create (data) {
@@ -45,6 +46,9 @@ class Promotion {
           element._doc.calification = 0
         }
       })
+      await promotion.products.forEach(async (element) => {
+        element._doc.category =  await CategoryModel.get({ _id: element.category })
+      })
     }
     if (promotion._id) {
       return { estado: true, data: promotion, mensaje: null }
@@ -68,24 +72,16 @@ class Promotion {
     const promotion = await PromotionModel.searchByPageMobile(data, initQuantity, finishQuantity)
     let calification = 0
     for (const object of promotion) {
-      console.log("_-----------------------")
-      console.log(object._doc)
-      console.log("_-----------------------")
       await object._doc.supermarket.forEach( async (element) => {
-        console.log("--------------------_SUPERMARKET-------------------------")
-        console.log(element)
-        console.log("--------------------_SUPERMARKET-------------------------")
         if(element.calification.length > 0) {
           await element.calification.forEach(async (item) => parseInt(calification) += parseInt(item))
         }
         calification !== parseInt(0) ? element._doc.calification = parseInt(calification) / parseInt(element.calification.length) : element._doc.calification = calification
-        console.log("----------------------CALIFICADO--------------------------")
-        console.log(element)
-        console.log("----------------------CALIFICADO--------------------------")
-
+      })
+      await object._doc.products.forEach(async (element) => {
+        element._doc.category = await CategoryModel.get({ _id: element.category })
       })
     }
-    console.log("PROMOCIONES", promotion)
     if (promotion.length > 0) {
       return { estado: true, data: promotion, mensaje: null }
     } else {

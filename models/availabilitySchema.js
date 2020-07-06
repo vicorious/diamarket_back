@@ -56,7 +56,7 @@ class Availability extends Base {
     this.fields = 'idSupermarket idProduct quantity price isActive'
     this.populate = [
       { path: 'idProduct', select: '', model: 'Product' },
-      { path: 'idSupermarket', select: 'status images isActive schedules _id supermarketIdPos name address neigborhood locality cellPhone idPos dateCreate location', model: 'Supermarket' },
+      { path: 'idSupermarket', select: 'status images isActive schedules _id supermarketIdPos name address neigborhood locality cellPhone idPos dateCreate location calification', model: 'Supermarket' },
       { path: 'idProduct.category', select: 'name description image isActive', model: 'Category' }
     ]
   }

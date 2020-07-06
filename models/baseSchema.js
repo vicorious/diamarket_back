@@ -119,6 +119,19 @@ class Base {
     const objects = await this.model.find(data).count()
     return objects
   }
+
+  async limit(data, limit) {
+    try {
+      let objects = await this.model.find(data, this.fields).sort(this.sort).limit(limit)
+      if (this.populate) {
+        objects = await this.model.find(data, this.fields).populate(this.populate).sort(this.sort).limit(limit)
+      }
+      return objects
+    } catch (error) {
+      console.log(error)
+      return makeErrors(error.errors)
+    }
+  }
 }
 
 module.exports = Base
