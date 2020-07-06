@@ -36,7 +36,7 @@ class Promotion {
   async detailApp (id) {
     const promotion = await PromotionModel.get(id)
     let calification = 0
-    if (promotion.supermarket.calification.length > 0) {
+    if (promotion.supermarket.calification.length > 0 || promotion.supermarket.calification !== undefined) {
       await promotion.supermarket.calification.forEach(item => calification += parseInt(item))
       promotion._doc.supermarket._doc.calification = parseInt(calification) / parseInt(promotion.supermarket.calification.length)
     } else {
