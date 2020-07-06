@@ -432,4 +432,56 @@ routesPromotionApp.get('/all/:supermarket/:initquantity/:finishquantity', async 
   response.json(search)
 })
 
+/**
+ * @swagger
+ * /app/promotion/detail/{id}:
+ *  get:
+ *    tags:
+ *      - Promotion
+ *    description: En este endpoint se detalla una promocion por el id enviado en cabecera
+ *    produces:
+ *    - applications/json
+ *    parameters:
+ *    - in: path
+ *      name: id
+ *      required: true
+ *    - in: header
+ *      name: Authorization
+ *      required: true
+ *    responses:
+ *      200:
+ *        description: Si se encuentra la promocion se devuelve el objeto de la promocion
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: true
+ *            data:
+ *              $ref: '#/definitions/Promotion'
+ *            mensaje:
+ *              type: string
+ *              example: null
+ *      400:
+ *        description: Si la promocion no existe devuelve el siguiente objeto
+ *        schema:
+ *          properties:
+ *            estado:
+ *              type: boolean
+ *              example: false
+ *            data:
+ *              type: array
+ *              items:
+ *                type: string
+ *                example: 'Array vacio'
+ *            mensaje:
+ *              type: string
+ *              example: 'La promocion no se encuentra registrada'
+ */
+routesPromotionApp.get('/detail/:id', isClient, async (request, response) => {
+  const _id = request.params.id
+  const detail = await PromotionController.detail({ _id })
+  response.json(detail)
+})
+
+
 module.exports = { routesPromotionApp, routesPromotionWeb }
