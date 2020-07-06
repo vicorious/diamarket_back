@@ -46,6 +46,24 @@ class Promotion {
 
   async all (data, initQuantity, finishQuantity) {
     const promotion = await PromotionModel.searchByPageMobile(data, initQuantity, finishQuantity)
+    let calification = 0
+    for (const object of promotion) {
+      console.log("_-----------------------")
+      console.log(object._doc)
+      console.log("_-----------------------")
+      await object._doc.supermarket.forEach( async (element) => {
+        console.log("--------------------_SUPERMARKET-------------------------")
+        console.log(element)
+        console.log("--------------------_SUPERMARKET-------------------------")
+        await element.calification.forEach(async (item) => parseInt(calification) += parseInt(item))
+        element._doc.calification = parseInt(calification) / parseInt(element.calification.length)
+        console.log("----------------------CALIFICADO--------------------------")
+        console.log(element)
+        console.log("----------------------CALIFICADO--------------------------")
+
+      })
+    }
+    console.log("PROMOCIONES", promotion)
     if (promotion.length > 0) {
       return { estado: true, data: promotion, mensaje: null }
     } else {
