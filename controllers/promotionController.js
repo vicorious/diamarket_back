@@ -33,6 +33,22 @@ class Promotion {
     }
   }
 
+  async detailApp (id) {
+    const promotion = await PromotionModel.get(id)
+    let calification = 0
+    if (promotion.supermarket.calification.length > 0) {
+      await promotion.supermarket.calification.forEach(item => calification += parseInt(item))
+      promotion._doc.supermarket._doc.calification = parseInt(calification) / parseInt(promotion.supermarket.calification.length)
+    } else {
+      promotion._doc.supermarket._doc.calification = 0
+    }
+    if (promotion._id) {
+      return { estado: true, data: promotion, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No existe esta promoción' }
+    }
+  }
+
   async allPage (data, quantity, page) {
     PromotionModel.perPage = parseInt(quantity)
     const promotions = await PromotionModel.searchByPage(data, page)
@@ -55,8 +71,10 @@ class Promotion {
         console.log("--------------------_SUPERMARKET-------------------------")
         console.log(element)
         console.log("--------------------_SUPERMARKET-------------------------")
-        await element.calification.forEach(async (item) => parseInt(calification) += parseInt(item))
-        element._doc.calification = parseInt(calification) / parseInt(element.calification.length)
+        if(element.calification.length > 0) {
+          await element.calification.forEach(async (item) => parseInt(calification) += parseInt(item))
+        }
+        calification !== parseInt(0) ? element._doc.calification = parseInt(calification) / parseInt(element.calification.length) : element._doc.calification = calification
         console.log("----------------------CALIFICADO--------------------------")
         console.log(element)
         console.log("----------------------CALIFICADO--------------------------")
