@@ -36,11 +36,15 @@ class Promotion {
   async detailApp (id) {
     const promotion = await PromotionModel.get(id)
     let calification = 0
-    if (promotion.supermarket.calification.length > 0 || promotion.supermarket.calification !== undefined) {
-      await promotion.supermarket.calification.forEach(item => calification += parseInt(item))
-      promotion._doc.supermarket._doc.calification = parseInt(calification) / parseInt(promotion.supermarket.calification.length)
-    } else {
-      promotion._doc.supermarket._doc.calification = 0
+    if (promotion.supermarket.length > 0) {
+      await promotion.supermarket.forEach(async (element) => {
+        await element.calification.forEach(item => calification += parseInt(item))
+        if (calification.length > 0) {
+          element._doc.calification = parseInt(calification) / parseInt(element._doc.calification.length)
+        } else {
+          element._doc.calification = 0
+        }
+      })
     }
     if (promotion._id) {
       return { estado: true, data: promotion, mensaje: null }
