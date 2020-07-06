@@ -479,7 +479,7 @@ routesPromotionApp.get('/all/:supermarket/:initquantity/:finishquantity', async 
  */
 routesPromotionApp.get('/detail/:id', isClient, async (request, response) => {
   const _id = request.params.id
-  const detail = await PromotionController.detail({ _id })
+  const detail = await PromotionController.detailApp({ _id })
   response.json(detail)
 })
 
