@@ -47,6 +47,7 @@ class Promotion {
         }
       })
       await promotion.products.forEach(async (element) => {
+        console.log(element)
         element._doc.category =  await CategoryModel.get({ _id: element.category })
       })
     }
@@ -79,6 +80,7 @@ class Promotion {
         calification !== parseInt(0) ? element._doc.calification = parseInt(calification) / parseInt(element.calification.length) : element._doc.calification = calification
       })
       await object._doc.products.forEach(async (element) => {
+        console.log(element)
         element._doc.category = await CategoryModel.get({ _id: element.category })
       })
     }

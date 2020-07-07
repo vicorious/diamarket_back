@@ -101,6 +101,15 @@ class Product {
 
   async productsSuperMarkets(idSupermarket, initQuantity, finishQuantity) {
     const products = await AvailabilityModel.searchByPageMobile({ idSupermarket, isActive: true }, initQuantity, finishQuantity)
+    for (const object of products) {
+      let calification = 0
+      if (object.idSupermarket.calification.length === 0) {
+        const category = await CategoryModel.get({ _id: object.idProduct.category })
+        object.idSupermarket.calification.forEach(item => calification += item)
+        object.idSupermarket._doc.calification = calification === 0 ? 0 : calification / object.idSupermarket.calification.length
+        object.idProduct._doc.category = category      
+      }
+    }
     if (products.length > 0) {
       return { estado: true, data: products, mensaje: null }
     } else {

@@ -96,7 +96,7 @@ class Promotion extends Base {
     },
     {
       path: 'products',
-      select: 'idPos name description category defaultprice image',
+      select: '',
       model: 'Product'
     }
     ]
