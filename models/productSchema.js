@@ -58,7 +58,8 @@ const Schema = new mongoose.Schema({
     type: Types.String
   },
   defaultPrice: {
-    type: Types.Number
+    type: Types.Number,
+    default: 0
   },
   image: [{
     type: Types.String

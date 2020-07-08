@@ -104,11 +104,16 @@ class Product {
     for (const object of products) {
       let calification = 0
       if (object.idSupermarket.calification.length === 0) {
-        const category = await CategoryModel.get({ _id: object.idProduct.category })
         object.idSupermarket.calification.forEach(item => calification += item)
         object.idSupermarket._doc.calification = calification === 0 ? 0 : calification / object.idSupermarket.calification.length
-        object.idProduct._doc.category = category      
       }
+      const category = await CategoryModel.get({ _id: object.idProduct.category })
+      delete category._doc.subCategory
+      object.idProduct._doc.category = category   
+      object.idProduct._doc.price = object.price
+      object.idProduct._doc.quantity = object.quantity
+      delete object._doc.price
+      delete object._doc.quantity
     }
     if (products.length > 0) {
       return { estado: true, data: products, mensaje: null }
@@ -222,9 +227,16 @@ class Product {
         const random = Math.floor(Math.random() * Math.floor(arrayProducts.length))
         const randomProduct = arrayProducts[random]
         if (selectProduct._id.toString() !== randomProduct._id.toString()) {
+          const category =  await CategoryModel.get({ _id: randomProduct.idProduct.category })
           let calification = 0
           randomProduct.idSupermarket.calification.forEach(item => calification += parseInt(item))
           randomProduct.idSupermarket._doc.calification = parseInt(calification) === 0 ? 0:  calification / parseInt(randomProduct.idSupermarket.calification.length)
+          randomProduct.idProduct._doc.category =  category
+          randomProduct.idProduct._doc.price = randomProduct.price
+          randomProduct.idProduct._doc.quantity = randomProduct.quantity
+          delete randomProduct.idProduct.category._doc.subCategory
+          delete randomProduct.price
+          delete randomProducts.quantity
           newProducts.push(randomProduct)
           selectProduct = randomProduct
         }
@@ -236,6 +248,12 @@ class Product {
         let calification = 0
         object.idSupermarket.calification.forEach(item => calification += parseInt(item))
         object.idSupermarket._doc.calification = parseInt(calification) === 0 ? 0 : calification / object.idSupermarket.calification.length
+        object.idProduct._doc.category = await CategoryModel.get({ _id: object.idProduct.category })
+        object.idProduct._doc.price = object.price
+        object.idProduct._doc.quantity = object.quantity
+        delete object.idProduct.category._doc.subCategory
+        delete object._doc.price
+        delete object._doc.quantity
       }
       return newProducts
     }

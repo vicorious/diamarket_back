@@ -2,6 +2,7 @@
 const PromotionModel = require('../models/promotionSchema')
 const SuperMarketModel = require('../models/supermarketSchema')
 const CategoryModel = require('../models/categorySchema')
+const AvailabilityModel = require('../models/availabilitySchema')
 
 class Promotion {
   async create (data) {
@@ -37,7 +38,7 @@ class Promotion {
   async detailApp (id) {
     const promotion = await PromotionModel.get(id)
     let calification = 0
-    if (promotion.supermarket.length > 0) {
+    let price = 0
       await promotion.supermarket.forEach(async (element) => {
         await element.calification.forEach(item => calification += parseInt(item))
         if (calification.length > 0) {
@@ -46,11 +47,35 @@ class Promotion {
           element._doc.calification = 0
         }
       })
-      await promotion.products.forEach(async (element) => {
-        console.log(element)
-        element._doc.category =  await CategoryModel.get({ _id: element.category })
-      })
-    }
+      for (const element of promotion.products) {
+        const category = await CategoryModel.get({ _id: element.category })
+        const availability = await AvailabilityModel.get({ idProduct: element._id })
+        delete category._doc.subCategory
+        element._doc.category =  category 
+        element._doc.price = availability.price
+        element._doc.quantity = availability.quantity
+        price += availability.price
+      }
+      promotion._doc.priceProducts = price
+      if (promotion.credits === 0 && promotion.discount === 0) {
+        promotion._doc.type = 'totalValue'
+        promotion._doc.amount = promotion.value
+        promotion._doc.value = 0
+        delete promotion._doc.discount
+        delete promotion._doc.credits
+      } else if (promotion.credits > 0 && promotion.discount === 0) {
+        promotion._doc.type = 'credits'
+        promotion._doc.amount =  promotion.value
+        promotion._doc.value = promotion.credits
+        delete promotion._doc.discount
+        delete promotion._doc.credits
+      } else if (promotion.discount > 0 && promotion.credits === 0) {
+        promotion._doc.type = 'discount'
+        promotion._doc.value = promotion.discount
+        promotion._doc.amount =  Math.abs(((price * promotion.discount) / 100) - price)
+        delete promotion._doc.discount
+        delete promotion._doc.credits
+      }
     if (promotion._id) {
       return { estado: true, data: promotion, mensaje: null }
     } else {
@@ -72,6 +97,7 @@ class Promotion {
   async all (data, initQuantity, finishQuantity) {
     const promotion = await PromotionModel.searchByPageMobile(data, initQuantity, finishQuantity)
     let calification = 0
+    let price  = 0
     for (const object of promotion) {
       await object._doc.supermarket.forEach( async (element) => {
         if(element.calification.length > 0) {
@@ -79,12 +105,37 @@ class Promotion {
         }
         calification !== parseInt(0) ? element._doc.calification = parseInt(calification) / parseInt(element.calification.length) : element._doc.calification = calification
       })
-      await object._doc.products.forEach(async (element) => {
+      for (const element of object.products) {
         const category = await CategoryModel.get({ _id: element.category })
-        console.log(category)
-        console.log(element.category)
-        element._doc.category =  category
-      })
+        const availability = await AvailabilityModel.get({ idProduct: element._id })
+        delete category._doc.subCategory
+        element._doc.category = category
+        element._doc.price = availability.price
+        element._doc.quantity = availability.quantity
+        console.log(availability.price)
+        price += availability.price
+      }
+      object._doc.priceProducts = price
+      if (object.credits === 0 && object.discount === 0) {
+        object._doc.type = 'totalValue'
+        object._doc.amount = object.value
+        object._doc.value = 0
+        delete object._doc.discount
+        delete object._doc.credits
+      } else if (object.credits > 0 && object.discount === 0) {
+        object._doc.type = 'credits'
+        object._doc.amount =  object.value
+        object._doc.value = object.credits
+        delete object._doc.discount
+        delete object._doc.credits
+      } else if (object.discount > 0 && object.credits === 0) {
+        object._doc.type = 'discount'
+        object._doc.value = object.discount
+        object._doc.amount =  Math.abs(((price * object.discount) / 100) - price)
+        delete object._doc.discount
+        delete object._doc.credits
+      }
+      price = 0
     }
     if (promotion.length > 0) {
       return { estado: true, data: promotion, mensaje: null }

@@ -278,7 +278,7 @@ routesOrderServiceWeb.put('/:id', async (request, response) => {
 routesOrderServiceApp.post('/calculatevalue', async (request, response) => {
   const data = request.body
   const value = await OrderServiceController.calculateValue(data)
-  console.log(value)
+  console.log("value------------------", value)
   response.json(value)
 })
 

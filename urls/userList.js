@@ -182,8 +182,8 @@ routesUserListApp.put('/:id', isClient, async (request, response) => {
  */
 routesUserListApp.get('', isClient, async (request, response) => {
   const user = request.User.id
-  const search = await UserListController.all({ user })
-  response.json(search)
+  const list = await UserListController.all({ user })
+  response.json(list)
 })
 
 /**
