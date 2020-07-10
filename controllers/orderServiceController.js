@@ -108,7 +108,8 @@ class OrderService {
   async calculateValue(data) {
     const valueProducts = await this.calculateValueProducts(data.products, data.supermarket)
     const valuePromotions = await this.calculateValuePromotions(data.promotions)
-    let value = parseInt(valueProducts) + parseInt(valuePromotions)
+    console.log(valuePromotions)
+    let value = parseInt(valuePromotions) === undefined ? parseInt(valueProducts) : parseInt(valueProducts) + parseInt(valuePromotions)
     if (parseInt(value) >= 35000 && parseInt(value) <= 150000) {
       value = parseInt(value) + 3000
       return { estado: true, data: { value, delivery: 3000, minValue: 35000 }, mensaje: null }
