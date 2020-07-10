@@ -3,8 +3,8 @@ const asyncify = require('express-asyncify')
 const OrderServiceController = require('../controllers/orderServiceController')
 const PayUController = require('../controllers/payUController')
 const { isSuperAdmin, isAdmin, isClient, isAdminAndIsSuperAdmin } = require('../middleware/token')
-const routesOrderServiceApp = asyncify(express.Router())
-const routesOrderServiceWeb = asyncify(express.Router())
+const routesOrderServiceApp = express.Router()
+const routesOrderServiceWeb = express.Router()
 
 /**
  * @swagger
@@ -529,11 +529,20 @@ routesOrderServiceWeb.post('/responsepayment', async (request, response) => {
   response.json(true)
 })
 
-routesOrderServiceWeb.post('/responsepaymentpse', async (request, response) => {
-  console.log("............................")
-  console.log(request)
-  console.log("............................")
+routesOrderServiceApp.all('/responsepaymentpse', async (request, response) => {
+  console.log("HOLAAA")
+  if (request.method.toString() === 'POST') {
+    await OrderServiceController.validateResponsePaymentPse(request.body, request.io)
+  } else {
+    await OrderServiceController.validateResponsePaymentPse(request.query, request.io)
+  }
   response.json(true)
 })
+
+// routesOrderServiceWeb('/responsepaymentpse', async (request, response) => {
+  
+  
+//   response.json(true)
+// })
 
 module.exports = { routesOrderServiceApp, routesOrderServiceWeb }

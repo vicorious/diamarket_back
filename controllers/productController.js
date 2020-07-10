@@ -81,6 +81,25 @@ class Product {
     }
   }
 
+  async detailApp(id) {
+    const isExist = await ProductModel.get(id)
+    if (isExist._id) {
+      const product = await AvailabilityModel.get({ idProduct: isExist._id })
+      let calification = 0
+      product.idSupermarket.calification.forEach(item => calification += item)
+      product.idSupermarket._doc.calification = calification === 0 ? 0 : calification
+      product.idProduct._doc.category = await CategoryModel.get({ _id: product.idProduct.category })
+      product.idProduct._doc.price = product.price
+      product.idProduct._doc.quantity = product.quantity
+      delete product.idProduct._doc.category._doc.subCategory
+      delete product._doc.price
+      delete product._doc.quantity
+      return { estado: true, data: product, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No existe el producto' }
+    }
+  }
+
   async all(data, quantity, page) {
     AvailabilityModel.perPage = parseInt(quantity)
     const products = []
@@ -122,6 +141,35 @@ class Product {
     }
   }
 
+  async productsForCategoryApp (data, initQuantity, finishQuantity) {
+    const products = await ProductModel.searchByPageMobile({ category: data.category, subCategory: data.subCategory }, initQuantity, finishQuantity)
+    const arrayProducts = []
+    for (const product of products) {
+      const productsCategory = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
+      if (productsCategory._id){
+        let calification = 0
+        if (productsCategory.idSupermarket.calification.length === 0) {
+          productsCategory.idSupermarket.calification.forEach( item => calification+= item)
+        }
+        productsCategory.idSupermarket._doc.calification = calification === 0 ? 0 : calification / productsCategory.idSupermarket.calification.length
+        const category = await CategoryModel.get({ _id: productsCategory.idProduct.category })
+        delete category._doc.subCategory
+        productsCategory.idProduct._doc.category = category
+        productsCategory.idProduct._doc.price = productsCategory.price
+        productsCategory.idProduct._doc.quantity = productsCategory.quantity
+        delete productsCategory._doc.price
+        delete productsCategory._doc.quantity
+        arrayProducts.push(productsCategory)
+        calification = 0
+      }
+    }
+    if (arrayProducts.length > 0) {
+      return { estado: true, data: arrayProducts, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'Esta categoria no tiene productos' }
+    }
+  }
+
   async productsForCategory(data, quantity, page) {
     ProductModel.perPage = parseInt(quantity)
     const products = await ProductModel.searchByPage({ category: data.category }, page)
@@ -135,22 +183,6 @@ class Product {
     }
     if (arrayProducts.length > 0) {
       return { estado: true, data: { page: page, quantity: quantity, total: countAvailability, items: arrayProducts }, mensaje: null }
-    } else {
-      return { estado: false, data: [], mensaje: 'Esta categoria no tiene productos' }
-    }
-  }
-  
-  async productsForCategoryApp (data, initQuantity, finishQuantity) {
-    const products = await ProductModel.searchByPageMobile({ category: data.category, subCategory: data.subCategory }, initQuantity, finishQuantity)
-    const arrayProducts = []
-    for (const product of products) {
-      const productsCategory = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
-      if (productsCategory._id){
-        arrayProducts.push(productsCategory)
-      }
-    }
-    if (arrayProducts.length > 0) {
-      return { estado: true, data: arrayProducts, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'Esta categoria no tiene productos' }
     }
@@ -264,8 +296,21 @@ class Product {
     const arrayProducts = []
     for (const product of products) {
       const productsName = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
-      if (productsName._id) {
+      if (productsName._id){
+        let calification = 0
+        if (productsName.idSupermarket.calification.length === 0) {
+          productsName.idSupermarket.calification.forEach( item => calification+= item)
+        }
+        productsName.idSupermarket._doc.calification = calification === 0 ? 0 : calification / productsName.idSupermarket.calification.length
+        const category = await CategoryModel.get({ _id: productsName.idProduct.category })
+        delete category._doc.subCategory
+        productsName.idProduct._doc.category = category
+        productsName.idProduct._doc.price = productsName.price
+        productsName.idProduct._doc.quantity = productsName.quantity
+        delete productsName._doc.price
+        delete productsName._doc.quantity
         arrayProducts.push(productsName)
+        calification = 0
       }
     }
     if (arrayProducts.length > 0) {

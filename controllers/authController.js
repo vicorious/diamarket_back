@@ -26,7 +26,6 @@ class Auth {
     let user
     const verifyToken = await AdminFirebase.auth().verifyIdToken(data.token)
     const userFirebase = await AdminFirebase.auth().getUser(verifyToken.uid)
-    console.log(userFirebase)
     userFirebase.providerData.forEach(obj => user = obj)
     const userDataBase = await UserModel.get({ email: user.email })
     if (userDataBase._id) {
@@ -40,7 +39,8 @@ class Auth {
         tokenCloudingMessagin: data.tokenCloudingMessagin,
         rol: 'client',
         password: '0000',
-        isActive: true
+        isActive: true,
+        idSocket: data.idSocket
       }
       user.phoneNumber ? dataUser.cellPhone = user.phoneNumber : dataUser.cellPhone = '000000000000'
       user.photoURL ? dataUser.image = user.photoURL : dataUser.image = 'no aplica'

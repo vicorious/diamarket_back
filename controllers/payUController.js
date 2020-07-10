@@ -139,7 +139,7 @@ class PayU {
 	async pse (data) {
     const objectPse = MakeObjectPse(data)
     console.log('------------OBJECT PSE ------------------------')
-    console.log(objectPse)
+    console.log(objectPse.transaction.order)
     console.log('------------OBJECT PSE ------------------------')
     const responsePse = await axios.post(MakeDataPayU.urlFinal, objectPse)
     console.log('--------------RESPONSE PSE---------------------------------')
@@ -164,7 +164,7 @@ class PayU {
 
         case 'PENDING': {
           // const validateResponse = await ValidateResponsePayment(responsePse.data.transactionResponse)
-          return { urlBank: responsePse.data.transactionResponse.extraParameters.BANK_URL , status: 'PENDING' }
+          return { urlBank: responsePse.data.transactionResponse.extraParameters.BANK_URL , status: 'PENDING', transaction: responsePse.data.transactionResponse.transactionId }
         }
         
         case 'CANCELLED': {

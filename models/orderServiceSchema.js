@@ -153,7 +153,7 @@ class OrderService extends Base {
       },
       {
         path: 'user',
-        select: 'id isActive dateCreate logs cards directions userList order name identification email cellPhone rol supermarketFavorite imageProfile birthday credits',
+        select: 'id isActive dateCreate logs cards directions userList order name identification email cellPhone rol supermarketFavorite imageProfile birthday credits  idSocket',
         model: 'User'
       }
     ]

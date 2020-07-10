@@ -223,6 +223,9 @@ routesAuthWeb.post('/resetpassword', async (request, response) => {
  */
 routesAuthApp.post('', async (request, response) => {
   console.log('---------------')
+  console.log(request.io)
+  console.log('---------------')
+
   const { clientId } = request.io
   console.log(clientId)
   request.body.idSocket = clientId

@@ -21,19 +21,17 @@ let clientId
 io.on('connect', (socket) => {
   clientId = socket.id
   socket.on('payPse', function (data) {
-    console.log(data)
-    io.emit('payPse', data);
-  });
-  socket.on('calification', function (data) {
-    console.log(data)
-    io.emit('calification', data);
-  });
-
+    io.emit('payPse', data)
+  })
 })
 app.use((request, response, next) => {
   request.io = { io, clientId}
   next()
 })
+
+app.get('/', function(req, res){
+  res.sendFile(__dirname + '/index.html');
+});
 
 app.use(cors())
 app.use(morgan('combined'))

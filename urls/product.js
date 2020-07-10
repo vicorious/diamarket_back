@@ -501,7 +501,7 @@ routesProductApp.post('/forcategory/:initquantity/:finishquantity', isClient, as
 
 routesProductApp.get('/detail/:id', isClient, async (request, response) => {
   const _id = request.params.id
-  const detail = await ProductController.detail({ _id })
+  const detail = await ProductController.detailApp({ _id })
   response.json(detail)
 })
 

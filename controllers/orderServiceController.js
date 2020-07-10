@@ -10,11 +10,15 @@ const ProductSchema = require('../controllers/productController')
 const makeCode = require('../utils/makeCode')
 
 class OrderService {
-  async create (data,io) {
+  async create(data, io) {
+    console.log("------------------------------------------")
+    console.log("PSE PSE PSE PSE PSE PSE PSE PSE PSE PSE PSE")
     console.log(data)
+    console.log("PSE PSE PSE PSE PSE PSE PSE PSE PSE PSE PSE")
+    console.log("------------------------------------------")
     if (parseInt(data.value) >= 10000) {
       switch (data.methodPayment.toLowerCase()) {
-        case 'credit': {
+        case 'credit': {
           const order = await this.credit(data)
           return order
         }
@@ -24,7 +28,7 @@ class OrderService {
         }
 
         case 'pse': {
-          const order = await this.pse(data,io)
+          const order = await this.pse(data, io)
           return order
         }
 
@@ -37,13 +41,13 @@ class OrderService {
     }
   }
 
-  async credit (data) {
+  async credit(data) {
     const user = await UserModel.get({ _id: data.user })
     const countOrder = await OrderServiceModel.count()
     if (!data.card.uid) {
       data.card._id = data.user
       const objectToken = await PayUController.tokenPayU(data.card)
-      if(objectToken.estado === false) {
+      if (objectToken.estado === false) {
         return objectToken
       } else {
         data.card.token = objectToken.creditCardToken.creditCardTokenId
@@ -54,7 +58,8 @@ class OrderService {
       data.card = card
     }
     data.user = user
-    data.referenceCode = `prueba${countOrder}Diamarket30`
+    const referenceDate = new Date()
+    data.referenceCode = `Diamarket/${referenceDate.getTime()}`
     const paymentResponse = await PayUController.payCredit(data)
     switch (paymentResponse.status) {
       case 'APPROVED': {
@@ -70,7 +75,7 @@ class OrderService {
         console.log('............')
         console.log(paymentResponse)
         data.paymentStatus = 1
-        data.transactionId = paymentResponse.transactionResponse.transactionId 
+        data.transactionId = paymentResponse.transactionResponse.transactionId
         await OrderServiceModel.create(data)
         delete paymentResponse.validateResponse.status
         return paymentResponse.validateResponse
@@ -83,29 +88,39 @@ class OrderService {
     }
   }
 
-  async pse (data,io) {
-    const countOrder = await OrderServiceModel.count()
+  async pse(data, io) {
+    const reference = new Date()
     const user = await UserModel.get({ _id: data.user })
-    data.referenceCode = `prueba${countOrder}DiaMarket6`
+    data.referenceCode = `pseDiamarket${reference.getTime()}`
     data.user = user
     data.paymetStatus = 1
+    data.value = 10000
     const paymentPse = await PayUController.pse(data)
-    io.sockets.to(user.idSocket).emit('payPse', paymentPse)
+    if (paymentPse.status === 'PENDING') {
+      data.transactionId = paymentPse.transaction
+      data.paymentStatus = 0
+      await OrderServiceModel.create(data)
+    }
+    // io.sockets.to(user.idSocket).emit('payPse', paymentPse) 
     return paymentPse
   }
 
-  async calculateValue (data) {
+  async calculateValue(data) {
     const valueProducts = await this.calculateValueProducts(data.products, data.supermarket)
     const valuePromotions = await this.calculateValuePromotions(data.promotions)
-    console.log(valueProducts)
-    console.log(valuePromotions)
-    const value = (parseInt(valueProducts) + parseInt(valuePromotions.value)) - parseInt(valuePromotions.discount)
+    let value = parseInt(valueProducts) + parseInt(valuePromotions)
     if (parseInt(value) >= 35000 && parseInt(value) <= 150000) {
+      value = parseInt(value) + 3000
       return { estado: true, data: { value, delivery: 3000, minValue: 35000 }, mensaje: null }
     } else if (parseInt(value) >= 150000) {
       return { estado: true, data: { value, delivery: 0, minValue: 35000 }, mensaje: null }
-    } else if (parseInt(value) <= 35000) {
-      return { estado: false, data: { value, delivery: 3000, minValue: 35000 }, mensaje: 'El valor de la orden debe ser mayor a $35.000' }
+    } else {
+      value = parseInt(value) + 3000
+      if (parseInt(value) <= 35000) {
+        return { estado: false, data: { value, delivery: 3000, minValue: 35000 }, mensaje: 'El valor de la orden debe ser mayor a $35.000' }
+      } else {
+        return { estado: true, data: { value, delivery: 3000, minValue: 35000 }, mensaje: null }
+      }
     }
   }
 
@@ -113,9 +128,7 @@ class OrderService {
     if (products.length > 0) {
       let value = 0
       for (const object of products) {
-        console.log(object.product)
         const product = await AvailabilitySchema.get({ idProduct: object.product, idSupermarket: supermarket })
-        console.log("product", product)
         value += parseInt(product.price) * parseInt(object.quantity)
       }
       return value
@@ -127,15 +140,22 @@ class OrderService {
   async calculateValuePromotions(promotions) {
     if (promotions.length > 0) {
       let value = 0
-      let discount = 0
+      let price = 0
       for (const object of promotions) {
         const promotion = await PromotionSchema.get({ _id: object.promotion })
-        promotion.discount > 0 ? discount+= parseInt(promotion.discount) * parseInt(object.quantity) : discount += 0
-        value += parseInt(promotion.value) * parseInt(object.quantity)
+        console.log(promotion.discount)
+        if (promotion.discount > 0) {
+          for (const elemet of promotion.products) {
+            const availability = await AvailabilitySchema.get({ idProduct: elemet._id })
+            price += availability.price
+          }
+          value = Math.abs(((price * promotion.discount) / 100) - price)
+          value = value * object.quantity
+        } else {
+          value = promotion.value * object.quantity
+        }
+        return value
       }
-      return { value, discount }
-    } else {
-      return { value: 0, discount: 0 }
     }
   }
 
@@ -146,7 +166,7 @@ class OrderService {
     parseInt(user.credits) === 0 ? credits = 0 : credits = parseInt(user.credits)
     if (promotions !== undefined && promotions.length > 0) {
       for (const object of promotions) {
-        const promotion = await PromotionSchema.get({ _id: object.promotion, supermarket: { $all: [object.supermarket] } })
+        const promotion = await PromotionSchema.get({ _id: object.promotion, supermarket: { $all: [object.supermarket] } })
         credits += promotion.credits ? parseInt(promotion.credits) * parseInt(object.quantity) : 0
       }
       await UserModel.update(user._id, { credits })
@@ -161,15 +181,15 @@ class OrderService {
         object.superMarket._doc.calification = 0
         let newProducts = []
         for (const dataProduct of object.products) {
-          const response = await ProductSchema.detail({_id:dataProduct.product})
-          if(response.data._id){
+          const response = await ProductSchema.detail({ _id: dataProduct.product })
+          if (response.data._id) {
             newProducts.push(response.data)
           }
         }
-        orders[integer].products= newProducts
+        orders[integer].products = newProducts
         integer++
       }
-      return { estado: true, data: orders, mensaje: null }
+      return { estado: true, data: [], mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay ordenes asociadas' }
     }
@@ -186,12 +206,12 @@ class OrderService {
     order.superMarket._doc.calification = parseInt(calification) / parseInt(quantity)
     let newProducts = []
     for (const dataProduct of order.products) {
-      const response = await ProductSchema.detail({_id:dataProduct.product})
-      if(response.data._id){
+      const response = await ProductSchema.detail({ _id: dataProduct.product })
+      if (response.data._id) {
         newProducts.push(response.data)
       }
     }
-    order.products= newProducts
+    order.products = newProducts
     if (order._id) {
       return { estado: true, data: order, mensaje: null }
     } else {
@@ -244,6 +264,11 @@ class OrderService {
     }
   }
 
+  async cancelServicePse(order) {
+    await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden de servicio ha sido cancelada', _id: order._id, state: 4, tokenMessaging: order.user.tokenCloudingMessagin })
+    await OrderServiceModel.update(_id, { status: 5 })
+  }
+
   async forSupermarket(data) {
     const supermarket = await SuperMarketSchema.get(data)
     const orders = await OrderServiceModel.search({ superMarket: supermarket._id })
@@ -269,6 +294,46 @@ class OrderService {
     const countOrderFinish = await orders.filter(obj => parseInt(obj.status) === parseInt(4))
     const countOrderWait = await orders.filter(obj => parseInt(obj.status) === parseInt(0))
     return { countOrder, countOrderFinish: countOrderFinish.length, countOrderWait: countOrderWait.length }
+  }
+
+  async validateResponsePaymentPse(data, socket) {
+    console.log(data)
+    const order = await OrderServiceModel.get({ transactionId: data.transactionId })
+    console.log("------------------ORDER----------------------")
+    console.log(order)
+    console.log("------------------ORDER----------------------")
+    console.log(data.polResponseCode)
+    switch (data.polResponseCode) {
+      case '1':{
+        console.log("ENTRAAAAA")
+        await OrderServiceModel.update(order._id, { paymentStatus: 1 })
+        const newOrder =  await OrderServiceModel.get({ _id: order._id })
+        console.log(newOrder)
+        socket.io.emit('payPse', { message: 'Transacción aprobada', status: true})
+        break
+      }
+
+      case '5': {
+        await OrderServiceModel.update(order._id, { paymentStatus: 2 })
+        socket.io.emit('payPse', { message: 'Transacción fallida', status: false })
+        await this.cancelServicePse(order)
+        break
+      }
+
+      case '4': {
+        await OrderServiceModel.update(order._id, { paymentStatus: 2 })
+        socket.io.emit('payPse', { message: 'Transacción rechazada', status: false })
+        await this.cancelServicePse(order)
+        break
+      }
+
+      default: {
+        await OrderServiceModel.update(order._id, { paymentStatus: 0 })
+        const newOrder =  await OrderServiceModel.get({ _id: order._id })
+        socket.io.emit('payPse', { message: 'Transacción pendiente, por favor revisar si el débito fue realizado en el banco.', status: true})
+        break
+      }
+    }
   }
 }
 

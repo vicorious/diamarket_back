@@ -3,6 +3,7 @@ const MakeDataPayU = require('./makeDataPayU')
 
 module.exports = function (data) {
 	const signature = crypto.createHash('md5').update(`${MakeDataPayU.apiKey}~${MakeDataPayU.merchantId}~${data.referenceCode}~${data.value}~COP`).digest('hex')
+	console.log("DATA:VALUE", data.value)
 	const obj = {
 		language: 'es',
 		command: 'SUBMIT_TRANSACTION',
@@ -14,10 +15,10 @@ module.exports = function (data) {
 			order: {
 				accountId: MakeDataPayU.accountId,
 				referenceCode: data.referenceCode,
-				description: 'payment test',
+				description: 'Diamarket Test',
 				language: 'es',
 				signature,
-				notifyUrl: 'http://f05aca725448.ngrok.io/v1/web/orderservice/responsepaymentpse',
+				notifyUrl: 'http://69723aa59c54.ngrok.io/v1/app/orderservice/responsepaymentpse',
 				additionalValues: {
 					TX_VALUE: {
 						value: data.value,
@@ -31,7 +32,7 @@ module.exports = function (data) {
 				contactPhone: data.user.cellPhone
 			},
 			extraParameters: {
-				RESPONSE_URL: 'http://f05aca725448.ngrok.io/v1/web/orderservice/responsepaymentpse',
+				RESPONSE_URL: 'http://69723aa59c54.ngrok.io/v1/app/orderservice/responsepaymentpse',
 				PSE_REFERENCE1: '127.0.0.1',
 				FINANCIAL_INSTITUTION_CODE: data.pseCode,
 				USER_TYPE: data.typeClient,
@@ -45,7 +46,7 @@ module.exports = function (data) {
 			cookie: 'pt1t38347bs6jc9ruv2ecpv7o2',
 			userAgent: 'Mozilla/5.0 (Windows NT 5.1; rv:18.0) Gecko/20100101 Firefox/18.0'
 		},
-		test: true
+		test: false
 	}
 	// const obj = {
 	// 	language: 'es',
