@@ -139,24 +139,30 @@ class OrderService {
   }
 
   async calculateValuePromotions(promotions) {
-    if (promotions.length > 0) {
-      let value = 0
-      let price = 0
-      for (const object of promotions) {
-        const promotion = await PromotionSchema.get({ _id: object.promotion })
-        console.log(promotion.discount)
-        if (promotion.discount > 0) {
-          for (const elemet of promotion.products) {
-            const availability = await AvailabilitySchema.get({ idProduct: elemet._id })
-            price += availability.price
+    if (promotions !== undefined) {
+      if (promotions.length > 0) {
+        let value = 0
+        let price = 0
+        for (const object of promotions) {
+          const promotion = await PromotionSchema.get({ _id: object.promotion })
+          console.log(promotion.discount)
+          if (promotion.discount > 0) {
+            for (const elemet of promotion.products) {
+              const availability = await AvailabilitySchema.get({ idProduct: elemet._id })
+              price += availability.price
+            }
+            value = Math.abs(((price * promotion.discount) / 100) - price)
+            value = value * object.quantity
+          } else {
+            value = promotion.value * object.quantity
           }
-          value = Math.abs(((price * promotion.discount) / 100) - price)
-          value = value * object.quantity
-        } else {
-          value = promotion.value * object.quantity
+          return value
         }
-        return value
+      } else {
+        return 0
       }
+    } else {
+      return 0
     }
   }
 
