@@ -94,7 +94,7 @@ class OrderService {
     data.referenceCode = `pseDiamarket${reference.getTime()}`
     data.user = user
     data.paymetStatus = 1
-    data.value = 10000
+    // data.value = 10000
     const paymentPse = await PayUController.pse(data)
     if (paymentPse.status === 'PENDING') {
       data.transactionId = paymentPse.transaction

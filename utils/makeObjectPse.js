@@ -18,7 +18,7 @@ module.exports = function (data) {
 				description: 'Diamarket Test',
 				language: 'es',
 				signature,
-				notifyUrl: 'http://69723aa59c54.ngrok.io/v1/app/orderservice/responsepaymentpse',
+				notifyUrl: 'http://api.diamarket.co/v1/app/orderservice/responsepaymentpse',
 				additionalValues: {
 					TX_VALUE: {
 						value: data.value,
@@ -32,7 +32,7 @@ module.exports = function (data) {
 				contactPhone: data.user.cellPhone
 			},
 			extraParameters: {
-				RESPONSE_URL: 'http://69723aa59c54.ngrok.io/v1/app/orderservice/responsepaymentpse',
+				RESPONSE_URL: 'http://api.diamarket.co/v1/app/orderservice/responsepaymentpse',
 				PSE_REFERENCE1: '127.0.0.1',
 				FINANCIAL_INSTITUTION_CODE: data.pseCode,
 				USER_TYPE: data.typeClient,
