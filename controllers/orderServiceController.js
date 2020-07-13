@@ -24,7 +24,13 @@ class OrderService {
         }
 
         case 'cash': {
-          break
+          const user = await UserModel.get({ _id: data.user })
+          data.user = user
+          data.referenceCode = `Diamarket/${referenceDate.getTime()}`
+          data.paymentStatus = 0
+          data.transactionId = '0'
+          const order = await OrderServiceModel.create(data)
+          return { estado: true, data: order, mensaje: null }
         }
 
         case 'pse': {
@@ -33,6 +39,13 @@ class OrderService {
         }
 
         case 'dataphone': {
+          const user = await UserModel.get({ _id: data.user })
+          data.user = user
+          data.referenceCode = `Diamarket/${referenceDate.getTime()}`
+          data.paymentStatus = 0
+          data.transactionId = '0'
+          const order = await OrderServiceModel.create(data)
+          return { estado: true, data: order, mensaje: null }
           break
         }
       }
