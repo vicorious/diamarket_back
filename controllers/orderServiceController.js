@@ -24,6 +24,7 @@ class OrderService {
         }
 
         case 'cash': {
+          const referenceDate = new Date()
           const user = await UserModel.get({ _id: data.user })
           data.user = user
           data.referenceCode = `Diamarket/${referenceDate.getTime()}`
@@ -39,6 +40,7 @@ class OrderService {
         }
 
         case 'dataphone': {
+          const referenceDate = new Date()
           const user = await UserModel.get({ _id: data.user })
           data.user = user
           data.referenceCode = `Diamarket/${referenceDate.getTime()}`
