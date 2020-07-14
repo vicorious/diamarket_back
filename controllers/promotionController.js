@@ -152,7 +152,8 @@ class Promotion {
     if (query.name) {
       promotions = await PromotionModel.searchByPage({ supermarket: { $in: [superMarket._id] }, name: { $regex: query.name, $options: 'i' } }, page)
     } else {
-      promotions = await PromotionModel.searchByPage({  supermarket: { $in: [superMarket._id] } }, page)
+      promotions = await PromotionModel.searchByPage({ }, page)
+      console.log(promotions)
     }
     if (promotions.length > 0) {
       return { estado: true, data: promotions, mensaje: null }
