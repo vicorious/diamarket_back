@@ -12,7 +12,6 @@ class Auth {
     if (data.email && data.password) {
       const password = makePassword(data.password)
       const dataUser = await UserModel.get({ email: data.email, password: password, isActive: true })
-      console.log(dataUser)
       if (dataUser._id) {
         const token = jwt.sign({ _id: dataUser._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
         return { estado: true, data: { token: token, user: dataUser }, mensaje: null }
@@ -46,7 +45,6 @@ class Auth {
       user.photoURL ? dataUser.image = user.photoURL : dataUser.image = 'no aplica'
       user.displayName ? dataUser.name = user.displayName : 'no aplica'
       user.email ? dataUser.email = user.email : dataUser.email = 'noaplica@firebase.com'
-      console.log(dataUser)
       const newUserFirebase = await UserModel.create(dataUser)
       const userNew = await UserModel.get({ _id: newUserFirebase })
       const token = jwt.sign({ _id: newUserFirebase._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
@@ -73,10 +71,8 @@ class Auth {
 
   async resetPassword(data) {
     const user = await UserModel.get({ verifyCode: data.code })
-    console.log(user)
     if (user._id) {
       const password = await makePassword(data.password)
-      console.log(password)
       return UserModel.update(user._id, { password })
     } else {
       return { estado: false, data: [], mensaje: 'El usuario no existe' }

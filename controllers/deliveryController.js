@@ -31,7 +31,6 @@ class Delivery {
 
   async edit (_id, data) {
     const order = await DeliveryModel.get({ _id })
-    console.log(order.clientId._id)
     const user = await UserModel.get({ _id: order.clientId._id })
     switch (data.status) {
       case parseInt(1): {
@@ -40,7 +39,6 @@ class Delivery {
       }
 
       case parseInt(2): {
-        console.log(user)
         await NotificationController.messaging({ title: 'DiaMarket', body: 'El domiciliario va en camino con tu pedido', _id: order._id, status: 3, tokenMessaging: user.tokenCloudingMessagin })
         return DeliveryModel.update(_id, { status: 2 })
       }
@@ -56,7 +54,6 @@ class Delivery {
           return OrderServiceController.edit(order.orderId._id, { status: 5 })
         } else {
           const cancelation = await OrderServiceController.edit(order.orderId._id, { codeCancelation: data.codeCancelation, status: 5 })
-          console.log(cancelation)
           if (cancelation === 'error') {
             return { estado: false, data: [], mensaje: 'El codigo no conside con el de la cancelacion' }
           } else {

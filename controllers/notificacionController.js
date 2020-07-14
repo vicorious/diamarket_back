@@ -18,7 +18,6 @@ class Notification {
       timeToLive: 60 * 60 * 24
    } 
    const message = await AdminFirebase.messaging().sendToDevice(data.tokenMessaging, payload, options)
-   console.log(message)
     // AdminFirebase
     //   .messaging()
     //   .sendToDevice(data.tokenMessaging, payload, options)

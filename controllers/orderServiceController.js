@@ -7,6 +7,7 @@ const AvailabilitySchema = require('../models/availabilitySchema')
 const PayUController = require('../controllers/payUController')
 const NotificationController = require('../controllers/notificacionController')
 const ProductSchema = require('../controllers/productController')
+const CategorySchema = require('../models/categorySchema')
 const makeCode = require('../utils/makeCode')
 
 class OrderService {
@@ -214,6 +215,132 @@ class OrderService {
       return { estado: true, data: [], mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay ordenes asociadas' }
+    }
+  }
+
+  async allProduct(data) {
+    const orders = await OrderServiceModel.search(data)
+    if (orders.length > 0) {
+      for (const object of orders) {
+        await this.formatSupermarket(object.superMarket)  
+        const product = await this.formatProducts(object.products, object.superMarket._id)
+        object._doc.products = product
+        const promotions = await this.formatPromotions(object.promotions, object.superMarket._id)
+        object._doc.promotions = promotions
+      }
+      return { estado: true, data: orders, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No hay ordenes asociadas' }
+    }
+  }
+
+  async formatPromotions (promotions, supermarket) {
+    if (promotions.length > 0) {
+      let newPromotions = []
+      for (const object of promotions) {
+        let products = []
+        let price = 0
+        for (const index in object.promotion.supermarket) {
+          const supermarket = await SuperMarketSchema.get({ _id: object.promotion.supermarket[index] })
+          const newSuperMarket = await this.formatSupermarket(supermarket)
+          object.promotion._doc.supermarket[index] = newSuperMarket
+        }
+        for (const key in object.promotion.products) {
+          const product = await ProductSchema.detail({ _id: object.promotion.products[key] })
+          const category = await CategorySchema.get({ _id: product.data.category })
+          delete category._doc.subCategory
+          delete product.data._doc.subCategory
+          product.data._doc.category = category
+          const availability = await AvailabilitySchema.get({ idProduct: product.data._id, idSupermarket: supermarket })
+          product.data._doc.price = availability.price
+          price += parseInt(availability.price)
+          products.push(product.data)
+        }
+        object.promotion._doc.products = products
+        object.promotion._doc.priceProducts = price
+        if (object.promotion.credits === 0 && object.promotion.discount === 0) {
+          object.promotion._doc.type = 'totalValue'
+          object.promotion._doc.amount = object.promotion.value
+          object.promotion._doc.value = 0
+          delete object.promotion._doc.discount
+          delete object.promotion._doc.credits
+        } else if (object.promotion.credits > 0 && object.promotion.discount === 0) {
+          object.promotion._doc.type = 'credits'
+          object.promotion._doc.amount = object.promotion.value
+          object.promotion._doc.value = object.promotion.credits
+          delete object.promotion._doc.discount
+          delete object.promotion._doc.credits
+        } else if (object.promotion.discount > 0 && object.promotion.credits === 0) {
+          object.promotion._doc.type = 'discount'
+          object.promotion._doc.value = object.promotion._doc.discount
+          object.promotion._doc.amount =  Math.abs(((price * object.promotion.discount) / 100) - price)
+          delete object.promotion._doc.discount
+          delete object.promotion._doc.credits
+        }
+        price = 0
+        object.promotion._doc.quantity = object.quantity
+        newPromotions.push(object.promotion)
+      }
+      return newPromotions
+    } else {
+      return []
+    }
+  }
+
+  async formatProducts (products, supermarket) {
+    if(products.length > 0) {
+      let newProducts = []
+      for (const object of products) {
+        const category = await CategorySchema.get({ _id: object.product.category })
+        delete category._doc.subCategory
+        object.product._doc.category = category
+        const availability = await AvailabilitySchema.get({ idProduct: object.product._id, idSupermarket: supermarket })
+        object.product._doc.price = availability.price
+        object.product._doc.quantity = object.quantity
+        delete object.quantity
+        newProducts.push(object.product)
+      }
+      return newProducts
+    } else {
+      return []
+    }
+  }
+
+  async formatSupermarket (supermarket) { 
+    if (supermarket.calification.length > 0) {
+      let calification = 0
+      supermarket.calification.forEach(element => calification += parseInt(element))
+      supermarket._doc.calification = calification === 0 ? 0 : parseInt(calification)
+      return supermarket
+    } else {
+      supermarket._doc.calification = 0
+      return supermarket
+    }
+  }
+
+  async detailApp(data) {
+    console.log(data)
+    let order = await OrderServiceModel.get(data)
+    console.log(order)
+    // let quantity = 0
+    // let calification = 0
+    // for (const object of order.superMarket.calification) {
+    //   calification = parseInt(calification) + parseInt(object)
+    //   quantity++
+    // }
+    // order.superMarket._doc.calification = parseInt(calification) / parseInt(quantity)
+    // let newProducts = []
+    // for (const dataProduct of order.products) {
+    //   const response = await ProductSchema.detail({ _id: dataProduct.product })
+    //   if (response.data._id) {
+    //     newProducts.push(response.data)
+    //   }
+    // }
+    // order.products = newProducts
+    if (order._id) {
+      return { estado: true, data: order, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No hay una orden asociada' }
     }
   }
 

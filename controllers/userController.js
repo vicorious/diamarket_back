@@ -36,9 +36,15 @@ class User {
                 }
 
                 case 'administrator': {
-                    const supermarket = await SuperMarketSchema.get({_id: data.supermarket})
+                    console.log("-------------------------------")
+                    console.log("DATA", data)
+                    const supermarket = await SuperMarketSchema.get({_id: data.workingSupermarket})
+                    console.log(supermarket)
                     data.isActive = true
                     const user = await UserModel.create(data)
+                    // const user = await UserModel.get(data)
+                    console.log(user)
+                    console.log("-------------------------------")
                     await SuperMarketSchema.update(supermarket._id, {idAdmin: user._id})
                     return {estado: true, data: user, mensaje: null}
                 }

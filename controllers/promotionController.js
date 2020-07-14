@@ -148,6 +148,7 @@ class Promotion {
     PromotionModel.perPage = parseInt(quantity)
     let promotions
     const superMarket = await SuperMarketModel.get({ idAdmin: _id })
+    console.log(superMarket)
     if (query.name) {
       promotions = await PromotionModel.searchByPage({ supermarket: superMarket, name: { $regex: query.name, $options: 'i' } }, page)
     } else {

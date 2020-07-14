@@ -458,10 +458,10 @@ routesOrderServiceApp.get('', isClient, async (request, response) => {
   const user = request.User.id
   const { filter } = request.query
   if (filter) {
-    const data = await OrderServiceController.all({ $and: [{ user }, { $or: [{ status: 0 }, { status: 1 }, { status: 2 }, { status: 3 }]}]})
+    const data = await OrderServiceController.allProduct({ $and: [{ user }, { $or: [{ status: 0 }, { status: 1 }, { status: 2 }, { status: 3 }]}]})
     response.json(data)
   } else {
-    const data = await OrderServiceController.all({ user })
+    const data = await OrderServiceController.allProduct({  $and: [{ user }, { $or: [{ status: 4}, { status: 5 }]}]})
     response.json(data)
   }  
 })
@@ -513,7 +513,7 @@ routesOrderServiceApp.get('', isClient, async (request, response) => {
  */
 routesOrderServiceApp.get('/detail/:id', isClient, async (request, response) => {
   const _id = request.params.id
-  const order = await OrderServiceController.detail({ _id })
+  const order = await OrderServiceController.detailApp({ _id })
   response.json(order)
 })
 

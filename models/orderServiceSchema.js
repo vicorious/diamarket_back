@@ -148,7 +148,7 @@ class OrderService extends Base {
       },
       {
         path: 'promotions.promotion',
-        select: 'name supermarket products value image isActive',
+        select: 'name supermarket products value discount credits image isActive initDate finishDate',
         model: 'Promotion'
       },
       {

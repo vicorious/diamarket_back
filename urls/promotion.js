@@ -364,6 +364,7 @@ routesPromotionWeb.get('/forsupermarket/:quantity/:page', isAdmin, async (reques
   const page = request.params.page
   const _id = request.User.id
   const query = request.query
+  console.log(quantity, page, _id, query)
   const promotions = await PromotionController.forSuperMarket(_id, query, quantity, page)
   response.json(promotions)
 })

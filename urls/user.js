@@ -138,6 +138,7 @@ routesUserWeb.post('/superadministrator', isSuperAdmin, convertBase64ToFile, asy
 routesUserWeb.post('/administrator', isSuperAdmin, convertBase64ToFile, async (request, response) => {
   request.body.rol = 'administrator'
   const data = request.body
+  delete data._id
   const create = await UserController.create(data)
   response.json(create)
 })
