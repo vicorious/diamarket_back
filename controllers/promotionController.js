@@ -150,9 +150,9 @@ class Promotion {
     const superMarket = await SuperMarketModel.get({ idAdmin: _id })
     console.log(superMarket)
     if (query.name) {
-      promotions = await PromotionModel.searchByPage({ supermarket: superMarket, name: { $regex: query.name, $options: 'i' } }, page)
+      promotions = await PromotionModel.searchByPage({ supermarket: { $in: [superMarket._id] }, name: { $regex: query.name, $options: 'i' } }, page)
     } else {
-      promotions = await PromotionModel.searchByPage({ supermarket: superMarket }, page)
+      promotions = await PromotionModel.searchByPage({  supermarket: { $in: [superMarket._id] } }, page)
     }
     if (promotions.length > 0) {
       return { estado: true, data: promotions, mensaje: null }
