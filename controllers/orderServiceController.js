@@ -212,7 +212,7 @@ class OrderService {
         orders[integer].products = newProducts
         integer++
       }
-      return { estado: true, data: [], mensaje: null }
+      return { estado: true, data: orders, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay ordenes asociadas' }
     }
