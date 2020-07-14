@@ -385,7 +385,7 @@ class OrderService {
 
       case parseInt(3): {
         // Notificacion para el cliente de que el domiciliario va en camino
-        await NotificationController.messaging({ title: 'DiaMarket', body: 'Tu servicio ha sido entregado, por favor califica el supermercado.', _id: order._id, status: 2, tokenMessaging: user.tokenCloudingMessagin })
+        await NotificationController.messaging({ title: 'DiaMarket', body: 'El domiciliario va en camino con tu pedido.', _id: order._id, status: 2, tokenMessaging: user.tokenCloudingMessagin })
         await OrderServiceModel.update(_id, data)
         break
       }

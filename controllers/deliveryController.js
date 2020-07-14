@@ -45,7 +45,7 @@ class Delivery {
 
       case parseInt(3): {
         await OrderServiceController.edit(order.orderId._id, { status: 4 })
-        if (order.methodPayment.toString() === 'cash' || order.methodPayment.toString() === 'dataphone') {
+        if (order.orderId.methodPayment.toString() === 'cash' || order.orderId.methodPayment.toString() === 'dataphone') {
           await OrderServiceController.edit(order.orderId._id, { paymentStatus: 3 })
         }
         return DeliveryModel.update(_id, { status: 3 })
