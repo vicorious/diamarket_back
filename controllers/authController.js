@@ -62,6 +62,7 @@ class Auth {
     const user = await UserModel.get(email)
     if (user._id) {
       const code = await MakeCode()
+      console.log(user)
       await sendSms(user.cellPhone, code)
       return UserModel.update(user._id, { verifyCode: code })
     } else {
