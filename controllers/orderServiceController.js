@@ -124,8 +124,9 @@ class OrderService {
   async calculateValue(data) {
     const valueProducts = await this.calculateValueProducts(data.products, data.supermarket)
     const valuePromotions = await this.calculateValuePromotions(data.promotions)
-    console.log(valuePromotions)
+    console.log(valueProducts, valuePromotions)
     let value = parseInt(valuePromotions) === undefined ? parseInt(valueProducts) : parseInt(valueProducts) + parseInt(valuePromotions)
+    console.log(" PEGUELO ", value)
     if (parseInt(value) >= 35000 && parseInt(value) <= 150000) {
       value = parseInt(value) + 3000
       return { estado: true, data: { value, delivery: 3000, minValue: 35000 }, mensaje: null }
@@ -161,15 +162,16 @@ class OrderService {
         let price = 0
         for (const object of promotions) {
           const promotion = await PromotionSchema.get({ _id: object.promotion })
-          console.log(promotion.discount)
+          for (const elemet of promotion.products) {
+            const availability = await AvailabilitySchema.get({ idProduct: elemet._id })
+            price += availability.price
+          }
           if (promotion.discount > 0) {
-            for (const elemet of promotion.products) {
-              const availability = await AvailabilitySchema.get({ idProduct: elemet._id })
-              price += availability.price
-            }
             value = Math.abs(((price * promotion.discount) / 100) - price)
             value = value * object.quantity
-          } else {
+          } else if (promotion.credits > 0) {
+            value = parseInt(price) * object.quantity
+          } else{
             value = promotion.value * object.quantity
           }
           return value
@@ -212,7 +214,7 @@ class OrderService {
         orders[integer].products = newProducts
         integer++
       }
-      return { estado: true, data: orders, mensaje: null }
+      return { estado: true, data: orders.reverse(), mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay ordenes asociadas' }
     }
@@ -228,7 +230,7 @@ class OrderService {
         const promotions = await this.formatPromotions(object.promotions, object.superMarket._id)
         object._doc.promotions = promotions
       }
-      return { estado: true, data: orders, mensaje: null }
+      return { estado: true, data: orders.reverse(), mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay ordenes asociadas' }
     }
@@ -319,25 +321,11 @@ class OrderService {
   }
 
   async detailApp(data) {
-    console.log(data)
     let order = await OrderServiceModel.get(data)
-    console.log(order)
-    // let quantity = 0
-    // let calification = 0
-    // for (const object of order.superMarket.calification) {
-    //   calification = parseInt(calification) + parseInt(object)
-    //   quantity++
-    // }
-    // order.superMarket._doc.calification = parseInt(calification) / parseInt(quantity)
-    // let newProducts = []
-    // for (const dataProduct of order.products) {
-    //   const response = await ProductSchema.detail({ _id: dataProduct.product })
-    //   if (response.data._id) {
-    //     newProducts.push(response.data)
-    //   }
-    // }
-    // order.products = newProducts
     if (order._id) {
+      await this.formatSupermarket(order.superMarket)
+      const products = await this.formatProducts(order.products)
+      order._doc.products = products
       return { estado: true, data: order, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay una orden asociada' }
@@ -412,6 +400,14 @@ class OrderService {
       }
     }
   }
+  
+  async cancel(_id) {
+    const order = await OrderServiceModel.get(_id)
+    console.log(order)
+    if (order._id){
+      return OrderServiceModel.update(order._id, { status: 5 })
+    }
+  }
 
   async cancelServicePse(order) {
     await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden de servicio ha sido cancelada', _id: order._id, state: 4, tokenMessaging: order.user.tokenCloudingMessagin })
@@ -422,7 +418,7 @@ class OrderService {
     const supermarket = await SuperMarketSchema.get(data)
     const orders = await OrderServiceModel.search({ superMarket: supermarket._id })
     if (orders.length > 0) {
-      return { estado: true, data: orders, mensaje: null }
+      return { estado: true, data: orders.reverse(), mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay ordenes asociadas' }
     }

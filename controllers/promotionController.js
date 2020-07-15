@@ -7,7 +7,7 @@ const AvailabilityModel = require('../models/availabilitySchema')
 class Promotion {
   async create (data) {
     console.log(data)
-    const isExist = await PromotionModel.get({ name: data.name, supermarket: data.supermarket })
+    const isExist = await PromotionModel.get({ name: data.name})
     if (!isExist._id) {
       const promotion = await PromotionModel.create(data)
       return { estado: true, data: promotion, mensaje: null }
@@ -153,8 +153,10 @@ class Promotion {
       promotions = await PromotionModel.searchByPage({ supermarket: { $in: [superMarket._id] }, name: { $regex: query.name, $options: 'i' } }, page)
     } else {
       promotions = await PromotionModel.searchByPage({ }, page)
-      console.log(promotions)
     }
+    console.log("SUPERMERCADOS PROMOCIONES ")
+    console.log(promotions[0])
+    console.log("SUPERMERCADOS PROMOCIONES ")
     if (promotions.length > 0) {
       return { estado: true, data: promotions, mensaje: null }
     } else {

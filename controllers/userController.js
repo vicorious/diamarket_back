@@ -281,7 +281,7 @@ class User {
 
     async domiciliaryForSuperMarket(_id) {
         const supermarket = await SuperMarketSchema.get({idAdmin: _id})
-        const users = await UserModel.search({workingSupermarket: supermarket._id})
+        const users = await UserModel.search({ $and: [{ workingSupermarket: supermarket._id }, { _id: { $ne: _id }}]})
         if (users.length > 0) {
             return {estado: true, data: users, mensaje: null}
         } else {

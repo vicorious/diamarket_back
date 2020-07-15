@@ -456,6 +456,7 @@ routesOrderServiceApp.post('', isClient, async (request, response) => {
  */
 routesOrderServiceApp.get('', isClient, async (request, response) => {
   const user = request.User.id
+  // const user = "5eda8e981fe0e360948a9cc6"
   const { filter } = request.query
   if (filter) {
     const data = await OrderServiceController.allProduct({ $and: [{ user }, { $or: [{ status: 0 }, { status: 1 }, { status: 2 }, { status: 3 }]}]})
@@ -511,11 +512,19 @@ routesOrderServiceApp.get('', isClient, async (request, response) => {
  *              type: string
  *              example: La orden no se encuentra registrada
  */
-routesOrderServiceApp.get('/detail/:id', isClient, async (request, response) => {
+routesOrderServiceApp.get('/detail/:id', async (request, response) => {
   const _id = request.params.id
   const order = await OrderServiceController.detailApp({ _id })
   response.json(order)
 })
+
+routesOrderServiceApp.put('/cancel', isClient, async (request, response) => {
+  console.log(request.body)
+  const _id = request.body._id
+  const order = await OrderServiceController.cancel({_id})
+  response.json(order)
+})
+
 
 routesOrderServiceApp.get('/datapse', async (request, response) => {
   const banks = await PayUController.dataPse()
