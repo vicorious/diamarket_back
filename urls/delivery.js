@@ -168,7 +168,7 @@ routesDeliveryWeb.get('/detail/:id', isDomiciliary, async (request, response) =>
 routesDeliveryWeb.put('/:id', isDomiciliary, async (request, response) => {
   const _id = request.params.id
   const data = request.body
-  const order = await DeliveryController.edit(_id, data)
+  const order = await DeliveryController.edit(_id, data, request.io)
   response.json(order)
 })
 

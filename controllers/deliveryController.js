@@ -29,22 +29,23 @@ class Delivery {
     }
   }
 
-  async edit (_id, data) {
+  async edit (_id, data, socket) {
     const order = await DeliveryModel.get({ _id })
     const user = await UserModel.get({ _id: order.clientId._id })
     switch (data.status) {
       case parseInt(1): {
-        await OrderServiceController.edit(order.orderId._id, { status: 3 })
+        await OrderServiceController.edit(order.orderId._id, { status: 3 }, socket)
         return DeliveryModel.update(_id, { status: 1 })
       }
 
       case parseInt(2): {
-        await NotificationController.messaging({ title: 'DiaMarket', body: 'El domiciliario llego con tu pedido.', _id: order._id, status: 3, tokenMessaging: user.tokenCloudingMessagin })
+        await NotificationController.messaging({ title: 'DiaMarket', body: 'El domiciliario llego con tu pedido.', _id: order._id, status: 4, tokenMessaging: user.tokenCloudingMessagin })
+        socket.io.to(user.idSocket).emit('changeStatus', { _id: order._id, state: 4 })
         return DeliveryModel.update(_id, { status: 2 })
       }
 
       case parseInt(3): {
-        await OrderServiceController.edit(order.orderId._id, { status: 4 })
+        await OrderServiceController.edit(order.orderId._id, { status: 4 }, socket)
         if (order.orderId.methodPayment.toString() === 'cash' || order.orderId.methodPayment.toString() === 'dataphone') {
           await OrderServiceController.edit(order.orderId._id, { paymentStatus: 3 })
         }
@@ -54,9 +55,9 @@ class Delivery {
       case parseInt(4): {
         const orderCodeCancelation = await OrderServiceController.detail({ _id: order.orderId._id, codeCancelation: data.codeCancelation })
         if (!orderCodeCancelation._id) {
-          return OrderServiceController.edit(order.orderId._id, { status: 5 })
+          return OrderServiceController.edit(order.orderId._id, { status: 5 }, socket)
         } else {
-          const cancelation = await OrderServiceController.edit(order.orderId._id, { codeCancelation: data.codeCancelation, status: 5 })
+          const cancelation = await OrderServiceController.edit(order.orderId._id, { codeCancelation: data.codeCancelation, status: 5 }, socket)
           if (cancelation === 'error') {
             return { estado: false, data: [], mensaje: 'El codigo no conside con el de la cancelacion' }
           } else {

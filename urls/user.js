@@ -790,7 +790,9 @@ routesUserApp.post('/direction', isClient, async (request, response) => {
 routesUserApp.put('', convertBase64ToFile, isClient, async (request, response) => {
   const _id = request.User.id
   const data = request.body
-  const update = await UserController.update({ _id }, data)
+  console.log("data", data)
+  const update = await UserController.updateApp({ _id }, data)
+  console.log(update)
   response.json(update)
 })
 

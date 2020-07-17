@@ -344,6 +344,7 @@ class OrderService {
     let newProducts = []
     for (const dataProduct of order.products) {
       const response = await ProductSchema.detail({ _id: dataProduct.product })
+      const productAvailavility = await AvailabilitySchema.get({ superMarket: order.superMarket._id })
       if (response.data._id) {
         newProducts.push(response.data)
       }
@@ -356,13 +357,14 @@ class OrderService {
     }
   }
 
-  async edit(_id, data) {
+  async edit(_id, data, socket) {
     const order = await OrderServiceModel.get({ _id })
     const user = await UserModel.get({ _id: order.user._id })
     switch (data.status) {
       case parseInt(1): {
         // Notificacion al cliente de que se ha aceptado la solicitud por el supermercado
         await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden ha sido aceptada por el supermercado', _id: order._id, state: 1, tokenMessaging: user.tokenCloudingMessagin })
+        socket.io.to(user.idSocket).emit('changeStatus', { _id: order._id, state: 1 })
         return OrderServiceModel.update(_id, { status: 1 })
       }
 
@@ -373,13 +375,16 @@ class OrderService {
 
       case parseInt(3): {
         // Notificacion para el cliente de que el domiciliario va en camino
-        await NotificationController.messaging({ title: 'DiaMarket', body: 'El domiciliario va en camino con tu pedido.', _id: order._id, status: 2, tokenMessaging: user.tokenCloudingMessagin })
+        await NotificationController.messaging({ title: 'DiaMarket', body: 'El domiciliario va en camino con tu pedido.', _id: order._id, status: 3, tokenMessaging: user.tokenCloudingMessagin })
+        socket.io.to(user.idSocket).emit('changeStatus', { _id: order._id, state: 3 })
         await OrderServiceModel.update(_id, data)
         break
       }
 
       case parseInt(4): {
+        await NotificationController.messaging({ title: 'DiaMarket', body: 'Tu orden de servicio a finalizado', _id: order._id, status: 5, tokenMessaging: user.tokenCloudingMessagin })
         await OrderServiceModel.update(_id, data)
+        socket.io.to(user.idSocket).emit('changeStatus', { _id: order._id, state: 5 })
         break
       }
 

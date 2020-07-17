@@ -217,7 +217,7 @@ routesOrderServiceWeb.get('/forsupermarket', isAdmin, async (request, response) 
 routesOrderServiceWeb.put('/:id', async (request, response) => {
   const data = request.body
   const _id = request.params.id
-  const order = await OrderServiceController.edit({ _id }, data)
+  const order = await OrderServiceController.edit({ _id }, data, request.io)
   response.json(order)
 })
 

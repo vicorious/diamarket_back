@@ -37,7 +37,7 @@ async function convertBase64ToFile(request, response, next) {
       request.body.images = images
     }
   }
-  if (request.body.image) {
+  if (request.body.image || request.body.imageProfile) {
     if (Array.isArray(request.body.image)) {
       if (request.body.image.length > 0) {
         const urlImages = []
@@ -54,7 +54,7 @@ async function convertBase64ToFile(request, response, next) {
         request.body.image = urlImages
       }
     } else {
-      const data = request.body.image.split(',')
+      const data = request.body.image ? request.body.image.split(',') : request.body.imageProfile.split(',')
       let image
       if (data[0] === 'data:image/jpeg;base64' || data[0] === 'data:image/png;base64' || data[0] === 'data:application/pdf;base64') {
         const name = `${uuid.v4()}.${data[0] === 'data:image/jpeg;base64' || data[0] === 'data:image/png;base64' ? 'jpg' : 'pdf'}`

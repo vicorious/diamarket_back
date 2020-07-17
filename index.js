@@ -23,6 +23,9 @@ io.on('connect', (socket) => {
   socket.on('payPse', function (data) {
     io.emit('payPse', data)
   })
+  socket.on('changeStatus', function(data){
+    io.emit('changeStatus', data)
+  })
 })
 app.use((request, response, next) => {
   request.io = { io, clientId}

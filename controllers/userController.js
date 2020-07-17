@@ -156,6 +156,23 @@ class User {
         }
     }
 
+    async updateApp(id, data) {
+        const isExist = await UserModel.get({_id: id})
+        if (data.password) {
+            const encriptar = await makePassword(data.password)
+            data.password = encriptar
+        }
+        if (isExist._id) {
+            const update = await UserModel.update(id, data)
+            const userUpdate = await UserModel.get({ _id: id })
+            userUpdate._doc.imageProfile = userUpdate.image
+            delete userUpdate._doc.image
+            return { estado: true, data: userUpdate, mensaje: null }
+        } else {
+            return {estado: false, data: [], mensaje: 'El usuario no ha sido actualizado'}
+        }
+    }
+
     async createDirection(_id, data) {
         const isExist = await UserModel.get(_id)
         data.uid = uuid.v4()
