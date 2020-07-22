@@ -8,18 +8,7 @@ const SECRET = 'Cb6t%5UpGtx-G@jUM[RG~Aei8k8MKStC]=}pBlIT:C-9jr2{8fVaLZNUmqt%'
 const AdminFirebase = require('firebase-admin')
 
 class Auth {
-  async createToken(data) {
-    if (data.email && data.password) {
-      const password = makePassword(data.password)
-      const dataUser = await UserModel.get({ email: data.email, password: password, isActive: true })
-      if (dataUser._id) {
-        const token = jwt.sign({ _id: dataUser._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
-        return { estado: true, data: { token: token, user: dataUser }, mensaje: null }
-      }
-      return { estado: false, data: [], mensaje: 'Usuario no validado o usuario y/o contraseña incorrectos' }
-    }
-    return { estado: false, data: [], mensaje: 'Usuario no validado o usuario y/o contraseña incorrectos' }
-  }
+
 
   async createTokenFirebase(data) {
     let user
@@ -50,7 +39,41 @@ class Auth {
       const token = jwt.sign({ _id: newUserFirebase._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
       return { estado: true, data: { token: token, user: userNew }, mensaje: null }
     }
+  }
 
+  async createTokenApp (data) {
+    if (data.email && data.password) {
+      const password = makePassword(data.password)
+      const userEmail = await UserModel.get({ email: data.email, password: password, isActive: true })
+      const userCellPhone = await UserModel.get({ cellPhone: data.email, password: password, isActive: true })
+      if (userEmail._id) {
+        const token = jwt.sign({ _id: userEmail._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
+        userEmail._doc.imageProfile = userEmail.image ? userEmail.image : ''
+        delete userEmail._doc.image
+        return { estado: true, data: { token: token, user: userEmail }, mensaje: null }
+      } else if (userCellPhone._id){
+        userEmail._doc.imageProfile = userEmail.image ? userEmail.image : ''
+        delete userEmail._doc.image
+        const token = jwt.sign({ _id: userCellPgone._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
+        return { estado: true, data: { token: token, user: userCellPgone }, mensaje: null }
+      } else {
+        return { estado: false, data: [], mensaje: 'Usuario no validado o usuario y/o contraseña incorrectos' }
+      }
+    }
+    return { estado: false, data: [], mensaje: 'Usuario no validado o usuario y/o contraseña incorrectos' }
+  }
+
+  async createToken(data) {
+    if (data.email && data.password) {
+      const password = makePassword(data.password)
+      const dataUser = await UserModel.get({ email: data.email, password: password, isActive: true })
+      if (dataUser._id) {
+        const token = jwt.sign({ _id: dataUser._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
+        return { estado: true, data: { token: token, user: dataUser }, mensaje: null }
+      }
+      return { estado: false, data: [], mensaje: 'Usuario no validado o usuario y/o contraseña incorrectos' }
+    }
+    return { estado: false, data: [], mensaje: 'Usuario no validado o usuario y/o contraseña incorrectos' }
   }
 
   async createTokenUser(user) {

@@ -324,8 +324,14 @@ class OrderService {
     let order = await OrderServiceModel.get(data)
     if (order._id) {
       await this.formatSupermarket(order.superMarket)
-      const products = await this.formatProducts(order.products)
-      order._doc.products = products
+      if (order.products.length > 0) {
+        const products = await this.formatProducts(order.products)
+        order._doc.products = products
+      } 
+      if (order.promotions.length > 0) {
+        const promotions = await this.formatPromotions(order.promotions, order.superMarket)
+        order._doc.promotions = promotions
+      }
       return { estado: true, data: order, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay una orden asociada' }
@@ -344,7 +350,6 @@ class OrderService {
     let newProducts = []
     for (const dataProduct of order.products) {
       const response = await ProductSchema.detail({ _id: dataProduct.product })
-      const productAvailavility = await AvailabilitySchema.get({ superMarket: order.superMarket._id })
       if (response.data._id) {
         newProducts.push(response.data)
       }

@@ -1,6 +1,7 @@
 'use strict'
 const SupermarketModel = require('../models/supermarketSchema')
 const MsSql = require('mssql')
+const moment = require('moment')
 
 class Supermarket {
   async createDataPos () {
@@ -130,6 +131,50 @@ class Supermarket {
     } else {
       return { estado: false, data: [], mensaje: 'No hay supermercados disponibles cerca de ti  ' }
     } 
+  }
+  async schedulesSupermarket (_id) {
+    const supermarket = await SupermarketModel.get(_id)
+    if (supermarket._id) {
+      let newArray = []
+      let currentDate = new Date()
+      if (supermarket.schedules.length > 0) {
+        for (let i = 0; i < 4; i++) {
+          for (const object of supermarket.schedules) {
+            if (parseInt(object.schedulesInit) === currentDate.getDay()) {
+              console.log(currentDate)
+              let data = {
+                day: moment(currentDate),
+                schedules: []
+              }
+              let hour = new Date()
+              const formatHourInit = new Date(hour.setHours(`${object.hourInit.split(':')[0]}`, `${object.hourInit.split(':')[1]}`))
+              const formatHourFinish = new Date(hour.setHours(`${object.hourFinish.split(':')[0]}`, `${object.hourFinish.split(':')[1]}`))
+              let end = new Date(hour.setHours(`${object.hourInit.split(':')[0]}`, `${object.hourInit.split(':')[1]}`))
+              const quantity = ( moment(formatHourInit).diff(moment(formatHourFinish), 'hours') / 2 )
+              for (let j = 0; j < Math.abs(quantity) ; j++) {
+                let newSchedule = {
+                  start: '',
+                  end: ''
+                }
+                if ( j === 0 ) {
+                  newSchedule.start = moment(formatHourInit)
+                  newSchedule.end = moment(new Date(end.setHours(end.getHours() + 2)))
+                } else {
+                  newSchedule.start = moment(new Date(formatHourInit.setHours(formatHourInit.getHours() + 2)))
+                  newSchedule.end = moment(new Date(end.setHours(end.getHours() + 2)))
+                }
+                data.schedules.push(newSchedule)
+              }
+              newArray.push(data)
+            }
+          }
+          currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1))
+        }
+      }
+      return newArray
+    } else {
+      return { estado: false, data: [], mensaje: 'Este supermercado no existe' }
+    }
   }
 }
 

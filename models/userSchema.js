@@ -162,13 +162,16 @@ const Schema = new mongoose.Schema({
     default: 0
   },
   logs: [{
-    type: Types.Mixed
+    type: Types.Mixed,
+    default: []
   }],
   cards: [{
-    type: Types.Mixed
+    type: Types.Mixed,
+    default: []
   }],
   directions: [{
-    type: Types.Mixed
+    type: Types.Mixed,
+    default: []
   }],
   idSocket: {
     type: Types.String

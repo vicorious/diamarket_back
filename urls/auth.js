@@ -232,8 +232,13 @@ routesAuthApp.post('', async (request, response) => {
   const data = request.body
   // const tokenGenerate = await FirebaseAdmin.auth().createCustomToken(id)
   console.log(data)
-  const token = await Auth.createTokenFirebase(data)
-  response.json(token)
+  if (data.email) {
+    const token = await Auth.createTokenApp(data)
+    response.json(token)
+  } else {
+    const token = await Auth.createTokenFirebase(data)
+    response.json(token)
+  }
 })
 
 module.exports = { routesAuthApp, routesAuthWeb }

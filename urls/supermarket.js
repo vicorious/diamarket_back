@@ -383,4 +383,10 @@ routesSupermarketApp.get('', async (request, response) => {
   response.json(all)
 })
 
+routesSupermarketApp.get('/schedule/:id', async (request, response) => {
+  const _id = request.params.id
+  const data = await supermarketController.schedulesSupermarket({ _id })
+  response.json(data)
+})
+
 module.exports = { routesSupermarketApp, routesSupermarketWeb }

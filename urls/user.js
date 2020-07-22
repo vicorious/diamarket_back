@@ -662,6 +662,7 @@ routesUserWeb.get('/supermarketclients/:id', isAdmin, async (request, response) 
 
 routesUserApp.post('', async (request, response) => {
   const data = request.body
+  console.log(data)
   const create = await UserController.create(data)
   response.json(create)
 })

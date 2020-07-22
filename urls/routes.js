@@ -15,6 +15,7 @@ const { routesPromotionApp, routesPromotionWeb } = require('./promotion')
 const { routesDeliveryWeb } = require('./delivery')
 const { routesUserListApp } = require('./userList')
 const { routesDashboardWeb } = require('./dashboard')
+const { routeAmountMininumWeb } = require('./AmountsMininumRoute')
 const { routeSwaggerWeb } = require('./swagger')
 
 routes.use('/app/auth', routesAuthApp)
@@ -38,6 +39,7 @@ routes.use('/web/promotion', routesPromotionWeb)
 routes.use('/web/delivery', routesDeliveryWeb)
 routes.use('/web/orderservice', routesOrderServiceWeb)
 routes.use('/web/dashboard', routesDashboardWeb)
+routes.use('/web/params', routeAmountMininumWeb)
 
 routes.use('/swagger', routeSwaggerWeb)
 
