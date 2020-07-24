@@ -98,9 +98,9 @@ const Schema = new mongoose.Schema({
     type: Types.String,
     require: [true, 'La dirección es requerida']
   },
-  calification: [{
+  calification: {
     type: Types.Number
-  }],
+  },
   location: {
     type: Types.Mixed
   },

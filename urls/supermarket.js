@@ -327,7 +327,7 @@ routesSupermarketWeb.get('/withoutadmin', async (request, response) => {
 routesSupermarketApp.put('/rate/:id', isClient, async (request, response) => {
   const _id = request.params.id
   const data = request.body
-  const rate = await supermarketController.rateSupermarket({ _id }, data,request.io.io)
+  const rate = await supermarketController.rateSupermarket({ _id }, data)
   response.json(rate)
 })
 

@@ -58,6 +58,10 @@ class User {
 
                 case 'client': {
                     data.dateCreate = new Date()
+                    data.credits = 0
+                    data.cards = []
+                    data.directions = []
+                    console.log(data)
                     const user = await UserModel.create(data)
                     if (user._id) {
                         console.log(data)

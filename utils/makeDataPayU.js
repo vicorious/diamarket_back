@@ -1,7 +1,7 @@
 const urlDevelopment = 'https://sandbox.api.payulatam.com/payments-api/4.0/service.cgi'
 const urlProduction = 'https://api.payulatam.com/payments-api/4.0/service.cgi'
 
-const urlFinal = urlProduction
+const urlFinal = urlDevelopment
 
 module.exports = URL = (
   urlFinal === urlDevelopment

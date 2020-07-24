@@ -69,9 +69,8 @@ class Supermarket {
     }
   }
 
-  async rateSupermarket (_id, data,io) {
+  async rateSupermarket (_id, data) {
     const isExist = await SupermarketModel.get(_id)
-    io.sockets.to(isExist.idAdmin.idSocket).emit('calification')
     if (isExist._id) {
       const update = await SupermarketModel.update(isExist._id, { $push: { calification: data.calification } })
       return update
@@ -114,19 +113,6 @@ class Supermarket {
   async searchSuperMarketForGeoLocation (data) {
     const supermarkets = await SupermarketModel.search({ location: { $nearSphere: { $geometry: { type: 'Point', coordinates: [ parseFloat(data.lat), parseFloat(data.lng) ] }, $maxDistance: 400 } } })
     if (supermarkets.length > 0) {
-      for (const object of supermarkets) {
-        if (object.calification.length > 0) {
-          let quantity = 0
-          let calification = 0
-          for (const item of object.calification) {
-            calification = calification + item
-            quantity++
-          }
-          object._doc.calification = parseInt(calification) / parseInt(quantity)
-        } else {
-          object._doc.calification = 0
-        }
-      }
       return { estado: true, data: supermarkets, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay supermercados disponibles cerca de ti  ' }

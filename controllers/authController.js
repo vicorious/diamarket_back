@@ -47,15 +47,17 @@ class Auth {
       const userEmail = await UserModel.get({ email: data.email, password: password, isActive: true })
       const userCellPhone = await UserModel.get({ cellPhone: data.email, password: password, isActive: true })
       if (userEmail._id) {
+        await UserModel.update(userEmail._id, {  tokenCloudingMessagin: data.tokenCloudingMessagin, idSocket: data.idSocket })
         const token = jwt.sign({ _id: userEmail._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
         userEmail._doc.imageProfile = userEmail.image ? userEmail.image : ''
         delete userEmail._doc.image
         return { estado: true, data: { token: token, user: userEmail }, mensaje: null }
       } else if (userCellPhone._id){
-        userEmail._doc.imageProfile = userEmail.image ? userEmail.image : ''
-        delete userEmail._doc.image
-        const token = jwt.sign({ _id: userCellPgone._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
-        return { estado: true, data: { token: token, user: userCellPgone }, mensaje: null }
+        await UserModel.update(userCellPhone._id, {  tokenCloudingMessagin: data.tokenCloudingMessagin, idSocket: data.idSocket })
+        userCellPhone._doc.imageProfile = userCellPhone.image ? userCellPhone.image : ''
+        delete userCellPhone._doc.image
+        const token = jwt.sign({ _id: userCellPhone._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
+        return { estado: true, data: { token: token, user: userCellPhone }, mensaje: null }
       } else {
         return { estado: false, data: [], mensaje: 'Usuario no validado o usuario y/o contraseña incorrectos' }
       }

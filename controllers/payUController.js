@@ -85,7 +85,7 @@ class PayU {
         type: response.data.creditCardToken.paymentMethod,
         securityCode : response.data.creditCardToken.securityCode
       }
-      if (user.cards.length > 0) {
+      if (user.cards !== null && user.cards.length > 0) {
         const flagCard = user.cards.filter(element => element.token === response.data.creditCardToken.creditCardTokenId)
         console.log(flagCard.length)
         if (flagCard.length === 0) {

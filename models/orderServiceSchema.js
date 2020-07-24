@@ -127,6 +127,16 @@ const Schema = new mongoose.Schema({
   dateCreate: {
     type: Types.Date,
     default: Date.now
+  },
+  dateService: {
+    type: Types.String
+  },
+  hour: {
+    type: Types.String
+  },
+  credits: {
+    type: Types.Number,
+    default: 0
   }
 })
 class OrderService extends Base {
@@ -134,7 +144,7 @@ class OrderService extends Base {
     super()
     this.sort = { name: 1 }
     this.model = mongoose.model('OrderService', Schema)
-    this.fields = 'value direction methodPayment status superMarket products promotions user dateCreate codeCancelation paymentStatus transactionId referenceCode'
+    this.fields = 'value direction methodPayment status superMarket products promotions user dateCreate codeCancelation paymentStatus transactionId referenceCode dateService hour'
     this.populate = [
       {
         path: 'superMarket',

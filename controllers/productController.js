@@ -85,9 +85,6 @@ class Product {
     const isExist = await ProductModel.get(id)
     if (isExist._id) {
       const product = await AvailabilityModel.get({ idProduct: isExist._id })
-      let calification = 0
-      product.idSupermarket.calification.forEach(item => calification += item)
-      product.idSupermarket._doc.calification = calification === 0 ? 0 : calification
       product.idProduct._doc.category = await CategoryModel.get({ _id: product.idProduct.category })
       product.idProduct._doc.price = product.price
       product.idProduct._doc.quantity = product.quantity
@@ -121,11 +118,6 @@ class Product {
   async productsSuperMarkets(idSupermarket, initQuantity, finishQuantity) {
     const products = await AvailabilityModel.searchByPageMobile({ idSupermarket, isActive: true }, initQuantity, finishQuantity)
     for (const object of products) {
-      let calification = 0
-      if (object.idSupermarket.calification.length === 0) {
-        object.idSupermarket.calification.forEach(item => calification += item)
-        object.idSupermarket._doc.calification = calification === 0 ? 0 : calification / object.idSupermarket.calification.length
-      }
       const category = await CategoryModel.get({ _id: object.idProduct.category })
       delete category._doc.subCategory
       object.idProduct._doc.category = category   
@@ -147,10 +139,6 @@ class Product {
     for (const product of products) {
       const productsCategory = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
       if (productsCategory._id){
-        let calification = 0
-        if (productsCategory.idSupermarket.calification.length === 0) {
-          productsCategory.idSupermarket.calification.forEach( item => calification+= item)
-        }
         productsCategory.idSupermarket._doc.calification = calification === 0 ? 0 : calification / productsCategory.idSupermarket.calification.length
         const category = await CategoryModel.get({ _id: productsCategory.idProduct.category })
         delete category._doc.subCategory
@@ -260,9 +248,6 @@ class Product {
         const randomProduct = arrayProducts[random]
         if (selectProduct._id.toString() !== randomProduct._id.toString()) {
           const category =  await CategoryModel.get({ _id: randomProduct.idProduct.category })
-          let calification = 0
-          randomProduct.idSupermarket.calification.forEach(item => calification += parseInt(item))
-          randomProduct.idSupermarket._doc.calification = parseInt(calification) === 0 ? 0:  calification / parseInt(randomProduct.idSupermarket.calification.length)
           randomProduct.idProduct._doc.category =  category
           randomProduct.idProduct._doc.price = randomProduct.price
           randomProduct.idProduct._doc.quantity = randomProduct.quantity
@@ -277,9 +262,6 @@ class Product {
     } else {
       newProducts = arrayProducts
       for (const object of newProducts) {
-        let calification = 0
-        object.idSupermarket.calification.forEach(item => calification += parseInt(item))
-        object.idSupermarket._doc.calification = parseInt(calification) === 0 ? 0 : calification / object.idSupermarket.calification.length
         object.idProduct._doc.category = await CategoryModel.get({ _id: object.idProduct.category })
         object.idProduct._doc.price = object.price
         object.idProduct._doc.quantity = object.quantity
@@ -297,11 +279,6 @@ class Product {
     for (const product of products) {
       const productsName = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
       if (productsName._id){
-        let calification = 0
-        if (productsName.idSupermarket.calification.length === 0) {
-          productsName.idSupermarket.calification.forEach( item => calification+= item)
-        }
-        productsName.idSupermarket._doc.calification = calification === 0 ? 0 : calification / productsName.idSupermarket.calification.length
         const category = await CategoryModel.get({ _id: productsName.idProduct.category })
         delete category._doc.subCategory
         productsName.idProduct._doc.category = category

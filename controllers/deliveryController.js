@@ -2,6 +2,7 @@ const DeliveryModel = require('../models/deliverySchema')
 const OrderServiceController = require('../controllers/orderServiceController')
 const NotificationController = require('../controllers/notificacionController')
 const UserModel = require('../models/userSchema')
+const CalificationController = require('../controllers/calificationController')
 
 class Delivery {
   async create (data) {
@@ -48,6 +49,13 @@ class Delivery {
         await OrderServiceController.edit(order.orderId._id, { status: 4 }, socket)
         if (order.orderId.methodPayment.toString() === 'cash' || order.orderId.methodPayment.toString() === 'dataphone') {
           await OrderServiceController.edit(order.orderId._id, { paymentStatus: 3 })
+          const user = await UserModel.get({ _id: order.orderId.user })
+          const calification = await CalificationController.detail({ user: user._id, orderService: order.orderId._id })
+          await NotificationController.messaging({ title: 'DiaMarket', body: 'Por favor califica el supermercado', _id: calification._id, supermarket: calification.supermarket.name, tokenMessaging: user.tokenCloudingMessagin })
+          if ( parseInt(user.credits) > 0 ) {
+            await UserModel.update(user._id, { credits: 0 })
+          }
+          await OrderServiceController.validateOfferOrCreditsPromotions(user._id, order.orderId.promotions)
         }
         return DeliveryModel.update(_id, { status: 3 })
       }

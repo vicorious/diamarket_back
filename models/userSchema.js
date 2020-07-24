@@ -175,6 +175,15 @@ const Schema = new mongoose.Schema({
   }],
   idSocket: {
     type: Types.String
+  },
+  country: {
+    type: Types.ObjectId
+  },
+  city: {
+    type: Types.ObjectId
+  },
+  state: {
+    type: Types.ObjectId
   }
 })
 
@@ -190,12 +199,29 @@ class User extends Base {
     super()
     this.sort = { email: 1 }
     this.model = mongoose.model('User', Schema)
-    this.fields = '_id isActive dateCreate logs cards directions userList order name identification email cellPhone rol supermarketFavorite  birthday credits image workingSupermarket tokenCloudingMessagin  idSocket'
-    this.populate = [{
+    this.fields = '_id isActive dateCreate logs cards directions userList order name identification email cellPhone rol supermarketFavorite  birthday credits image workingSupermarket tokenCloudingMessagin  idSocket country city state'
+    this.populate = [
+      {
       path: 'supermarketFavorite',
       select: 'status name address calification location neigborhood locality email logo images isActive idAdmin schedules dateCreate',
       model: 'Supermarket'
-    }]
+      },
+      {
+        path: 'country',
+        select: 'name status',
+        model: 'Country'
+      },
+      {
+        path: 'state',
+        select: 'name status',
+        model: 'State'
+      },
+      {
+        path: 'city',
+        select: 'name status',
+        model: 'City'
+      }
+    ]
   }
 }
 
