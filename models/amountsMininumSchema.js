@@ -34,6 +34,9 @@ const Schema = new mongoose.Schema({
   },
   notDelivery: {
       type: Types.Number
+  },
+  paymentGateway: {
+    type: Types.Number
   }
 })
 
@@ -42,7 +45,7 @@ class AmountsMininum extends Base {
     super()
     this.sort = { quantity: 1 }
     this.model = mongoose.model('AmountsMininum', Schema)
-    this.fields = 'amountMininum deliveryValue notDelivery'
+    this.fields = 'amountMininum deliveryValue notDelivery paymentGateway'
   }
 }
 

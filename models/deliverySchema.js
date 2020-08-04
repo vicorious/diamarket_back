@@ -60,7 +60,7 @@ class Delivery extends Base {
     },
     {
       path: 'orderId',
-      select: 'value direction methodPayment status superMarket products promotions user dateCreate',
+      select: 'value direction methodPayment status superMarket products promotions user dateCreate credits',
       model: 'OrderService'
     }
     ]

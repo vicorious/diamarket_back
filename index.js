@@ -33,7 +33,7 @@ app.use((request, response, next) => {
 })
 
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
+  res.send(true);
 });
 
 app.use(cors())

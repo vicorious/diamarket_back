@@ -135,8 +135,7 @@ const Schema = new mongoose.Schema({
     type: Types.String
   },
   credits: {
-    type: Types.Number,
-    default: 0
+    type: Types.Number
   }
 })
 class OrderService extends Base {

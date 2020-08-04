@@ -52,8 +52,9 @@ class Delivery {
           const user = await UserModel.get({ _id: order.orderId.user })
           const calification = await CalificationController.detail({ user: user._id, orderService: order.orderId._id })
           await NotificationController.messaging({ title: 'DiaMarket', body: 'Por favor califica el supermercado', _id: calification._id, supermarket: calification.supermarket.name, tokenMessaging: user.tokenCloudingMessagin })
-          if ( parseInt(user.credits) > 0 ) {
-            await UserModel.update(user._id, { credits: 0 })
+          if ( parseInt(order.orderId.credits) > 0 ) {
+            const credits = parseInt(user.credits) - parseInt(order.orderId.credits)
+            await UserModel.update(user._id, { credits })
           }
           await OrderServiceController.validateOfferOrCreditsPromotions(user._id, order.orderId.promotions)
         }
