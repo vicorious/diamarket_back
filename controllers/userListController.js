@@ -105,12 +105,6 @@ class UserList {
               delete data.idProduct._doc.category._doc.subCategory
               delete data._doc.price
               delete data._doc.quantity
-              let calification = 0
-              console.log(data.idSupermarket)
-              for (const element of data.idSupermarket.calification) {
-                  calification += element
-              }
-              data.idSupermarket._doc.calification = calification === 0 ? 0 : calification
               newProducts.push(data)
             }
             estructureList.products=newProducts
