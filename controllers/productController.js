@@ -139,7 +139,6 @@ class Product {
     for (const product of products) {
       const productsCategory = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
       if (productsCategory._id){
-        productsCategory.idSupermarket._doc.calification = calification === 0 ? 0 : calification / productsCategory.idSupermarket.calification.length
         const category = await CategoryModel.get({ _id: productsCategory.idProduct.category })
         delete category._doc.subCategory
         productsCategory.idProduct._doc.category = category
