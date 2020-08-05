@@ -62,8 +62,9 @@ class Delivery {
       }
 
       case parseInt(4): {
-        const orderCodeCancelation = await OrderServiceController.detail({ _id: order.orderId._id, codeCancelation: data.codeCancelation })
-        if (!orderCodeCancelation._id) {
+        console.log(data)
+        // const orderCodeCancelation = await OrderServiceController.detail({ _id: order.orderId._id, codeCancelation: data.codeCancelation })
+        if (!data.codeCancelation && data.codeCancelation === null) {
           return OrderServiceController.edit(order.orderId._id, { status: 5 }, socket)
         } else {
           const cancelation = await OrderServiceController.edit(order.orderId._id, { codeCancelation: data.codeCancelation, status: 5 }, socket)

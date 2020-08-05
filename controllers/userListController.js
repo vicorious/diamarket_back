@@ -132,19 +132,7 @@ class UserList {
                 schedules: data.supermarket.schedules,
                 dateCreate: data.supermarket.dateCreate
             }
-            if (data.supermarket.calification.length > 0) {
-                let quantity = 0
-                let calification = 0
-                for (const item of data.supermarket.calification) {
-                    calification = calification + item
-                    quantity++
-                }
-                estructureSupermarket.calification = parseInt(calification) / parseInt(quantity)
-                estructureList.supermarket = estructureSupermarket
-            } else {
-                estructureSupermarket.calification = 0
-                estructureList.supermarket = estructureSupermarket
-            }
+            estructureList.supermarket = estructureSupermarket
             newList.push(estructureList)
         }
         if (newList.length > 0) {

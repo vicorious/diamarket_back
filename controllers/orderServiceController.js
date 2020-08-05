@@ -416,15 +416,15 @@ class OrderService {
 
   async detail(data) {
     let order = await OrderServiceModel.get(data)
-    let newProducts = []
-    for (const dataProduct of order.products) {
-      const response = await ProductSchema.detail({ _id: dataProduct.product })
-      if (response.data._id) {
-        newProducts.push(response.data)
-      }
-    }
-    order.products = newProducts
     if (order._id) {
+      let newProducts = []
+      for (const dataProduct of order.products) {
+        const response = await ProductSchema.detail({ _id: dataProduct.product })
+        if (response.data._id) {
+          newProducts.push(response.data)
+        }
+      }
+      order.products = newProducts
       return { estado: true, data: order, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay una orden asociada' }
