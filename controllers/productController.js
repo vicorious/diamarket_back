@@ -147,7 +147,6 @@ class Product {
         delete productsCategory._doc.price
         delete productsCategory._doc.quantity
         arrayProducts.push(productsCategory)
-        calification = 0
       }
     }
     if (arrayProducts.length > 0) {
