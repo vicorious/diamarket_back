@@ -285,7 +285,6 @@ class Product {
         delete productsName._doc.price
         delete productsName._doc.quantity
         arrayProducts.push(productsName)
-        calification = 0
       }
     }
     if (arrayProducts.length > 0) {
