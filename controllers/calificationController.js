@@ -22,7 +22,7 @@ class CalificationController {
 			califications.forEach(element => number += parseInt(element.calification))
 			number = number / califications.length
 			console.log(number)
-			await SuperMarketSchema.update(calification.supermarket._id, { calification: number })
+			await SuperMarketSchema.update(calification.supermarket._id, { calification: parseInt(number) })
 			return { estado: true, data: { updated: true }, mensaje: null }
 		}
 	}
