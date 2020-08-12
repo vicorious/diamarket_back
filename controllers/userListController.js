@@ -5,7 +5,7 @@ const CategoryModel = require('../models/categorySchema')
 
 class UserList {
     async create(data) {
-        const isExist = await UserListModel.get({ name: data.name })
+        const isExist = await UserListModel.get({ name: data.name, user: data.user })
         if (!isExist._id) {
             const list = await UserListModel.create(data)
             return { estado: true, data: list, mensaje: null }
