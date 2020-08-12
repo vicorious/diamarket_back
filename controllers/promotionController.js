@@ -56,8 +56,8 @@ class Promotion {
         delete promotion._doc.credits
       } else if (promotion.credits > 0 && promotion.discount === 0) {
         promotion._doc.type = 'credits'
-        promotion._doc.amount =  promotion.value
-        promotion._doc.value = promotion.credits
+        promotion._doc.amount =  promotion.credits
+        // promotion._doc.value = promotion.credits
         delete promotion._doc.discount
         delete promotion._doc.credits
       } else if (promotion.discount > 0 && promotion.credits === 0) {
@@ -76,6 +76,7 @@ class Promotion {
 
   async all (data, initQuantity, finishQuantity) {
     const promotion = await PromotionModel.searchByPageMobile(data, initQuantity, finishQuantity)
+    console.log(promotion)
     let price  = 0
     for (const object of promotion) {
       for (const element of object.products) {
@@ -85,7 +86,6 @@ class Promotion {
         element._doc.category = category
         element._doc.price = availability.price
         element._doc.quantity = availability.quantity
-        console.log(availability.price)
         price += availability.price
       }
       object._doc.priceProducts = price
@@ -96,9 +96,11 @@ class Promotion {
         delete object._doc.discount
         delete object._doc.credits
       } else if (object.credits > 0 && object.discount === 0) {
+        console.log("object.credits", object.credits)
         object._doc.type = 'credits'
-        object._doc.amount =  object.value
-        object._doc.value = object.credits
+        object._doc.amount =  object.credits
+        // object._doc.value = object.credits
+        // console.log(object)
         delete object._doc.discount
         delete object._doc.credits
       } else if (object.discount > 0 && object.credits === 0) {
@@ -111,7 +113,7 @@ class Promotion {
       price = 0
     }
     if (promotion.length > 0) {
-      console.log(promotion)
+      // console.log(promotion)
       return { estado: true, data: promotion, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No existen promociones para este supermercado' }
