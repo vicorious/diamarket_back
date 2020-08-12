@@ -375,12 +375,18 @@ class OrderService {
         const category = await CategorySchema.get({ _id: object.product.category })
         delete category._doc.subCategory
         object.product._doc.category = category
+        console.log("_----------------------------------------")
+        console.log(object)
+        console.log(object.product._id, supermarket)
+        console.log("_----------------------------------------")
         const availability = await AvailabilitySchema.get({ idProduct: object.product._id, idSupermarket: supermarket })
+        console.log(availability)
         object.product._doc.price = availability.price
         object.product._doc.quantity = object.quantity
         delete object.quantity
         newProducts.push(object.product)
       }
+      console.log(newProducts)
       return newProducts
     } else {
       return []
@@ -401,13 +407,14 @@ class OrderService {
     if (order._id) {
       await this.formatSupermarket(order.superMarket)
       if (order.products.length > 0) {
-        const products = await this.formatProducts(order.products)
+        const products = await this.formatProducts(order.products, order.superMarket)
         order._doc.products = products
       }
       if (order.promotions.length > 0) {
         const promotions = await this.formatPromotions(order.promotions, order.superMarket)
         order._doc.promotions = promotions
       }
+      console.log(order)
       return { estado: true, data: order, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay una orden asociada' }

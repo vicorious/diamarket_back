@@ -72,7 +72,7 @@ class Supermarket {
   async rateSupermarket (_id, data) {
     const isExist = await SupermarketModel.get(_id)
     if (isExist._id) {
-      const update = await SupermarketModel.update(isExist._id, { $push: { calification: data.calification } })
+      const update = await SupermarketModel.update(isExist._id, { $push: { calification: parseInt(data.calification) } })
       return update
     } else {
       return { estado: false, data: [], mensaje: 'El supermercado no existe' }

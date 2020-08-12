@@ -122,6 +122,7 @@ class Promotion {
       price = 0
     }
     if (promotion.length > 0) {
+      console.log(promotion)
       return { estado: true, data: promotion, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No existen promociones para este supermercado' }
