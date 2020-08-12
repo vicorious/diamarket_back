@@ -460,7 +460,7 @@ class OrderService {
         await OrderServiceModel.update(_id, data)
         const calification = await CalificationController.detail({ orderService: order._id })
         if (order.methodPayment.toString() === 'cash' || order.methodPayment.toString() === 'dataphone') {
-          await OrderServiceModel.update(_id, { paymetStatus: 1 })
+          await OrderServiceModel.update(_id, { paymentStatus: 1 })
         }
         socket.io.to(user.idSocket).emit('changeStatus', { _id: order._id, state: 5, idCalification: calification._id, supermarket: calification.supermarket.name })
         break

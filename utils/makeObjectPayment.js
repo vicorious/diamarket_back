@@ -19,7 +19,7 @@ module.exports = function (data) {
           description: 'payment test',
           language: 'es',
           signature: signature,
-          notifyUrl: 'http://32020c1059f5.ngrok.io/v1/web/orderservice/responsepayment',
+          notifyUrl: 'https://api.diamarket.co/v1/app/orderservice/responsepaymentpse',
           additionalValues: {
              TX_VALUE: {
                 value: data.value,
@@ -49,7 +49,7 @@ module.exports = function (data) {
        },
        extraParameters: {
          INSTALLMENTS_NUMBER: 1,
-         RESPONSE_URL: 'http://32020c1059f5.ngrok.io/v1/web/orderservice/responsepayment'
+         RESPONSE_URL: 'https://api.diamarket.co/v1/app/orderservice/responsepaymentpse'
        },
        type: 'AUTHORIZATION_AND_CAPTURE',
        paymentMethod: data.card.type,
