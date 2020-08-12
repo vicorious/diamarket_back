@@ -70,6 +70,7 @@ const Schema = new mongoose.Schema({
   },
   image: [{
     type: Types.String,
+    default: [],
     required: [true, 'La imagen es requerida']
   }],
   isActive: {
