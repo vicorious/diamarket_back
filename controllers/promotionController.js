@@ -74,17 +74,6 @@ class Promotion {
     }
   }
 
-  async allPage (data, quantity, page) {
-    PromotionModel.perPage = parseInt(quantity)
-    const promotions = await PromotionModel.searchByPage(data, page)
-    const countPromotions = await PromotionModel.count({})
-    if (promotions.length > 0) {
-      return { estado: true, data: { page: page, quantity: quantity, total: countPromotions, items: promotions }, mensaje: null }
-    } else {
-      return { estado: false, data: [], mensaje: 'No existen promociones para este supermercado' }
-    }
-  }
-
   async all (data, initQuantity, finishQuantity) {
     const promotion = await PromotionModel.searchByPageMobile(data, initQuantity, finishQuantity)
     let price  = 0
@@ -129,10 +118,22 @@ class Promotion {
     }
   }
 
+  async allPage (data, quantity, page) {
+    PromotionModel.perPage = parseInt(quantity)
+    const promotions = await PromotionModel.searchByPage(data, page)
+    const countPromotions = await PromotionModel.count({})
+    if (promotions.length > 0) {
+      return { estado: true, data: { page: page, quantity: quantity, total: countPromotions, items: promotions }, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No existen promociones para este supermercado' }
+    }
+  }
+
   async forSuperMarket (_id, query, quantity, page) {
     PromotionModel.perPage = parseInt(quantity)
     let promotions
     const superMarket = await SuperMarketModel.get({ idAdmin: _id })
+    const countPromotions = await PromotionModel.count({supermarket: { $in: [superMarket._id] }})
     console.log(superMarket)
     if (query.name) {
       promotions = await PromotionModel.searchByPage({ supermarket: { $in: [superMarket._id] }, name: { $regex: query.name, $options: 'i' } }, page)
@@ -140,7 +141,7 @@ class Promotion {
       promotions = await PromotionModel.searchByPage({ }, page)
     }
     if (promotions.length > 0) {
-      return { estado: true, data: promotions, mensaje: null }
+      return { estado: true, data: { page: page, quantity, total: countPromotions, items: promotions}, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay promociones para este supermercado' }
     }
