@@ -459,7 +459,9 @@ class OrderService {
         await NotificationController.messaging({ title: 'DiaMarket', body: 'Tu orden de servicio a finalizado', _id: order._id, status: 5, tokenMessaging: user.tokenCloudingMessagin })
         await OrderServiceModel.update(_id, data)
         const calification = await CalificationController.detail({ orderService: order._id })
-        console.log(calification)
+        if (order.methodPayment.toString() === 'cash' || order.methodPayment.toString() === 'dataphone') {
+          await OrderServiceModel.update(_id, { paymetStatus: 1 })
+        }
         socket.io.to(user.idSocket).emit('changeStatus', { _id: order._id, state: 5, idCalification: calification._id, supermarket: calification.supermarket.name })
         break
       }
