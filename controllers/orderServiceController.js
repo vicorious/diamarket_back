@@ -539,6 +539,7 @@ class OrderService {
     console.log("------------------ORDER----------------------")
     console.log(data.polResponseCode)
     data.polResponseCode = '1'
+    const user = await OrderServiceModel.get({ _id: order.user._id })
     switch (data.polResponseCode) {
       case '1': {
         console.log("ENTRAAAAA")
@@ -552,20 +553,21 @@ class OrderService {
           }
           await this.validateOfferOrCreditsPromotions(newOrder.user._id, newOrder.promotions)
         }
-        socket.io.emit('payPse', { message: 'Transacción aprobada', status: true })
+
+        socket.io.to(user.idSocket).emit('payPse', { message: 'Transacción aprobada', status: true })
         break
       }
 
       case '5': {
         await OrderServiceModel.update(order._id, { paymentStatus: 2 })
-        socket.io.emit('payPse', { message: 'Transacción fallida', status: false })
+        socket.io.to(user.idSocket).emit('payPse', { message: 'Transacción fallida', status: false })
         await this.cancelServicePse(order)
         break
       }
 
       case '4': {
         await OrderServiceModel.update(order._id, { paymentStatus: 2 })
-        socket.io.emit('payPse', { message: 'Transacción rechazada', status: false })
+        socket.io.to(user.idSocket).emit('payPse', { message: 'Transacción rechazada', status: false })
         await this.cancelServicePse(order)
         break
       }
@@ -573,7 +575,7 @@ class OrderService {
       default: {
         await OrderServiceModel.update(order._id, { paymentStatus: 0 })
         const newOrder = await OrderServiceModel.get({ _id: order._id })
-        socket.io.emit('payPse', { message: 'Transacción pendiente, por favor revisar si el débito fue realizado en el banco.', status: true })
+        socket.io.to(user.idSocket).emit('payPse', { message: 'Transacción pendiente, por favor revisar si el débito fue realizado en el banco.', status: true })
         break
       }
     }
