@@ -3,8 +3,8 @@
 const DATABASES = {
   mongodb: {
     NAME: process.env.NODE_ENV || 'diamarket',
-    HOST: process.env.HOST || 'admin_diamarket:5q9prVAPlySbU7m@localhost'
-    // HOST: process.env.HOST || 'localhost'
+    // HOST: process.env.HOST || 'admin_diamarket:5q9prVAPlySbU7m@localhost'
+    HOST: process.env.HOST || 'localhost'
   },
   sqlServer: {
     user: 'zuluagasoto',

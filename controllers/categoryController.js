@@ -131,7 +131,7 @@ class Category {
             newSubCategory.push(object.subCategory[key])
           }
         }
-        object._doc.subCategory = newSubCategorylist
+        object._doc.subCategory = newSubCategory
       }
       return { estado: true, data: getAll, mensaje: null }
     } else {
