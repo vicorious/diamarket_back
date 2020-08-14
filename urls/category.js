@@ -237,8 +237,8 @@ routesCategoryApp.get('/detail/:id', isClient, async (request, response) => {
  *              type: string
  *              example: 'No hay categorias'
  */
-routesCategoryApp.get('', isClient, async (request, response) => {
-  const all = await categoryController.all()
+routesCategoryApp.get('', async (request, response) => {
+  const all = await categoryController.allApp({ isActive: true })
   response.json(all)
 })
 

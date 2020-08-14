@@ -113,8 +113,26 @@ class Category {
   }
 
   async all() {
-    const getAll = await CategoryModel.search({ isActive: true })
+    const getAll = await CategoryModel.search({})
     if (getAll.length > 0) {
+      return { estado: true, data: getAll, mensaje: null }
+    } else {
+      return { estado: false, data: [], mensaje: 'No hay categorias' }
+    }
+  }
+
+  async allApp (data) {
+    const getAll = await CategoryModel.search(data)
+    if (getAll.length > 0) {
+      for (const object of getAll) {
+        let newSubCategory = []
+        for (const key in object.subCategory) {
+          if (object.subCategory[key].isActive) {
+            newSubCategory.push(object.subCategory[key])
+          }
+        }
+        object._doc.subCategory = newSubCategory
+      }
       return { estado: true, data: getAll, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay categorias' }
