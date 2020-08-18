@@ -58,7 +58,7 @@ const Schema = new mongoose.Schema({
   }],
   value: {
     type: Types.Number,
-    required: [true, 'El valor es requerido']
+    default: 0
   },
   credits: {
     type: Types.Number,

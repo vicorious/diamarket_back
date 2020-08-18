@@ -14,7 +14,9 @@ class Promotion {
           data.supermarket.push(object._id)
         }
       }
+      delete data._id
       const promotion = await PromotionModel.create(data)
+      console.log(promotion)
       return { estado: true, data: promotion, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'La promocion ya se encuentra resgitrada' }
