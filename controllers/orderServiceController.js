@@ -11,10 +11,11 @@ const CategorySchema = require('../models/categorySchema')
 const AmountsMininumSchema = require('../models/amountsMininumSchema')
 const makeCode = require('../utils/makeCode')
 const CalificationController = require('../controllers/calificationController')
+const uuid = require('node-uuid')
 
 class OrderService {
   async create(data, io) {
-    console.log(data)
+    // console.log(data)
     switch (data.methodPayment.toLowerCase()) {
       case 'credit': {
         const order = await this.credit(data)
@@ -29,7 +30,8 @@ class OrderService {
         data.paymentStatus = 0
         data.transactionId = '0'
         const order = await OrderServiceModel.create(data)
-        console.log(order)
+        await UserModel.update(user._id, { supermarketFavorite: data.superMarket })
+        await this.validateDirection(data.direction, user)
         await CalificationController.create({ orderService: order._id, user: user._id, supermarket: data.superMarket })
         return { estado: true, data: order, mensaje: null }
       }
@@ -47,9 +49,38 @@ class OrderService {
         data.paymentStatus = 0
         data.transactionId = '0'
         const order = await OrderServiceModel.create(data)
+        await UserModel.update(user._id, { supermarketFavorite: order._id })
         await CalificationController.create({ orderService: order._id, user: user._id, supermarket: data.superMarket })
+        await this.validateDirection(data.direction, user)
         return { estado: true, data: order, mensaje: null }
       }
+    }
+  }
+
+  async validateDirection (direction, user) {
+    console.log(direction)
+    console.log(user.directions)
+    let flagDirection = false
+    if (user.directions.length > 0) {
+      for (const item in user.directions) {
+        if (user.directions[item].address === direction.address) {
+          user._doc.directions[item].default = true
+          flagDirection = true
+        } else {
+          user._doc.directions[item].default = false
+        }
+      }
+      if (!flagDirection) {
+        const idDirection = uuid.v4()
+        user._doc.directions.push({ uid: idDirection, address: direction.address, location: direction.location, default: true })
+        user._doc.directionDefault = { uid: idDirection, address: direction.address, location: direction.location, default: true }
+      }
+      await UserModel.update(user._id, user)
+    } else {
+      const idDirection = uuid.v4()
+      user._doc.directions.push({ uid: idDirection, address: direction.address, location: direction.location, default: true })
+      user._doc.directionDefault = { uid: idDirection, address: direction.address, location: direction.location, default: true }
+      await UserModel.update(user._id, user)
     }
   }
 
@@ -85,6 +116,7 @@ class OrderService {
               const credits = parseInt(user.credits) - data.credits
               await UserModel.update(user._id, { credits })
             }
+            await this.validateDirection(data.direction, user)
             await UserModel.update(user._id, { supermarketFavorite: data.superMarket })
             await CalificationController.create({ orderService: order._id, user: user._id, supermarket: data.superMarket })
             await this.validateOfferOrCreditsPromotions({ _id: user._id }, data.promotions)
@@ -140,7 +172,10 @@ class OrderService {
     if (paymentPse.status === 'PENDING') {
       data.transactionId = paymentPse.transaction
       data.paymentStatus = 0
-      await OrderServiceModel.create(data)
+      const order = await OrderServiceModel.create(data)
+      await this.validateDirection(data.direction, user)
+      await UserModel.update(user._id, { supermarketFavorite: order._id })
+
     }
     // io.sockets.to(user.idSocket).emit('payPse', paymentPse) 
     return paymentPse
@@ -170,49 +205,49 @@ class OrderService {
     const amountMinunum = await AmountsMininumSchema.search({})
     console.log(amountMinunum)
     return { estado: true, data: { delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, paymentGateway: amountMinunum[0].paymentGateway, notDelivery: amountMinunum[0].notDelivery} }
-    const user = await UserModel.get({ _id: data.user })
-    // const amountMinunum = await AmountsMininumSchema.search({})
-    const valueProducts = await this.calculateValueProducts(data.products, data.supermarket)
-    const valuePromotions = await this.calculateValuePromotions(data.promotions)
-    let value = parseInt(valuePromotions) === undefined ? parseInt(valueProducts) : parseInt(valueProducts) + parseInt(valuePromotions)
-    if (data.tip > 0) {
-      value = value + data.tip
-    }
-    value = parseInt(value) + amountMinunum[0].deliveryValue
-    if (value >= amountMinunum[0].amountMininum) {
-      if (data.tip > 0) {
-        value = value - data.tip
-      }
-      const discountedCredits = await this.calculateDiscountCredits(user, value)  
-      switch (discountedCredits.isDiscount) {
-        case true: {
-          return { estado: true, data: { value: discountedCredits.value, delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, credits: discountedCredits.credits }, mensaje: null }
-        }
+    // const user = await UserModel.get({ _id: data.user })
+    // // const amountMinunum = await AmountsMininumSchema.search({})
+    // const valueProducts = await this.calculateValueProducts(data.products, data.supermarket)
+    // const valuePromotions = await this.calculateValuePromotions(data.promotions)
+    // let value = parseInt(valuePromotions) === undefined ? parseInt(valueProducts) : parseInt(valueProducts) + parseInt(valuePromotions)
+    // if (data.tip > 0) {
+    //   value = value + data.tip
+    // }
+    // value = parseInt(value) + amountMinunum[0].deliveryValue
+    // if (value >= amountMinunum[0].amountMininum) {
+    //   if (data.tip > 0) {
+    //     value = value - data.tip
+    //   }
+    //   const discountedCredits = await this.calculateDiscountCredits(user, value)  
+    //   switch (discountedCredits.isDiscount) {
+    //     case true: {
+    //       return { estado: true, data: { value: discountedCredits.value, delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, credits: discountedCredits.credits }, mensaje: null }
+    //     }
 
-        case false: {
-          value = parseInt(value) - amountMinunum[0].deliveryValue
-          if (parseInt(value) >= amountMinunum[0].amountMininum && parseInt(value) <= amountMinunum[0].notDelivery) {
-            value = parseInt(value) + amountMinunum[0].deliveryValue
-            return { estado: true, data: { value, delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, credits: 0 }, mensaje: null }
-          } else if (parseInt(value) >= amountMinunum[0].notDelivery) {
-            return { estado: true, data: { value, delivery: 0, minValue: amountMinunum[0].amountMininum, credits: 0 }, mensaje: null }
-          } else {
-            value = parseInt(value) + amountMinunum[0].deliveryValue
-            if (parseInt(value) <= amountMinunum[0].notDelivery) {
-              return { estado: false, data: { value, delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, credits: 0 }, mensaje: 'El valor de la orden debe ser mayor a $35.000' }
-            } else {
-              value = parseInt(value) + amountMinunum[0].deliveryValue
-              return { estado: true, data: { value, delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, credits: 0 }, mensaje: null }
-            }
-          }
-        }
-      }
-    } else {
-      if (data.tip > 0) {
-        value = value - data.tip
-      }
-      return { estado: false, data: { value, delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, credits: 0 }, mensaje: 'El valor de la orden debe ser mayor a $35.000' }
-    }
+    //     case false: {
+    //       value = parseInt(value) - amountMinunum[0].deliveryValue
+    //       if (parseInt(value) >= amountMinunum[0].amountMininum && parseInt(value) <= amountMinunum[0].notDelivery) {
+    //         value = parseInt(value) + amountMinunum[0].deliveryValue
+    //         return { estado: true, data: { value, delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, credits: 0 }, mensaje: null }
+    //       } else if (parseInt(value) >= amountMinunum[0].notDelivery) {
+    //         return { estado: true, data: { value, delivery: 0, minValue: amountMinunum[0].amountMininum, credits: 0 }, mensaje: null }
+    //       } else {
+    //         value = parseInt(value) + amountMinunum[0].deliveryValue
+    //         if (parseInt(value) <= amountMinunum[0].notDelivery) {
+    //           return { estado: false, data: { value, delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, credits: 0 }, mensaje: 'El valor de la orden debe ser mayor a $35.000' }
+    //         } else {
+    //           value = parseInt(value) + amountMinunum[0].deliveryValue
+    //           return { estado: true, data: { value, delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, credits: 0 }, mensaje: null }
+    //         }
+    //       }
+    //     }
+    //   }
+    // } else {
+    //   if (data.tip > 0) {
+    //     value = value - data.tip
+    //   }
+    //   return { estado: false, data: { value, delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, credits: 0 }, mensaje: 'El valor de la orden debe ser mayor a $35.000' }
+    // }
   }
 
   async calculateValueProducts(products, supermarket) {
@@ -337,6 +372,11 @@ class OrderService {
           price += parseInt(availability.price)
           products.push(product.data)
         }
+        console.log("---------------------------------------")
+        console.log(object)
+        console.log("---------------------------------------")
+        console.log(products)
+        console.log("---------------------------------------")
         object.promotion._doc.products = products
         object.promotion._doc.priceProducts = price
         if (object.promotion.credits === 0 && object.promotion.discount === 0) {

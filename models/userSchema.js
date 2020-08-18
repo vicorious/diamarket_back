@@ -120,6 +120,9 @@ const Schema = new mongoose.Schema({
   supermarketFavorite: {
     type: Types.ObjectId
   },
+  directionDefault: {
+    type: Types.Mixed
+  },
   workingSupermarket: {
     type: Types.ObjectId
   },
@@ -199,7 +202,7 @@ class User extends Base {
     super()
     this.sort = { email: 1 }
     this.model = mongoose.model('User', Schema)
-    this.fields = '_id isActive dateCreate logs cards directions userList order name identification email cellPhone rol supermarketFavorite  birthday credits image workingSupermarket tokenCloudingMessagin  idSocket country city state'
+    this.fields = '_id isActive dateCreate logs cards directions userList order name identification email cellPhone rol supermarketFavorite  birthday credits image workingSupermarket tokenCloudingMessagin  idSocket country city state directionDefault'
     this.populate = [
       {
       path: 'supermarketFavorite',
