@@ -19,7 +19,6 @@ class User {
     async create(data) {
         const isExists = await UserModel.get({email: data.email})
         data.verifyCode = await makeCode()
-        console.log(data)
         if (!isExists._id) {
             switch (data.rol) {
                 case 'domiciliary': {
@@ -37,15 +36,11 @@ class User {
                 }
 
                 case 'administrator': {
-                    console.log("-------------------------------")
-                    console.log("DATA", data)
                     const supermarket = await SuperMarketSchema.get({_id: data.workingSupermarket})
-                    console.log(supermarket)
+
                     data.isActive = true
                     const user = await UserModel.create(data)
                     // const user = await UserModel.get(data)
-                    console.log(user)
-                    console.log("-------------------------------")
                     await SuperMarketSchema.update(supermarket._id, {idAdmin: user._id})
                     return {estado: true, data: user, mensaje: null}
                 }
@@ -61,10 +56,8 @@ class User {
                     data.credits = 0
                     data.cards = []
                     data.directions = []
-                    console.log(data)
                     const user = await UserModel.create(data)
                     if (user._id) {
-                        console.log(data)
                         await sendSms(data.cellPhone, data.verifyCode)
                         return {estado: true, data: user, mensaje: null}
                     } else {
@@ -141,7 +134,6 @@ class User {
         const user = await UserModel.get({verifyCode: data.code})
         if (user._id) {
             const passwordCrypt = await makePassword(data.password)
-            console.log(passwordCrypt)
             const update = await UserModel.update(user._id, {password: passwordCrypt, verifyCode: codeRandom})
             return update
         } else {
@@ -199,15 +191,6 @@ class User {
     async detail(id) {
         const user = await UserModel.get(id)
         if (user._id) {
-
-            let integer = 0
-            for (const direction of user.directions) {
-                let cordinate = direction.location.coordinates[0]
-                cordinate=cordinate.split(', ')
-                user.directions[integer].location.coordinates[0] = cordinate[0]
-                user.directions[integer].location.coordinates[1] = cordinate[1]
-                integer++
-            }
             if (user.rol === 'administrator') {
                 const supermarket = await SuperMarketSchema.get({idAdmin: user._id})
                 if (supermarket._id) {
@@ -271,13 +254,11 @@ class User {
     async administratorsWithoutSupermarket() {
         const users = await UserModel.search({rol: 'administrator'})
         const supermarkets = await SuperMarketSchema.search({idAdmin: {$exists: true}})
-        console.log(supermarkets)
         let administrators = []
         if (supermarkets.length > 0) {
             for (const user of users) {
                 let flagSupermarket = false
                 for (const item of supermarkets) {
-                    console.log(item)
                     if (item.idAdmin._id.toString() === user._id.toString()) {
                         flagSupermarket = true
                     }

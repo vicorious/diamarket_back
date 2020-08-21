@@ -87,7 +87,6 @@ class Auth {
     const user = await UserModel.get(email)
     if (user._id) {
       const code = await MakeCode()
-      console.log(user)
       await sendSms(user.cellPhone, code)
       return UserModel.update(user._id, { verifyCode: code })
     } else {
@@ -97,10 +96,8 @@ class Auth {
 
   async resetPassword(data) {
     const user = await UserModel.get({ verifyCode: data.code })
-    console.log(user)
     if (user._id) {
       const password = await makePassword(data.password)
-      console.log(password)
       return UserModel.update(user._id, { password })
     } else {
       return { estado: false, data: [], mensaje: 'El usuario no existe' }

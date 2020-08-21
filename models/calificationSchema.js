@@ -20,6 +20,10 @@ const Schema = new mongoose.Schema({
   createAt: {
       type: Types.Date,
       default: Date.now
+  },
+  show: {
+    type: Types.Boolean,
+    default: false
   }
 })
 
@@ -27,7 +31,7 @@ class Calification extends Base {
   constructor () {
     super()
     this.model = mongoose.model('Calification', Schema)
-    this.fields = 'user supermarket orderService calification'
+    this.fields = 'user supermarket orderService calification show'
     this.populate = [
         { path: 'user', select: '_id isActive dateCreate logs cards directions userList order name identification email cellPhone rol supermarketFavorite  birthday credits image workingSupermarket tokenCloudingMessagin  idSocket country city state', model: 'User' },
         { path: 'supermarket', select: 'status name address calification location neigborhood cellPhone locality email logo images isActive idAdmin schedules dateCreate idPos', model: 'Supermarket' },

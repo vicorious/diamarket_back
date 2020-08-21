@@ -9,8 +9,8 @@ class CalificationController {
 	}
 
 	async detail (data){
-		const calification = CalificationSchema.get(data)
-		return calification
+		const calification = await CalificationSchema.get(data)
+		return { estado: true, data: calification, mensaje: null}
 	}
 
 	async calification (data) {
@@ -21,7 +21,6 @@ class CalificationController {
 			let number = 0
 			califications.forEach(element => number += parseInt(element.calification))
 			number = number / califications.length
-			console.log(number)
 			await SuperMarketSchema.update(calification.supermarket._id, { calification: parseInt(number) })
 			return { estado: true, data: { updated: true }, mensaje: null }
 		}

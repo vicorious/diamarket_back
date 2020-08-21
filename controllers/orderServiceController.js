@@ -15,7 +15,6 @@ const uuid = require('node-uuid')
 
 class OrderService {
   async create(data, io) {
-    // console.log(data)
     switch (data.methodPayment.toLowerCase()) {
       case 'credit': {
         const order = await this.credit(data)
@@ -58,8 +57,6 @@ class OrderService {
   }
 
   async validateDirection (direction, user) {
-    console.log(direction)
-    console.log(user.directions)
     let flagDirection = false
     if (user.directions.length > 0) {
       for (const item in user.directions) {
@@ -86,7 +83,6 @@ class OrderService {
 
   async credit(data) {
     const referenceDate = new Date()
-    console.log(data)
     const user = await UserModel.get({ _id: data.user })
     if (parseInt(data.value) > 0) {
       if (!data.card.uid) {
@@ -105,7 +101,7 @@ class OrderService {
       data.user = user
       data.referenceCode = `Diamarket/${referenceDate.getTime()}`
       const paymentResponse = await PayUController.payCredit(data)
-      console.log(paymentResponse)
+
       switch (paymentResponse.status) {
         case 'APPROVED': {
           data.paymentStatus = 1
@@ -125,8 +121,6 @@ class OrderService {
         }
 
         case 'PENDING': {
-          console.log('............')
-          console.log(paymentResponse)
           data.paymentStatus = 0
           data.transactionId = paymentResponse.transactionResponse.transactionId
           const order = await OrderServiceModel.create(data)
@@ -145,9 +139,7 @@ class OrderService {
       data.transactionId = 'Pago con creditos'
       data.referenceCode = `Diamarket/${referenceDate.getTime()}`
       data.user = user._id
-      console.log(user)
       const order = await OrderServiceModel.create(data)
-      console.log(order)
       if (order._id) {
         if (parseInt(data.credits) > 0) {
           const credits = parseInt(user.credits) - data.credits
@@ -203,51 +195,7 @@ class OrderService {
 
   async calculateValue() {
     const amountMinunum = await AmountsMininumSchema.search({})
-    console.log(amountMinunum)
     return { estado: true, data: { delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, paymentGateway: amountMinunum[0].paymentGateway, notDelivery: amountMinunum[0].notDelivery} }
-    // const user = await UserModel.get({ _id: data.user })
-    // // const amountMinunum = await AmountsMininumSchema.search({})
-    // const valueProducts = await this.calculateValueProducts(data.products, data.supermarket)
-    // const valuePromotions = await this.calculateValuePromotions(data.promotions)
-    // let value = parseInt(valuePromotions) === undefined ? parseInt(valueProducts) : parseInt(valueProducts) + parseInt(valuePromotions)
-    // if (data.tip > 0) {
-    //   value = value + data.tip
-    // }
-    // value = parseInt(value) + amountMinunum[0].deliveryValue
-    // if (value >= amountMinunum[0].amountMininum) {
-    //   if (data.tip > 0) {
-    //     value = value - data.tip
-    //   }
-    //   const discountedCredits = await this.calculateDiscountCredits(user, value)  
-    //   switch (discountedCredits.isDiscount) {
-    //     case true: {
-    //       return { estado: true, data: { value: discountedCredits.value, delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, credits: discountedCredits.credits }, mensaje: null }
-    //     }
-
-    //     case false: {
-    //       value = parseInt(value) - amountMinunum[0].deliveryValue
-    //       if (parseInt(value) >= amountMinunum[0].amountMininum && parseInt(value) <= amountMinunum[0].notDelivery) {
-    //         value = parseInt(value) + amountMinunum[0].deliveryValue
-    //         return { estado: true, data: { value, delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, credits: 0 }, mensaje: null }
-    //       } else if (parseInt(value) >= amountMinunum[0].notDelivery) {
-    //         return { estado: true, data: { value, delivery: 0, minValue: amountMinunum[0].amountMininum, credits: 0 }, mensaje: null }
-    //       } else {
-    //         value = parseInt(value) + amountMinunum[0].deliveryValue
-    //         if (parseInt(value) <= amountMinunum[0].notDelivery) {
-    //           return { estado: false, data: { value, delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, credits: 0 }, mensaje: 'El valor de la orden debe ser mayor a $35.000' }
-    //         } else {
-    //           value = parseInt(value) + amountMinunum[0].deliveryValue
-    //           return { estado: true, data: { value, delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, credits: 0 }, mensaje: null }
-    //         }
-    //       }
-    //     }
-    //   }
-    // } else {
-    //   if (data.tip > 0) {
-    //     value = value - data.tip
-    //   }
-    //   return { estado: false, data: { value, delivery: amountMinunum[0].deliveryValue, minValue: amountMinunum[0].amountMininum, credits: 0 }, mensaje: 'El valor de la orden debe ser mayor a $35.000' }
-    // }
   }
 
   async calculateValueProducts(products, supermarket) {
@@ -255,7 +203,7 @@ class OrderService {
       let value = 0
       for (const object of products) {
         const product = await AvailabilitySchema.get({ idProduct: object.product, idSupermarket: supermarket })
-        console.log(product.price)
+
         value += parseInt(product.price) * parseInt(object.quantity)
       }
       return value
@@ -294,7 +242,6 @@ class OrderService {
   }
 
   async validateOfferOrCreditsPromotions(_id, promotions) {
-    console.log("promotions", promotions)
     const user = await UserModel.get(_id)
     let credits = 0
     // parseInt(user.credits) === 0 ? credits = 0 : credits = parseInt(user.credits)
@@ -372,11 +319,6 @@ class OrderService {
           price += parseInt(availability.price)
           products.push(product.data)
         }
-        console.log("---------------------------------------")
-        console.log(object)
-        console.log("---------------------------------------")
-        console.log(products)
-        console.log("---------------------------------------")
         object.promotion._doc.products = products
         object.promotion._doc.priceProducts = price
         if (object.promotion.credits === 0 && object.promotion.discount === 0) {
@@ -415,18 +357,12 @@ class OrderService {
         const category = await CategorySchema.get({ _id: object.product.category })
         delete category._doc.subCategory
         object.product._doc.category = category
-        console.log("_----------------------------------------")
-        console.log(object)
-        console.log(object.product._id, supermarket)
-        console.log("_----------------------------------------")
         const availability = await AvailabilitySchema.get({ idProduct: object.product._id, idSupermarket: supermarket })
-        console.log(availability)
         object.product._doc.price = availability.price
         object.product._doc.quantity = object.quantity
         delete object.quantity
         newProducts.push(object.product)
       }
-      console.log(newProducts)
       return newProducts
     } else {
       return []
@@ -454,7 +390,6 @@ class OrderService {
         const promotions = await this.formatPromotions(order.promotions, order.superMarket)
         order._doc.promotions = promotions
       }
-      console.log(order)
       return { estado: true, data: order, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay una orden asociada' }
@@ -533,7 +468,6 @@ class OrderService {
 
   async cancel(_id) {
     const order = await OrderServiceModel.get(_id)
-    console.log(order)
     if (order._id) {
       return OrderServiceModel.update(order._id, { status: 5 })
     }
@@ -572,20 +506,12 @@ class OrderService {
   }
 
   async validateResponsePaymentPse(data, socket) {
-    console.log(data)
-    const order = await OrderServiceModel.get({ transactionId: data.transactionId })
-    console.log("------------------ORDER----------------------")
-    console.log(order)
-    console.log("------------------ORDER----------------------")
-    console.log(data.polResponseCode)
     data.polResponseCode = '1'
     const user = await OrderServiceModel.get({ _id: order.user._id })
     switch (data.polResponseCode) {
       case '1': {
-        console.log("ENTRAAAAA")
         await OrderServiceModel.update(order._id, { paymentStatus: 1 })
         const newOrder = await OrderServiceModel.get({ _id: order._id })
-        console.log(newOrder)
         if (newOrder.promotions.length > 0) {
           if (pasrseInt(newOrder.credits) > 0) {
             const credits = parseInt(user.credits) - parseInt(newOrder.credits)

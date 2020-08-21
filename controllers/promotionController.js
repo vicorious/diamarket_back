@@ -16,7 +16,6 @@ class Promotion {
       }
       delete data._id
       const promotion = await PromotionModel.create(data)
-      console.log(promotion)
       return { estado: true, data: promotion, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'La promocion ya se encuentra resgitrada' }
@@ -83,7 +82,6 @@ class Promotion {
 
   async all (data, initQuantity, finishQuantity) {
     const promotion = await PromotionModel.searchByPageMobile(data, initQuantity, finishQuantity)
-    console.log(promotion)
     let price  = 0
     for (const object of promotion) {
       for (const element of object.products) {
@@ -103,11 +101,9 @@ class Promotion {
         delete object._doc.discount
         delete object._doc.credits
       } else if (object.credits > 0 && object.discount === 0) {
-        console.log("object.credits", object.credits)
         object._doc.type = 'credits'
         object._doc.amount =  object.credits
         // object._doc.value = object.credits
-        // console.log(object)
         delete object._doc.discount
         delete object._doc.credits
       } else if (object.discount > 0 && object.credits === 0) {
@@ -120,7 +116,6 @@ class Promotion {
       price = 0
     }
     if (promotion.length > 0) {
-      // console.log(promotion)
       return { estado: true, data: promotion, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No existen promociones para este supermercado' }
@@ -143,7 +138,6 @@ class Promotion {
     let promotions
     const superMarket = await SuperMarketModel.get({ idAdmin: _id })
     const countPromotions = await PromotionModel.count({supermarket: { $in: [superMarket._id] }})
-    console.log(superMarket)
     if (query.name) {
       promotions = await PromotionModel.searchByPage({ supermarket: { $in: [superMarket._id] }, name: { $regex: query.name, $options: 'i' } }, page)
     } else {

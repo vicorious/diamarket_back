@@ -16,13 +16,7 @@ class PayU {
     data.card.token = crypto.createDecipher('aes-256-ctr', secret).update(data.card.token, 'hex', 'utf8')
     data.card.securityCode = crypto.createDecipher('aes-256-ctr', secret).update(data.card.securityCode, 'hex', 'utf8')
     const objectPayment = MakeObjectPayment(data)
-    console.log('----------------------OBJECT PAYMENT CON TOKEN------------------------------------------')
-    console.log(objectPayment)
-    console.log('----------------------OBJECT PAYMENT CON TOKEN------------------------------------------')
     const response = await axios.post(MakeDataPayU.urlFinal, objectPayment)
-    console.log("-------------------------------RESPONSE DE LA PETICION DEL PAGO")
-    console.log(response.data)
-    console.log("-------------------------------RESPONSE DE LA PETICION DEL PAGO")
     if (response.data.code === 'SUCCESS') {
       switch (response.data.transactionResponse.state) {
         case 'APPROVED': {
@@ -69,9 +63,6 @@ class PayU {
   async tokenPayU (data) {
     const objectToken = MakeObjectToken(data)
     const response = await axios.post(MakeDataPayU.urlFinal, objectToken)
-    console.log('-------------------Token-------------------------------------------')
-    console.log(response.data)
-    console.log('-------------------Token-------------------------------------------')
     if (response.data.code !== 'ERROR') {
       response.data.creditCardToken.creditCardTokenId = crypto.createCipher('aes-256-ctr', secret).update(response.data.creditCardToken.creditCardTokenId, 'utf8', 'hex')
       response.data.creditCardToken.securityCode = crypto.createCipher('aes-256-ctr', secret).update(data.securityCode.toString(), 'utf8', 'hex')
@@ -87,18 +78,9 @@ class PayU {
       }
       if (user.cards !== null && user.cards.length > 0) {
         const flagCard = user.cards.filter(element => element.token === response.data.creditCardToken.creditCardTokenId)
-        console.log(flagCard.length)
         if (flagCard.length === 0) {
           await UserSchema.update(user._id, { $push: { cards: dataCard }})
         }
-        // for (const card of user.cards) {
-        //   console.log(card.token, response.data.creditCardToken.creditCardTokenId)
-        //   console.log(card.token === response.data.creditCardToken.creditCardTokenId)
-        //   if (card.token !== response.data.creditCardToken.creditCardTokenId) {
-        //     await UserSchema.update(user._id, { $push: { cards: dataCard } }) 
-        //     break
-        //   }
-        // }
         return response.data
       } else {
         await UserSchema.update(user._id, { $push: { cards: dataCard } }) 
@@ -113,7 +95,6 @@ class PayU {
 		const objectBanks = MakeObjectBanks()
 		try {
       const banks = await axios.post(MakeDataPayU.urlFinal, objectBanks)
-      console.log(banks.data)
 			const typeClient = [
 				{ value: 'N', label: 'Persona natural' },
 				{ value: 'J', label: 'persona jurídica' }
@@ -131,20 +112,13 @@ class PayU {
 			]
 			return { estado: true, data: [ { type: 'typeClient', typeClient },{ type: 'typeDocument', typeDocument },{ type: 'banks', banks: banks.data.banks } ], mensaje: null }
 		} catch (error) {
-      console.log(error)
 			return { estado: false, data: [], mensaje: 'Ha ocurrido un error inesperado' }
 		}		
 	}
 	
 	async pse (data) {
     const objectPse = MakeObjectPse(data)
-    console.log('------------OBJECT PSE ------------------------')
-    console.log(objectPse.transaction.order)
-    console.log('------------OBJECT PSE ------------------------')
     const responsePse = await axios.post(MakeDataPayU.urlFinal, objectPse)
-    console.log('--------------RESPONSE PSE---------------------------------')
-    console.log(responsePse.data)
-    console.log('--------------RESPONSE PSE---------------------------------')
 		if (responsePse.data.code === 'SUCCESS') {
       switch (responsePse.data.transactionResponse.state) {
         case 'DECLINED': {

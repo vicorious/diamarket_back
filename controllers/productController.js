@@ -43,7 +43,6 @@ class Product {
         await ProductModel.update(product._id, { image: file })
       }
     }
-    console.log('Terminidado')
   }
 
   async create(data) {
@@ -178,7 +177,6 @@ class Product {
     const productLength = await ProductModel.count({ subCategory: data.subCategory })
     const initQuantity = Math.floor(Math.random() * productLength) + 1
     const finishQuantity = initQuantity + 5
-    console.log(productLength,initQuantity,finishQuantity)
     const products = await ProductModel.searchByPageMobile({ subCategory: data.subCategory }, initQuantity, finishQuantity)
     const arrayProducts = []
     for (const product of products) {
@@ -370,7 +368,6 @@ class Product {
               defaultprice: 12300
             }
             const create = await ProductModel.create(obj)
-            console.log(create)
           }
         }
         return 'Successful!'

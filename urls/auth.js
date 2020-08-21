@@ -222,16 +222,10 @@ routesAuthWeb.post('/resetpassword', async (request, response) => {
  *              example: null
  */
 routesAuthApp.post('', async (request, response) => {
-  console.log('---------------')
-  console.log(request.io)
-  console.log('---------------')
-
   const { clientId } = request.io
-  console.log(clientId)
   request.body.idSocket = clientId
   const data = request.body
   // const tokenGenerate = await FirebaseAdmin.auth().createCustomToken(id)
-  console.log(data)
   if (data.email) {
     const token = await Auth.createTokenApp(data)
     response.json(token)

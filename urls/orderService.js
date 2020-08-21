@@ -279,7 +279,6 @@ routesOrderServiceApp.post('/calculatevalue', isClient, async (request, response
   // const data = request.body
   // data.user = request.User.id
   const value = await OrderServiceController.calculateValue()
-  console.log("value------------------", value)
   response.json(value)
 })
 
@@ -459,13 +458,12 @@ routesOrderServiceApp.get('', isClient, async (request, response) => {
   const user = request.User.id
   // const user = "5eda8e981fe0e360948a9cc6"
   const { filter } = request.query
-  console.log(filter)
   if (filter.toString() === 'true') {
     const data = await OrderServiceController.allProduct({ $and: [{ user }, { $or: [{ status: 0 }, { status: 1 }, { status: 2 }, { status: 3 }]}]})
     response.json(data)
   } else {
     const data = await OrderServiceController.allProduct({  $and: [{ user }, { $or: [{ status: 4}, { status: 5 }]}]})
-    console.log(data)
+
     response.json(data)
   }  
 })
@@ -522,7 +520,7 @@ routesOrderServiceApp.get('/detail/:id', async (request, response) => {
 })
 
 routesOrderServiceApp.put('/cancel', isClient, async (request, response) => {
-  console.log(request.body)
+
   const _id = request.body._id
   const order = await OrderServiceController.cancel({_id})
   response.json(order)
@@ -535,9 +533,6 @@ routesOrderServiceApp.get('/datapse', async (request, response) => {
 })
 
 routesOrderServiceWeb.post('/responsepayment', async (request, response) => {
-  console.log("............................")
-  console.log(request)
-  console.log("............................")
   response.json(true)
 })
 

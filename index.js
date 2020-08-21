@@ -11,6 +11,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const routeUser = require('./urls/routes')
 const cookieParser = require('cookie-parser')
+const UserController = require('./controllers/userController')
 
 const port = 5002
 const app = asyncify(express())
@@ -18,8 +19,14 @@ const server = http.createServer(app)
 const io = require('socket.io')(server)
 
 let clientId
-io.on('connect', (socket) => {
+io.on('connect', async (socket) => {
   clientId = socket.id
+  socket.on('updateToken', async (data) => {
+    console.log(data, clientId)
+    if (data.user !== null) {
+      await UserController.update(data.user, {  idSocket: clientId })
+    }
+  })
   socket.on('payPse', function (data) {
     io.emit('payPse', data)
   })
@@ -31,10 +38,6 @@ app.use((request, response, next) => {
   request.io = { io, clientId}
   next()
 })
-
-app.get('/', function(req, res){
-  res.send(true);
-});
 
 app.use(cors())
 app.use(morgan('combined'))

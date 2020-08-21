@@ -127,7 +127,6 @@ class Supermarket {
         for (let i = 0; i < 4; i++) {
           for (const object of supermarket.schedules) {
             if (parseInt(object.schedulesInit) === currentDate.getDay()) {
-              console.log(currentDate)
               let data = {
                 day: moment(currentDate),
                 schedules: []
