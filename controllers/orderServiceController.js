@@ -390,6 +390,11 @@ class OrderService {
         const promotions = await this.formatPromotions(order.promotions, order.superMarket)
         order._doc.promotions = promotions
       }
+      const calification = await (await CalificationController.detail({ orderService: order._id })).data
+      delete calification._doc.user
+      delete calification._doc.orderService
+      order._doc.calification = calification
+      console.log(order)
       return { estado: true, data: order, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay una orden asociada' }
@@ -440,11 +445,14 @@ class OrderService {
       case parseInt(4): {
         await NotificationController.messaging({ title: 'DiaMarket', body: 'Tu orden de servicio a finalizado', _id: order._id, status: 5, tokenMessaging: user.tokenCloudingMessagin })
         await OrderServiceModel.update(_id, data)
-        const calification = await CalificationController.detail({ orderService: order._id })
+        const calification = await (await CalificationController.detail({ orderService: order._id })).data
         if (order.methodPayment.toString() === 'cash' || order.methodPayment.toString() === 'dataphone') {
           await OrderServiceModel.update(_id, { paymentStatus: 1 })
         }
-        socket.io.to(user.idSocket).emit('changeStatus', { _id: order._id, state: 5, idCalification: calification._id, supermarket: calification.supermarket.name })
+        delete calification._doc.user
+        delete calification._doc.orderService
+        console.log("calification", calification)
+        socket.io.to(user.idSocket).emit('changeStatus', { _id: order._id, state: 5, calification })
         break
       }
 

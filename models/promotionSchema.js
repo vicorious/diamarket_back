@@ -82,6 +82,9 @@ const Schema = new mongoose.Schema({
   },
   finishDate: {
     type: Types.Date
+  },
+  flagPromotion: {
+    type: Types.Boolean
   }
 })
 class Promotion extends Base {

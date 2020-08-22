@@ -14,6 +14,11 @@ class Promotion {
           data.supermarket.push(object._id)
         }
       }
+      if (data.products.length > 0 && data.products.length < 2){
+        data.flagPromotion = true
+      } else {
+        data.flagPromotion = false
+      }
       delete data._id
       const promotion = await PromotionModel.create(data)
       return { estado: true, data: promotion, mensaje: null }

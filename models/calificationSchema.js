@@ -23,7 +23,7 @@ const Schema = new mongoose.Schema({
   },
   show: {
     type: Types.Boolean,
-    default: false
+    default: true
   }
 })
 

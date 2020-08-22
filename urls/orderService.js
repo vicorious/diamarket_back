@@ -1,6 +1,7 @@
 const express = require('express')
 const asyncify = require('express-asyncify')
 const OrderServiceController = require('../controllers/orderServiceController')
+const CalificationController = require('../controllers/calificationController')
 const PayUController = require('../controllers/payUController')
 const { isSuperAdmin, isAdmin, isClient, isAdminAndIsSuperAdmin } = require('../middleware/token')
 const routesOrderServiceApp = express.Router()
@@ -463,7 +464,16 @@ routesOrderServiceApp.get('', isClient, async (request, response) => {
     response.json(data)
   } else {
     const data = await OrderServiceController.allProduct({  $and: [{ user }, { $or: [{ status: 4}, { status: 5 }]}]})
-
+    if (data.estado === true) {
+      for (const object of data.data) {
+        const calification = await (await CalificationController.detail({ orderService: object._id })).data
+        delete calification._doc.orderService
+        delete calification._doc.user
+        object._doc.calification = calification
+      }
+    }
+    console.log("-----------")
+    console.log(data)
     response.json(data)
   }  
 })
