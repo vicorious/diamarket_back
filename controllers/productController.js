@@ -34,14 +34,19 @@ class Product {
     const routeFile = `${path.dirname(__dirname)}/images`
     const filesImages = await fs.readdirSync(routeFile)
     for (const item of filesImages) {
+      console.log("ITEMMMMMMMM", item)
       const nameItem = item.split('.')[0]
       const product = await ProductModel.get({ idImage: nameItem })
       if (product._id) {
         const bitImage = fs.readFileSync(`${routeFile}/${item}`)
+        console.log(bitImage)
         const base64Image = new Buffer(bitImage).toString('base64')
         const file = await uploadFile(Buffer.from(base64Image, 'base64'), item, 'base64')
+        console.log(file)
+        console.log(product._id)
         await ProductModel.update(product._id, { image: file })
       }
+      break
     }
   }
 

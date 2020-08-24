@@ -443,6 +443,7 @@ class OrderService {
       }
 
       case parseInt(4): {
+        let credits = 0
         await NotificationController.messaging({ title: 'DiaMarket', body: 'Tu orden de servicio a finalizado', _id: order._id, status: 5, tokenMessaging: user.tokenCloudingMessagin })
         await OrderServiceModel.update(_id, data)
         const calification = await (await CalificationController.detail({ orderService: order._id })).data
@@ -451,8 +452,17 @@ class OrderService {
         }
         delete calification._doc.user
         delete calification._doc.orderService
+        console.log("ORDER SERVICE CONTROLLER ORDER SERVICE,", order)
         console.log("calification", calification)
-        socket.io.to(user.idSocket).emit('changeStatus', { _id: order._id, state: 5, calification })
+        if (order.promotions.length > 0) {
+          for (const element of order.promotions) {
+            if (element.promotion.credits > 0) {
+              credits += element.promotion.credits * element.quantity
+            }
+          }
+        }
+        console.log("credits", credits)
+        socket.io.to(user.idSocket).emit('changeStatus', { _id: order._id, state: 5, calification, credits })
         break
       }
 

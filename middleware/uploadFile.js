@@ -1,13 +1,12 @@
 'use strict'
 const AWS = require('aws-sdk')
 const uuid = require('node-uuid')
-const bucketName = 'helpmi-s3'
-
+const bucketName = 'diamarket-s3'
 
 async function uploadFile (image, originalname, type) {
 
-  const ID = 'AKIAQKARQNPYDXZ5TPGV'
-  const SECRET = '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'
+  const ID = 'AKIAJFVTEUNHP6HKLDIA'
+  const SECRET = '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'
   const s3 = new AWS.S3({
     accessKeyId: ID,
     secretAccessKey: SECRET
@@ -32,6 +31,7 @@ async function uploadFile (image, originalname, type) {
     params.Key = name
     params.ACL = 'public-read'
   }
+  console.log(params)
   const file = await s3.upload(params).promise()
   return file.Location
 }
