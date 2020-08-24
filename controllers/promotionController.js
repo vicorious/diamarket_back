@@ -3,6 +3,7 @@ const PromotionModel = require('../models/promotionSchema')
 const SuperMarketModel = require('../models/supermarketSchema')
 const CategoryModel = require('../models/categorySchema')
 const AvailabilityModel = require('../models/availabilitySchema')
+const moment = require('moment')
 
 class Promotion {
   async create (data) {
@@ -86,9 +87,13 @@ class Promotion {
   }
 
   async all (data, initQuantity, finishQuantity) {
-    const promotion = await PromotionModel.searchByPageMobile(data, initQuantity, finishQuantity)
+    // const currentNow = new Date()
+    // const promotion = await PromotionModel.searchByPageMobile({ $and: [{ supermarket: data.supermarket}, { isActive: true }, { initDate: { $gte: new Date(currentNow.setHours('01', '00', '00', '00')) } }, { finishDate: { $lte: new Date() } }]}, initQuantity, finishQuantity)
+    const promotion = await PromotionModel.searchByPageMobile({ $and: [{ finishDate: {$gt: new Date()}}, { initDate: {$lt: new Date()}}]})
     let price  = 0
     for (const object of promotion) {
+      object._doc.initDate = moment(object.initDate).format('YYYY-MM-DD HH:mm')
+      object._doc.finishDate = moment(object.finishDate).format('YYYY-MM-DD HH:mm')
       for (const element of object.products) {
         const category = await CategoryModel.get({ _id: element.category })
         const availability = await AvailabilityModel.get({ idProduct: element._id })
