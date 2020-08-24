@@ -235,4 +235,16 @@ routesAuthApp.post('', async (request, response) => {
   }
 })
 
+routesAuthApp.get('/:email', async(request, response) => {
+  const email = request.params.email
+  const update = await Auth.sendCode({ email })
+  response.json(update)
+})
+
+routesAuthApp.put('/resetpassword', async (request, response) => {
+  const data = request.body
+  const resetPassword = await Auth.resetPassword(data)
+  response.json(resetPassword)
+})
+
 module.exports = { routesAuthApp, routesAuthWeb }
