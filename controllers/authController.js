@@ -87,6 +87,7 @@ class Auth {
     const user = await UserModel.get(email)
     if (user._id) {
       const code = await MakeCode()
+      console.log(code)
       await sendSms(user.cellPhone, code)
       return UserModel.update(user._id, { verifyCode: code })
     } else {
@@ -100,7 +101,7 @@ class Auth {
       const password = await makePassword(data.password)
       return UserModel.update(user._id, { password })
     } else {
-      return { estado: false, data: [], mensaje: 'El usuario no existe' }
+      return { estado: false, data: [], mensaje: 'El codigo no coincide' }
     }
   }
 }
