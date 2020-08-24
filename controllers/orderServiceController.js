@@ -391,9 +391,11 @@ class OrderService {
         order._doc.promotions = promotions
       }
       const calification = await (await CalificationController.detail({ orderService: order._id })).data
-      delete calification._doc.user
-      delete calification._doc.orderService
-      order._doc.calification = calification
+      if(calification._id) {
+        delete calification._doc.user
+        delete calification._doc.orderService
+        order._doc.calification = calification
+      }
       console.log(order)
       return { estado: true, data: order, mensaje: null }
     } else {
