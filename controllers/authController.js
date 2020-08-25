@@ -69,7 +69,7 @@ class Auth {
     if (data.email && data.password) {
       const password = makePassword(data.password)
       const dataUser = await UserModel.get({ email: data.email, password: password, isActive: true })
-      if (dataUser.rol.toString() === 'client') {
+      if (dataUser.rol === 'client') {
         return { estado: false, data: [], mensaje: 'Usuario cliente, no tiene permisos' }
       }
       if (dataUser._id) {
