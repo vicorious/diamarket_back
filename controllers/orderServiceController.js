@@ -396,7 +396,6 @@ class OrderService {
         delete calification._doc.orderService
         order._doc.calification = calification
       }
-      console.log(order)
       return { estado: true, data: order, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay una orden asociada' }

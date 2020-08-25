@@ -472,8 +472,6 @@ routesOrderServiceApp.get('', isClient, async (request, response) => {
         object._doc.calification = calification
       }
     }
-    console.log("-----------")
-    console.log(data)
     response.json(data)
   }  
 })

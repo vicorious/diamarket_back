@@ -33,7 +33,11 @@ io.on('connect', async (socket) => {
   socket.on('changeStatus', function(data){
     io.emit('changeStatus', data)
   })
+  socket.on('disconnect', async (data) => {
+    console.log("DESCONECTADO")
+  })
 })
+
 app.use((request, response, next) => {
   request.io = { io, clientId}
   next()

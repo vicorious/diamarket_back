@@ -13,7 +13,7 @@ class Delivery {
   async all (data) {
     const orders = await DeliveryModel.search(data)
     if (orders.length > 0) {
-      return { estado: true, data: orders, mensaje: null }
+      return { estado: true, data: orders.reverse(), mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay ordenes asociadas' }
     }
