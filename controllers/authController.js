@@ -69,6 +69,9 @@ class Auth {
     if (data.email && data.password) {
       const password = makePassword(data.password)
       const dataUser = await UserModel.get({ email: data.email, password: password, isActive: true })
+      if (dataUser.rol.toString() === 'client') {
+        return { estado: false, data: [], mensaje: 'Usuario cliente, no tiene permisos' }
+      }
       if (dataUser._id) {
         const token = jwt.sign({ _id: dataUser._id }, SECRET, { algorithm: 'HS512', expiresIn: 3600 * 24 })
         return { estado: true, data: { token: token, user: dataUser }, mensaje: null }
