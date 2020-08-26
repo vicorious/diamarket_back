@@ -467,9 +467,11 @@ routesOrderServiceApp.get('', isClient, async (request, response) => {
     if (data.estado === true) {
       for (const object of data.data) {
         const calification = await (await CalificationController.detail({ orderService: object._id })).data
-        delete calification._doc.orderService
-        delete calification._doc.user
-        object._doc.calification = calification
+        if (calification._id) {
+          delete calification._doc.orderService
+          delete calification._doc.user
+          object._doc.calification = calification
+        }
       }
     }
     response.json(data)
