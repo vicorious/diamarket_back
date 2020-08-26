@@ -16,18 +16,19 @@ class Product {
     FROM dbo.t120_mc_items as items
     WHERE items.f120_id_cia = 6 AND items.f120_ind_venta = 1;
   `
-    if (products.recordset.length > 0) {
-      for (const object of products.recordset) {
-        const data = {
-          idPos: object.id_product,
-          name: object.name_product,
-          description: object.f120_descripcion_corta,
-          idImage: object.id_item
-        }
-        await ProductModel.create(data)
-      }
-      return products
-    }
+  return products
+    // if (products.recordset.length > 0) {
+    //   for (const object of products.recordset) {
+    //     const data = {
+    //       idPos: object.id_product,
+    //       name: object.name_product,
+    //       description: object.f120_descripcion_corta,
+    //       idImage: object.id_item
+    //     }
+    //     await ProductModel.create(data)
+    //   }
+    //   return products
+    // }
   }
 
   async assignedImage() {

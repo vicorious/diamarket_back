@@ -8,21 +8,24 @@ const MsSql = require('mssql')
 
 class Availability {
   async createPos () {
+    console.log("HOLAAA")
     const supermarkets = await SuperMarketModel.search({})
+    const stockProd = []
     for (const object of supermarkets) {
       const stock = await this.createStockPos(object.idPos)
-      for (const objectStock of stock.recordset) {
-        const product = await ProductModel.get({ idPos: objectStock.f126_rowid_item })
-        const dataStock = {
-          idSupermarket: object._id,
-          idProduct: product._id,
-          quantity: objectStock.f400_cant_existencia_1,
-          price: objectStock.f126_precio
-        }
-        await availabilityModel.create(dataStock)
-      }
+      stockProd.push({ supermarket: object, stock })
+      // for (const objectStock of stock.recordset) {
+      //   const product = await ProductModel.get({ idPos: objectStock.f126_rowid_item })
+      //   const dataStock = {
+      //     idSupermarket: object._id,
+      //     idProduct: product._id,
+      //     quantity: objectStock.f400_cant_existencia_1,
+      //     price: objectStock.f126_precio
+      //   }
+      //   await availabilityModel.create(dataStock)
+      // }
     }
-    return 'Perfecto'
+    return stockProd
   }
 
   async createStockPos (supermarket) {
