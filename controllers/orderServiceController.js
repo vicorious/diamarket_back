@@ -493,7 +493,7 @@ class OrderService {
   }
 
   async cancelServicePse(order) {
-    await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden de servicio ha sido cancelada', _id: order._id, state: 4, tokenMessaging: order.user.tokenCloudingMessagin })
+    // await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden de servicio ha sido cancelada', _id: order._id, state: 4, tokenMessaging: order.user.tokenCloudingMessagin })
     await OrderServiceModel.update(_id, { status: 5 })
   }
 
@@ -540,7 +540,6 @@ class OrderService {
           }
           await this.validateOfferOrCreditsPromotions(newOrder.user._id, newOrder.promotions)
         }
-
         socket.io.to(user.idSocket).emit('payPse', { message: 'Transacción aprobada', status: true })
         break
       }
