@@ -167,7 +167,7 @@ class OrderService {
       const order = await OrderServiceModel.create(data)
       await this.validateDirection(data.direction, user)
       await UserModel.update(user._id, { supermarketFavorite: order._id })
-
+      await CalificationController.create({ orderService: order._id, user: user._id, supermarket: data.superMarket })
     }
     // io.sockets.to(user.idSocket).emit('payPse', paymentPse) 
     return paymentPse
