@@ -48,7 +48,7 @@ class OrderService {
         data.paymentStatus = 0
         data.transactionId = '0'
         const order = await OrderServiceModel.create(data)
-        await UserModel.update(user._id, { supermarketFavorite: order._id })
+        await UserModel.update(user._id, { supermarketFavorite: data.superMarket })
         await CalificationController.create({ orderService: order._id, user: user._id, supermarket: data.superMarket })
         await this.validateDirection(data.direction, user)
         return { estado: true, data: order, mensaje: null }
@@ -166,7 +166,7 @@ class OrderService {
       data.paymentStatus = 0
       const order = await OrderServiceModel.create(data)
       await this.validateDirection(data.direction, user)
-      await UserModel.update(user._id, { supermarketFavorite: order._id })
+      await UserModel.update(user._id, { supermarketFavorite: data.superMarket })
       await CalificationController.create({ orderService: order._id, user: user._id, supermarket: data.superMarket })
     }
     // io.sockets.to(user.idSocket).emit('payPse', paymentPse) 
