@@ -493,7 +493,7 @@ class OrderService {
   }
 
   async cancelServicePse(order) {
-    // await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden de servicio ha sido cancelada', _id: order._id, state: 4, tokenMessaging: order.user.tokenCloudingMessagin })
+    await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden de servicio ha sido cancelada', _id: order._id, status: 4, tokenMessaging: order.user.tokenCloudingMessagin })
     await OrderServiceModel.update(order._id, { status: 5 })
   }
 
@@ -526,9 +526,9 @@ class OrderService {
 
   async validateResponsePaymentPse(data, socket) {
     // data.polResponseCode = '1'
-    console.log(data)
+    console.log(data) 
     const order = await OrderServiceModel.get({ transactionId: data.transactionId })
-    const user = await OrderServiceModel.get({ _id: order.user._id })
+    const user = await UserModel.get({ _id: order.user._id })
     switch (data.polResponseCode) {
       case '1': {
         await OrderServiceModel.update(order._id, { paymentStatus: 1 })
@@ -541,19 +541,23 @@ class OrderService {
           await this.validateOfferOrCreditsPromotions(newOrder.user._id, newOrder.promotions)
         }
         socket.io.to(user.idSocket).emit('payPse', { message: 'Transacción aprobada', status: true })
+        // socket.io.emit('payPse', { message: 'Transacción pendiente, por favor revisar si el débito fue realizado en el banco.', status: true })
         break
       }
 
       case '5': {
         await OrderServiceModel.update(order._id, { paymentStatus: 2 })
         socket.io.to(user.idSocket).emit('payPse', { message: 'Transacción fallida', status: false })
+        // socket.io.emit('payPse', { message: 'Transacción pendiente, por favor revisar si el débito fue realizado en el banco.', status: true })
         await this.cancelServicePse(order)
         break
       }
 
       case '4': {
         await OrderServiceModel.update(order._id, { paymentStatus: 2 })
+        console.log(user.idSocket)
         socket.io.to(user.idSocket).emit('payPse', { message: 'Transacción rechazada', status: false })
+        // socket.io.emit('payPse', { message: 'Transacción pendiente, por favor revisar si el débito fue realizado en el banco.', status: true })
         await this.cancelServicePse(order)
         break
       }
@@ -562,6 +566,7 @@ class OrderService {
         await OrderServiceModel.update(order._id, { paymentStatus: 0 })
         const newOrder = await OrderServiceModel.get({ _id: order._id })
         socket.io.to(user.idSocket).emit('payPse', { message: 'Transacción pendiente, por favor revisar si el débito fue realizado en el banco.', status: true })
+        // socket.io.emit('payPse', { message: 'Transacción pendiente, por favor revisar si el débito fue realizado en el banco.', status: true })
         break
       }
     }
