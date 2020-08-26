@@ -525,7 +525,9 @@ class OrderService {
   }
 
   async validateResponsePaymentPse(data, socket) {
-    data.polResponseCode = '1'
+    // data.polResponseCode = '1'
+    console.log(data)
+    const order = await OrderServiceModel.get({ transactionId: data.transactionId })
     const user = await OrderServiceModel.get({ _id: order.user._id })
     switch (data.polResponseCode) {
       case '1': {

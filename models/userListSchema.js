@@ -64,7 +64,7 @@ class UserList extends Base {
       },
       {
         path: 'user',
-        select: '_id isActive dateCreate logs cards directions userList order name identification email cellPhone rol supermarketFavorite imageProfile birthday credits',
+        select: '_id isActive dateCreate logs cards directions userList order name identification email cellPhone rol imageProfile birthday credits',
         model: 'User'
       }
     ]
