@@ -494,7 +494,7 @@ class OrderService {
 
   async cancelServicePse(order) {
     // await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden de servicio ha sido cancelada', _id: order._id, state: 4, tokenMessaging: order.user.tokenCloudingMessagin })
-    await OrderServiceModel.update(_id, { status: 5 })
+    await OrderServiceModel.update(order._id, { status: 5 })
   }
 
   async forSupermarket(data) {
