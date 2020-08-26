@@ -25,7 +25,7 @@ class CalificationController {
 		const calification = await CalificationSchema.get({ _id: data._id })
 		if (calification._id) {
 			await CalificationSchema.update(calification._id, { calification: data.calification, show: false })
-			const califications = await CalificationSchema.search({ calification: { $gte: 0 } })
+			const califications = await CalificationSchema.search({supermarket: calification.supermarket._id, calification: { $gte: 0 } })
 			let number = 0
 			califications.forEach(element => number += parseInt(element.calification))
 			number = number / califications.length
