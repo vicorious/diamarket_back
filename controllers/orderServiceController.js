@@ -319,30 +319,32 @@ class OrderService {
           price += parseInt(availability.price)
           products.push(product.data)
         }
-        object.promotion._doc.products = products
-        object.promotion._doc.priceProducts = price
-        if (object.promotion.credits === 0 && object.promotion.discount === 0) {
-          object.promotion._doc.type = 'totalValue'
-          object.promotion._doc.amount = object.promotion.value
-          object.promotion._doc.value = 0
-          delete object.promotion._doc.discount
-          delete object.promotion._doc.credits
-        } else if (object.promotion.credits > 0 && object.promotion.discount === 0) {
-          object.promotion._doc.type = 'credits'
-          object.promotion._doc.amount = object.promotion.value
-          object.promotion._doc.value = object.promotion.credits
-          delete object.promotion._doc.discount
-          delete object.promotion._doc.credits
-        } else if (object.promotion.discount > 0 && object.promotion.credits === 0) {
-          object.promotion._doc.type = 'discount'
-          object.promotion._doc.value = object.promotion._doc.discount
-          object.promotion._doc.amount = Math.abs(((price * object.promotion.discount) / 100) - price)
-          delete object.promotion._doc.discount
-          delete object.promotion._doc.credits
+        if (object.promotion._doc !== undefined) {
+          object.promotion._doc.products = products
+          object.promotion._doc.priceProducts = price
+          if (object.promotion.credits === 0 && object.promotion.discount === 0) {
+            object.promotion._doc.type = 'totalValue'
+            object.promotion._doc.amount = object.promotion.value
+            object.promotion._doc.value = 0
+            delete object.promotion._doc.discount
+            delete object.promotion._doc.credits
+          } else if (object.promotion.credits > 0 && object.promotion.discount === 0) {
+            object.promotion._doc.type = 'credits'
+            object.promotion._doc.amount = object.promotion.value
+            object.promotion._doc.value = object.promotion.credits
+            delete object.promotion._doc.discount
+            delete object.promotion._doc.credits
+          } else if (object.promotion.discount > 0 && object.promotion.credits === 0) {
+            object.promotion._doc.type = 'discount'
+            object.promotion._doc.value = object.promotion._doc.discount
+            object.promotion._doc.amount = Math.abs(((price * object.promotion.discount) / 100) - price)
+            delete object.promotion._doc.discount
+            delete object.promotion._doc.credits
+          }
+          price = 0
+          object.promotion._doc.quantity = object.quantity
+          newPromotions.push(object.promotion)
         }
-        price = 0
-        object.promotion._doc.quantity = object.quantity
-        newPromotions.push(object.promotion)
       }
       return newPromotions
     } else {
@@ -445,7 +447,7 @@ class OrderService {
 
       case parseInt(4): {
         let credits = 0
-        await NotificationController.messaging({ title: 'DiaMarket', body: 'Tu orden de servicio a finalizado', _id: order._id, status: 5, tokenMessaging: user.tokenCloudingMessagin })
+        await NotificationController.messaging({ title: 'DiaMarket', body: 'Tu orden de servicio a finalizado', _id: order._id, status: 6, tokenMessaging: user.tokenCloudingMessagin })
         await OrderServiceModel.update(_id, data)
         const calification = await (await CalificationController.detail({ orderService: order._id })).data
         if (order.methodPayment.toString() === 'cash' || order.methodPayment.toString() === 'dataphone') {
@@ -463,7 +465,7 @@ class OrderService {
           }
         }
         console.log("credits", credits)
-        socket.io.to(user.idSocket).emit('changeStatus', { _id: order._id, state: 5, calification, credits })
+        socket.io.to(user.idSocket).emit('changeStatus', { _id: order._id, state: 6, calification, credits })
         break
       }
 
@@ -474,8 +476,9 @@ class OrderService {
         } else {
           // Notificacion para el cliente de cancelacion de la orden
           if (order.codeCancelation === parseInt(data.codeCancelation)) {
-            await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden de servicio ha sido cancelada', _id: order._id, status: 4, tokenMessaging: user.tokenCloudingMessagin })
-            await OrderServiceModel.update(_id, { status: 5 })
+            await NotificationController.messaging({ title: 'DiaMarket', body: 'Su orden de servicio ha sido cancelada', _id: order._id, status: 5, tokenMessaging: user.tokenCloudingMessagin })
+            await OrderServiceModel.update(_id, { status: 5, paymentStatus: 3 })
+            socket.io.to(user.idSocket).emit('changeStatus', { _id: order._id, state: 5 })
           } else {
             return 'error'
           }
