@@ -266,6 +266,7 @@ class OrderService {
       let integer = 0
       for (const object of orders) {
         let newProducts = []
+        if (object.products.length > 0) {
         for (const dataProduct of object.products) {
           const response = await ProductSchema.detail({ _id: dataProduct.product })
           if (response.data._id) {
@@ -273,6 +274,7 @@ class OrderService {
           }
         }
         orders[integer].products = newProducts
+        }
         integer++
       }
       return { estado: true, data: orders.reverse(), mensaje: null }
@@ -412,6 +414,11 @@ class OrderService {
         const response = await ProductSchema.detail({ _id: dataProduct.product })
         if (response.data._id) {
           newProducts.push(response.data)
+        }
+      }
+      for (const object of order._doc.promotions) {
+        for (const key in object.promotion.products) {
+          object.promotion.products[key] = await (await ProductSchema.detail({ _id: object.promotion.products[key] })).data
         }
       }
       order.products = newProducts

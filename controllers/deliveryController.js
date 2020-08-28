@@ -3,6 +3,7 @@ const OrderServiceController = require('../controllers/orderServiceController')
 const NotificationController = require('../controllers/notificacionController')
 const UserModel = require('../models/userSchema')
 const CalificationController = require('../controllers/calificationController')
+const ProductSchema = require('../models/productSchema')
 
 class Delivery {
   async create (data) {
@@ -23,7 +24,12 @@ class Delivery {
     const order = await DeliveryModel.get(_id)
     if (order._id) {
       const orderService = await OrderServiceController.detail({ _id: order.orderId })
-      order._doc.orderId = orderService
+      order._doc.orderId = orderService.data
+      for(const object of order._doc.orderId._doc.promotions) {
+        for (const key in object.promotion.products) {
+          object.promotion.products[key] = await ProductSchema.get({_id: object.promotion.products[key]})
+        }
+      }
       return { estado: true, data: order, mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay ordenes asociadas' }
