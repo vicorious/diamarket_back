@@ -586,8 +586,9 @@ class OrderService {
   }
 
   async cronJob () {
+    console.log("CRON JOB EJECUTADO CORRECTAMENTE")
     const currentDate = new Date()
-    const orders = await OrderServiceModel.search({ dateService: { $gte: new Date()}, dateService: { $lte: new Date(currentDate.setHours('23','59','59','59')) }, status: 0 })
+    const orders = await OrderServiceModel.search({ dateService: { $gte: new Date(currentDate.setHours('01','00','00','00'))}, dateService: { $lte: new Date(currentDate.setHours('23','59','59','59')) }, status: 0 })
     for (const object of orders) {
       // const scheduleSupermarket = await SuperMarketController.schedulesSupermarket(object.superMarket._id)
       // for (const element of scheduleSupermarket) {
