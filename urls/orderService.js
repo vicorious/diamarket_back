@@ -556,6 +556,11 @@ routesOrderServiceApp.all('/responsepaymentpse', async (request, response) => {
   response.json(true)
 })
 
+routesOrderServiceWeb.get('/cronjob', async (request, response) => {
+  const cron = await OrderServiceController.cronJob()
+  response.json(cron)
+})
+
 // routesOrderServiceWeb('/responsepaymentpse', async (request, response) => {
   
   

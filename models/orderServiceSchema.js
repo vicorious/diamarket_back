@@ -129,7 +129,7 @@ const Schema = new mongoose.Schema({
     default: Date.now
   },
   dateService: {
-    type: Types.String
+    type: Types.Date
   },
   hour: {
     type: Types.String

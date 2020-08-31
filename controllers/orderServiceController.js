@@ -10,7 +10,10 @@ const ProductSchema = require('../controllers/productController')
 const CategorySchema = require('../models/categorySchema')
 const AmountsMininumSchema = require('../models/amountsMininumSchema')
 const makeCode = require('../utils/makeCode')
+const moment = require('moment')
+const SuperMarketController = require('./supermarketController')
 const CalificationController = require('../controllers/calificationController')
+const MakeHour = require('../utils/makeHour')
 const uuid = require('node-uuid')
 
 class OrderService {
@@ -580,6 +583,27 @@ class OrderService {
         break
       }
     }
+  }
+
+  async cronJob () {
+    const currentDate = new Date()
+    const orders = await OrderServiceModel.search({ dateService: { $gte: new Date()}, dateService: { $lte: new Date(currentDate.setHours('23','59','59','59')) }, status: 0 })
+    for (const object of orders) {
+      // const scheduleSupermarket = await SuperMarketController.schedulesSupermarket(object.superMarket._id)
+      // for (const element of scheduleSupermarket) {
+      //   if (moment(element.day).format('YYYY-MM-DD') === moment(object.dateService).format('YYYY-MM-DD')) {
+      //     console.log(element.schedules)
+      //   }
+      // }
+      const hourService = await MakeHour(object.hour.split("-")[1].split(" ")[1], object.hour.split("-")[1].split(" ")[2])
+      currentDate.setHours(`${hourService.split(':')[0]}`, '00', '00', '00')
+      console.log(parseInt(moment().format('HHmm')))
+      console.log(parseInt(moment(new Date(currentDate)).format('HHmm')))
+      if (parseInt(moment().format('HHmm')) > parseInt(moment(new Date(currentDate)).format('HHmm'))) {
+        await OrderServiceModel.update(object._id, { status: 5, paymentStatus: 3 })
+      }
+    }
+    return orders
   }
 }
 
