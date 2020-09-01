@@ -89,7 +89,7 @@ class Promotion {
   async all (data, initQuantity, finishQuantity) {
     // const currentNow = new Date()
     // const promotion = await PromotionModel.searchByPageMobile({ $and: [{ supermarket: data.supermarket}, { isActive: true }, { initDate: { $gte: new Date(currentNow.setHours('01', '00', '00', '00')) } }, { finishDate: { $lte: new Date() } }]}, initQuantity, finishQuantity)
-    const promotion = await PromotionModel.searchByPageMobile({ $and: [{ finishDate: {$gt: new Date()}}, { initDate: {$lt: new Date()}}, { name: 'Jabones' }]})
+    const promotion = await PromotionModel.searchByPageMobile({ $and: [{ finishDate: {$gt: new Date()}}, { initDate: {$lt: new Date()}}]})
     let price  = 0
     for (const object of promotion) {
       console.log(object)

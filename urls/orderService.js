@@ -50,8 +50,10 @@ const routesOrderServiceWeb = express.Router()
  *              type: string
  *              example: No hay ordenes registradas
  */
-routesOrderServiceWeb.get('', isSuperAdmin, async (request, response) => {
-  const data = await OrderServiceController.all({})
+routesOrderServiceWeb.get('/isimmediate/:isImmediate', isSuperAdmin, async (request, response) => {
+  let isImmediate = false
+  request.params.isImmediate === 'false' ? isImmediate = false : isImmediate = true
+  const data = await OrderServiceController.all({ isImmediate })
   response.json(data)
 })
 
@@ -149,9 +151,11 @@ routesOrderServiceWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request,
  *              type: string
  *              example: No hay ordenes registradas
  */
-routesOrderServiceWeb.get('/forsupermarket', isAdmin, async (request, response) => {
+routesOrderServiceWeb.get('/forsupermarket/:isImmediate', isAdmin, async (request, response) => {
   const idAdmin = request.User.id
-  const orders = await OrderServiceController.forSupermarket({ idAdmin })
+  let isImmediate = false
+  request.params.isImmediate === 'false' ? isImmediate = false : isImmediate = true
+  const orders = await OrderServiceController.forSupermarket({ idAdmin }, { isImmediate })
   response.json(orders)
 })
 

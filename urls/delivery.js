@@ -47,9 +47,11 @@ const DeliveryController = require('../controllers/deliveryController')
  *              type: string
  *              example: No hay ordenes registradas
  */
-routesDeliveryWeb.get('', isDomiciliary, async (request, response) => {
+routesDeliveryWeb.get('/isimmediate/:isImmediate', isDomiciliary, async (request, response) => {
+  let isImmediate = false
+  request.params.isImmediate === 'false' ? isImmediate = false : isImmediate = true
   const idUser = request.User.id
-  const orders = await DeliveryController.all({ idUser })
+  const orders = await DeliveryController.all({ idUser }, isImmediate)
   response.json(orders)
 })
 

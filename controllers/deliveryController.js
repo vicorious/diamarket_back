@@ -11,10 +11,24 @@ class Delivery {
     return { estado: true, data: create, mensaje: null }
   }
 
-  async all (data) {
+  async all (data, isImmediate) {
     const orders = await DeliveryModel.search(data)
     if (orders.length > 0) {
-      return { estado: true, data: orders.reverse(), mensaje: null }
+      let newArray = []
+      if(isImmediate) {
+        for (const object of orders) {
+          if (object.orderId.isImmediate) {
+            newArray.push(object)
+          }
+        }  
+      } else {
+        for (const object of orders) {
+          if (!object.orderId.isImmediate) {
+            newArray.push(object)
+          }
+        }
+      }
+      return { estado: true, data: newArray.reverse(), mensaje: null }
     } else {
       return { estado: false, data: [], mensaje: 'No hay ordenes asociadas' }
     }

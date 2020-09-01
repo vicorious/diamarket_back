@@ -18,6 +18,11 @@ const uuid = require('node-uuid')
 
 class OrderService {
   async create(data, io) {
+    if (moment(data.dateService).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')) {
+      data.isImmediate = true
+    } else {
+      data.isImmediate = false
+    }
     switch (data.methodPayment.toLowerCase()) {
       case 'credit': {
         const order = await this.credit(data)
@@ -510,9 +515,9 @@ class OrderService {
     await OrderServiceModel.update(order._id, { status: 5 })
   }
 
-  async forSupermarket(data) {
+  async forSupermarket(data, query) {
     const supermarket = await SuperMarketSchema.get(data)
-    const orders = await OrderServiceModel.search({ superMarket: supermarket._id })
+    const orders = await OrderServiceModel.search({ superMarket: supermarket._id, isImmediate: query.isImmediate})
     if (orders.length > 0) {
       return { estado: true, data: orders.reverse(), mensaje: null }
     } else {
@@ -601,6 +606,8 @@ class OrderService {
       console.log(parseInt(moment().format('HHmm')))
       console.log(parseInt(moment(new Date(currentDate)).format('HHmm')))
       if (parseInt(moment().format('HHmm')) > parseInt(moment(new Date(currentDate)).format('HHmm'))) {
+        const user = await UserModel.get({ _id: object.user._id })
+        await NotificationController.messaging({ title: 'DiaMarket', body: 'Tu pedido ha sido cancelado, el supermercado no lo ha aceptado', _id: object._id, status: 5, tokenMessaging: user.tokenCloudingMessagin })
         await OrderServiceModel.update(object._id, { status: 5, paymentStatus: 3 })
       }
     }
