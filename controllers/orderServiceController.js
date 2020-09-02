@@ -607,8 +607,8 @@ class OrderService {
       console.log(parseInt(moment(new Date(currentDate)).format('HHmm')))
       if (parseInt(moment().format('HHmm')) > parseInt(moment(new Date(currentDate)).format('HHmm'))) {
         const user = await UserModel.get({ _id: object.user._id })
-        await NotificationController.messaging({ title: 'DiaMarket', body: 'Tu pedido ha sido cancelado, el supermercado no lo ha aceptado', _id: object._id, status: 5, tokenMessaging: user.tokenCloudingMessagin })
-        await OrderServiceModel.update(object._id, { status: 5, paymentStatus: 3 })
+        // await NotificationController.messaging({ title: 'DiaMarket', body: 'Tu pedido ha sido cancelado, el supermercado no lo ha aceptado', _id: object._id, status: 5, tokenMessaging: user.tokenCloudingMessagin })
+        // await OrderServiceModel.update(object._id, { status: 5, paymentStatus: 3 })
       }
     }
     return orders
