@@ -238,7 +238,7 @@ routesPromotionWeb.put('/:id', isSuperAdmin, convertBase64ToFile, async (request
  *              type: string
  *              example: 'La promocion no se encuentra registrada'
  */
-routesPromotionWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request, response) => {
+routesPromotionWeb.get('/detail/:id', async (request, response) => {
   const _id = request.params.id
   const detail = await PromotionController.detail({ _id })
   response.json(detail)
@@ -478,7 +478,7 @@ routesPromotionApp.get('/all/:supermarket/:initquantity/:finishquantity', async 
  *              type: string
  *              example: 'La promocion no se encuentra registrada'
  */
-routesPromotionApp.get('/detail/:id', async (request, response) => {
+routesPromotionApp.get('/detail/:id', isClient, async (request, response) => {
   const _id = request.params.id
   const detail = await PromotionController.detailApp({ _id })
   response.json(detail)
