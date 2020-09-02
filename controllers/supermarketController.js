@@ -172,11 +172,11 @@ class Supermarket {
                   end: ''
                 }
                 if ( j === 0 ) {
-                  newSchedule.start = moment(formatHourInit).format('HH:mm')
-                  newSchedule.end = moment(new Date(end.setHours(end.getHours() + 2))).format('HH:mm')
+                  newSchedule.start = moment(formatHourInit)
+                  newSchedule.end = moment(new Date(end.setHours(end.getHours() + 2)))
                 } else {
-                  newSchedule.start = moment(new Date(formatHourInit.setHours(formatHourInit.getHours() + 2))).format('HH:mm')
-                  newSchedule.end = moment(new Date(end.setHours(end.getHours() + 2))).format('HH:mm')
+                  newSchedule.start = moment(new Date(formatHourInit.setHours(formatHourInit.getHours() + 2)))
+                  newSchedule.end = moment(new Date(end.setHours(end.getHours() + 2)))
                 }
                 data.schedules.push(newSchedule)
               }
