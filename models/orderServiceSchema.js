@@ -146,7 +146,7 @@ class OrderService extends Base {
     super()
     this.sort = { name: 1 }
     this.model = mongoose.model('OrderService', Schema)
-    this.fields = 'value direction methodPayment status superMarket products promotions user dateCreate codeCancelation paymentStatus transactionId referenceCode dateService hour isImmediate'
+    this.fields = 'value direction methodPayment status superMarket products promotions user dateCreate codeCancelation paymentStatus transactionId referenceCode dateService hour isImmediate description credits'
     this.populate = [
       {
         path: 'superMarket',

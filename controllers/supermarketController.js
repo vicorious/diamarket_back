@@ -125,36 +125,6 @@ class Supermarket {
       let currentDate = new Date()
       if (supermarket.schedules.length > 0) {
         for (let i = 0; i < 4; i++) {
-          // for (const object of supermarket.schedules) {
-          //   if (parseInt(object.schedulesInit) === currentDate.getDay()){
-          //     let data = {
-          //       day: moment(currentDate),
-          //       schedules: []
-          //     }
-          //     let hour = new Date()
-          //     const formatHourInit = new Date(hour.setHours(`${object.hourInit.split(':')[0]}`, `${object.hourInit.split(':')[1]}`))
-          //     const formatHourFinish = new Date(hour.setHours(`${object.hourFinish.split(':')[0]}`, `${object.hourFinish.split(':')[1]}`))
-          //     console.log(moment(formatHourInit).format('HH:mm'), moment(formatHourFinish).format('HH:mm'), object)
-          //     let end = new Date(hour.setHours(`${object.hourInit.split(':')[0]}`, `${object.hourInit.split(':')[1]}`))
-          //     const quantity = (moment(formatHourInit).diff(moment(formatHourFinish), 'hours') / 2)
-          //     for (let j = 0; j < Math.abs(quantity); j++) {
-          //       let newSchedule = {
-          //         start: '',
-          //         end: ''
-          //       }
-          //       if ( j=== 0 ) {
-          //         newSchedule.start = moment(formatHourInit).format('HH:MM')
-          //         newSchedule.end = moment(new Date(end.setHours(end.getHours() + 2 ))).format('HH:MM')
-          //       } else {
-          //         newSchedule.start = moment(new Date(formatHourInit.setHours(formatHourInit.getHours() + 2))).format('HH:MM')
-          //         newSchedule.end = moment(new Date(end.setHours(end.getHours() + 2))).format('HH:MM')
-          //       }
-          //       data.schedules.push(newSchedule)
-          //     }
-          //     newArray.push(data)
-          //   }
-          // }
-          // currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1))
           for (const object of supermarket.schedules) {
             if (parseInt(object.schedulesInit) === currentDate.getDay()) {
               let data = {

@@ -4,6 +4,7 @@ const NotificationController = require('../controllers/notificacionController')
 const UserModel = require('../models/userSchema')
 const CalificationController = require('../controllers/calificationController')
 const ProductSchema = require('../models/productSchema')
+const moment = require('moment')
 
 class Delivery {
   async create (data) {
@@ -12,21 +13,20 @@ class Delivery {
   }
 
   async all (data, isImmediate) {
-    const orders = await DeliveryModel.search(data)
+    const orders = await DeliveryModel.search({ idUser: data.idUser })
     if (orders.length > 0) {
       let newArray = []
-      if(isImmediate) {
-        for (const object of orders) {
-          if (object.orderId.isImmediate) {
+      let date = moment()
+      for (const object of orders) {
+        if (isImmediate) {
+          if (date.format('YYYY-MM-DD') === moment(object.orderId.dateService).format('YYYY-MM-DD')) {
             newArray.push(object)
           }
-        }  
-      } else {
-        for (const object of orders) {
-          if (!object.orderId.isImmediate) {
+        } else {
+          if (moment(object.orderId.dateService).isAfter(date)) {
             newArray.push(object)
           }
-        }
+        } 
       }
       return { estado: true, data: newArray.reverse(), mensaje: null }
     } else {

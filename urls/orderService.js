@@ -4,6 +4,7 @@ const OrderServiceController = require('../controllers/orderServiceController')
 const CalificationController = require('../controllers/calificationController')
 const PayUController = require('../controllers/payUController')
 const { isSuperAdmin, isAdmin, isClient, isAdminAndIsSuperAdmin } = require('../middleware/token')
+const moment = require('moment')
 const routesOrderServiceApp = express.Router()
 const routesOrderServiceWeb = express.Router()
 
@@ -51,9 +52,21 @@ const routesOrderServiceWeb = express.Router()
  *              example: No hay ordenes registradas
  */
 routesOrderServiceWeb.get('/isimmediate/:isImmediate', isSuperAdmin, async (request, response) => {
-  let isImmediate = false
-  request.params.isImmediate === 'false' ? isImmediate = false : isImmediate = true
-  const data = await OrderServiceController.all({ isImmediate })
+  if(request.params.isImmediate === 'false'){
+    const { _d } = moment().set('date' ,moment().get('date') + 1).set('hours', 00).set('minutes', 00)
+    const data = await OrderServiceController.all({ dateService: { $gte: _d}})
+    response.json(data)
+  } else {
+    const hourInit = moment().set('hours', 00).set('minutes', 00)
+    const hourFinish = moment().set('hours', 23).set('minutes', 59)
+    const data = await OrderServiceController.all({ $and: [{dateService: { $gte: hourInit._d }}, {dateService: { $lte: hourFinish._d }} ]})
+    response.json(data)
+  }
+})
+
+routesOrderServiceWeb.get('/history', async(request, response) => {
+  const date = moment().set('hours', 00).set('minutes', 00)
+  const data = await OrderServiceController.all({ dateService: { $lte: date._d } })
   response.json(data)
 })
 
@@ -153,10 +166,23 @@ routesOrderServiceWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request,
  */
 routesOrderServiceWeb.get('/forsupermarket/:isImmediate', isAdmin, async (request, response) => {
   const idAdmin = request.User.id
-  let isImmediate = false
-  request.params.isImmediate === 'false' ? isImmediate = false : isImmediate = true
-  const orders = await OrderServiceController.forSupermarket({ idAdmin }, { isImmediate })
-  response.json(orders)
+  if(request.params.isImmediate === 'false'){
+    const { _d } = moment().set('date' ,moment().get('date') + 1).set('hours', 00).set('minutes', 00)
+    const data = await OrderServiceController.forSupermarket({idAdmin}, {dateService: [{ dateService: { $gte: _d}}]})
+    response.json(data)
+  } else {
+    const hourInit = moment().set('hours', 00).set('minutes', 00)
+    const hourFinish = moment().set('hours', 23).set('minutes', 59)
+    const data = await OrderServiceController.forSupermarket({idAdmin}, { dateService: [{dateService: { $gte: hourInit._d }}, {dateService: { $lte: hourFinish._d }} ] })
+    response.json(data)
+  }
+})
+
+routesOrderServiceWeb.get('/forsupermarket/history', isAdmin, async(request, response) => {
+  const idAdmin = request.User.id
+  const date = moment().set('hours', 00).set('minutes', 00)
+  const data = await OrderServiceController.forSupermarket({idAdmin}, { dateService: [ {dateService: {$lte: date._d}} ] })
+  response.json(data)
 })
 
 /**
@@ -563,6 +589,11 @@ routesOrderServiceApp.all('/responsepaymentpse', async (request, response) => {
 routesOrderServiceWeb.get('/cronjob', async (request, response) => {
   const cron = await OrderServiceController.cronJob()
   response.json(cron)
+})
+
+routesOrderServiceWeb.get('/report/:dateInit/:dateFinish', isAdminAndIsSuperAdmin, async(request, response) => {
+  const file = await OrderServiceController.report(request.User.id, request.User.rol, moment(request.params.dateInit), moment(request.params.dateFinish))
+  response.send(file)
 })
 
 // routesOrderServiceWeb('/responsepaymentpse', async (request, response) => {

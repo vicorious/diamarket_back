@@ -15,6 +15,8 @@ const SuperMarketController = require('./supermarketController')
 const CalificationController = require('../controllers/calificationController')
 const MakeHour = require('../utils/makeHour')
 const uuid = require('node-uuid')
+const excel = require('exceljs')
+const Path = require('path')
 
 class OrderService {
   async create(data, io) {
@@ -485,6 +487,9 @@ class OrderService {
       }
 
       case parseInt(5): {
+        console.log("_------------------")
+          console.log(_id, data)
+          console.log("_------------------")
         if (!data.codeCancelation) {
           const codeCancelation = makeCode()
           return OrderServiceModel.update(_id, { codeCancelation })
@@ -516,8 +521,9 @@ class OrderService {
   }
 
   async forSupermarket(data, query) {
+    console.log(data, query)
     const supermarket = await SuperMarketSchema.get(data)
-    const orders = await OrderServiceModel.search({ superMarket: supermarket._id, isImmediate: query.isImmediate})
+    const orders = await OrderServiceModel.search({ superMarket: supermarket._id, $and: query.dateService})
     if (orders.length > 0) {
       return { estado: true, data: orders.reverse(), mensaje: null }
     } else {
@@ -612,6 +618,87 @@ class OrderService {
       }
     }
     return orders
+  }
+
+  async report (_id, role, dateInit, dateFinish) {
+    let orders
+    if (role.toString() === 'superadministrator') {
+      orders = await OrderServiceModel.search({$and: [{ dateService: { $gte: new Date(dateInit) }}, { dateService: { $lte: new Date(dateFinish) }}]})
+    } else {
+      const supermarket = await SuperMarketSchema.get({idAdmin: _id})
+      orders = await OrderServiceModel.search({$and: [{ superMarket: supermarket._id }, { dateService: { $gte: new Date(dateInit) }}, { dateService: { $lte: new Date(dateFinish) }}]})
+    }
+    const route = `${Path.dirname(__dirname)}/public`
+    const workBook = new excel.Workbook()
+    const workSheet = workBook.addWorksheet('Servicios')
+    workSheet.columns = [
+      { header: '_id', key: '_id' },
+      { header: 'Identificacion Cliente', key: 'identificationClient' },
+      { header: 'Nombre Cliente', key: 'nameClient' },
+      { header: 'Nombre Supermercado', key: 'nameSuperMarket' },
+      { header: 'Dirección', key: 'address' },
+      { header: 'Coordenadas', key: 'coordinates' },
+      { header: 'Productos', key: 'products' },
+      { header: 'Promociones', key: 'promotions' },
+      { header: 'Fecha del servicio', key: 'dateService' },
+      { header: 'Hora del servicio', key: 'hourService' },
+      { header: 'Descripción', key: 'description' },
+      { header: 'Metodo de pago', key: 'methodPayment' },
+      { header: 'Valor', key: 'valuePayment' },
+      { header: 'Referencia de pago', key: 'referenceCode' },
+      { header: 'Estado de pago', key: 'paymentStatus' },
+      { header: 'Estado del pedido', key: 'status' },
+      { header: 'Codigo de cancelación', key: 'codeCancelation' },
+      { header: 'Creditos pagados', key: 'credits' },
+      { header: 'Fecha de creación', key: 'dateCreate' }
+    ]
+    if (orders.length > 0) {
+      for (const object of orders) {
+        let data = {
+          _id: object._id,
+          identificationClient: object.user.identification ? object.user.identification : 'N/A',
+          nameClient: object.user.name ? object.user.name : 'N/A',
+          nameSuperMarket: object.superMarket.name,
+          address: object.direction.address,
+          coordinates: `${object.direction.location.coordinates[0]}, ${object.direction.location.coordinates[1]}`,
+          products: object.products.length > 0 ? await this.formatProductsForExcel(object.products) : 'N/A',
+          promotions: object.promotions.length > 0 ? await this.formatPromotionsExcel(object.promotions): 'N/A',
+          dateService: moment(object.dateService).format('YYYY-MM-DD'),
+          hourService: object.hour,
+          description: object.description ? object.description : 'N/A',
+          methodPayment: object.methodPayment === 'cash' ? 'Efectivo' : object.methodPayment === 'credit' ? 'Tarjeta de credito' : object.methodPayment === 'PSE' ? 'PSE' : 'Dataphone',
+          valuePayment: object.value,
+          referenceCode: object.referenceCode ? object.referenceCode : 'N/A',
+          paymetStatus: object.paymentStatus === 0 ? 'Pendiente' : object.paymentStatus === 1 ? 'Pago' : object.paymentStatus === 2 ? 'Fallo pago' : 'Fallo por cancelacion',
+          status: object.status === 0 ? 'Pendiente' : object.status === 1 ? 'Aceptado por supermercado' : object.status === 2 ? 'Asignado a supermercado' : object.status === 3  ? 'En Camino' : object.status === 4 ? 'Entregado' : 'Cancelado',
+          codeCancelation: object.codeCancelation ? object.codeCancelation : 'N/A',
+          credits: parseInt(object.credits) > 0 ? object.credits: 'N/A' ,
+          dateCreate: object.dateCreate
+        }
+        workSheet.addRow(data)
+      }
+      await workBook.xlsx.writeFile(`${route}/Servicios.xlsx`)
+      return `${Path.dirname(__dirname)}/public/Servicios.xlsx`
+    } else {
+      await workBook.xlsx.writeFile(`${route}/Servicios.xlsx`)
+      return `${Path.dirname(__dirname)}/public/Servicios.xlsx`
+    }
+  }
+
+  async formatProductsForExcel (products) {
+    let productsString = ''
+    for (const object of products) {
+      productsString += `${object.product.name} / ${object.quantity}, `
+    }
+    return productsString
+  }
+
+  async formatPromotionsExcel (promotions) {
+    let promotionsString = ''
+    for (const object of promotions) {
+      promotionsString += `${object.promotion.name} / ${object.quantity}, `
+    }
+    return promotionsString
   }
 }
 

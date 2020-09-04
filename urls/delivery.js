@@ -55,6 +55,7 @@ routesDeliveryWeb.get('/isimmediate/:isImmediate', isDomiciliary, async (request
   response.json(orders)
 })
 
+
 /**
  * @swagger
  * /web/delivery/detail/{idDelivery}:
@@ -171,6 +172,7 @@ routesDeliveryWeb.put('/:id', isDomiciliary, async (request, response) => {
   const _id = request.params.id
   const data = request.body
   const order = await DeliveryController.edit(_id, data, request.io)
+  console.log(order)
   response.json(order)
 })
 
