@@ -593,7 +593,8 @@ routesOrderServiceWeb.get('/cronjob', async (request, response) => {
 
 routesOrderServiceWeb.get('/report/:dateInit/:dateFinish', isAdminAndIsSuperAdmin, async(request, response) => {
   const file = await OrderServiceController.report(request.User.id, request.User.rol, moment(request.params.dateInit), moment(request.params.dateFinish))
-  response.send(file)
+  // const file = await OrderServiceController.report(11111111, 'superadministrator', moment(request.params.dateInit), moment(request.params.dateFinish))
+  response.download(file)
 })
 
 // routesOrderServiceWeb('/responsepaymentpse', async (request, response) => {
