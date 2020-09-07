@@ -372,7 +372,7 @@ routesProductWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request, resp
  *              example: "Este supermercado no tiene productos"
  */
 
-routesProductApp.get('/forsupermarket/:id/:initquantity/:finishquantity', isClient, async (request, response) => {
+routesProductApp.get('/forsupermarket/:id/:initquantity/:finishquantity', async (request, response) => {
   const idSupermarket = request.params.id
   const initQuantity = request.params.initquantity
   const finishQuantity = request.params.finishquantity
