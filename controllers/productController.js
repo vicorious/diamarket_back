@@ -116,7 +116,7 @@ class Product {
   }
 
   async productsSuperMarkets(idSupermarket, initQuantity, finishQuantity) {
-    const products = await AvailabilityModel.searchByPageMobile({ idSupermarket, isActive: true }, initQuantity, finishQuantity)
+    const products = await AvailabilityModel.searchByPageMobile({ idSupermarket, isActive: true, quantity: {$gte: 0} }, initQuantity, finishQuantity)
     for (const object of products) {
       const category = await CategoryModel.get({ _id: object.idProduct.category })
       delete category._doc.subCategory
@@ -137,7 +137,7 @@ class Product {
     const products = await ProductModel.searchByPageMobile({ category: data.category, subCategory: data.subCategory }, initQuantity, finishQuantity)
     const arrayProducts = []
     for (const product of products) {
-      const productsCategory = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
+      const productsCategory = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true, quantity: {$gte: 0} })
       if (productsCategory._id){
         const category = await CategoryModel.get({ _id: productsCategory.idProduct.category })
         delete category._doc.subCategory
@@ -216,7 +216,7 @@ class Product {
     const countAvailability = await AvailabilityModel.count({})
     const arrayProducts = []
     for (const product of products) {
-      const productsName = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true })
+      const productsName = await AvailabilityModel.get({ idSupermarket: data.idSupermarket, idProduct: product._id, isActive: true, quantity: {$gte: 0} })
       if (productsName._id) {
         arrayProducts.push(productsName)
       }
@@ -233,7 +233,7 @@ class Product {
     const arrayProducts  = []
     let newProducts = []
     for (const product of products) {
-      const productsName = await AvailabilityModel.get({ idSupermarket, idProduct: product._id, isActive: true })
+      const productsName = await AvailabilityModel.get({ idSupermarket, idProduct: product._id, isActive: true, quantity: {$gte: 0} })
       if (productsName._id) {
         arrayProducts.push(productsName)
       }

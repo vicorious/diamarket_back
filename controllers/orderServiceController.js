@@ -599,7 +599,7 @@ class OrderService {
   async cronJob () {
     console.log("CRON JOB EJECUTADO CORRECTAMENTE")
     const currentDate = new Date()
-    const orders = await OrderServiceModel.search({ dateService: { $gte: new Date(currentDate.setHours('01','00','00','00'))}, dateService: { $lte: new Date(currentDate.setHours('23','59','59','59')) }, status: 0 })
+    const orders = await OrderServiceModel.search({$and: [{dateService: { $gte: new Date(currentDate.setHours('01','00','00','00'))}}, {dateService: { $lte: new Date(currentDate.setHours('23','59','59','59')) }}, { status: 0 }]})
     for (const object of orders) {
       // const scheduleSupermarket = await SuperMarketController.schedulesSupermarket(object.superMarket._id)
       // for (const element of scheduleSupermarket) {
@@ -607,14 +607,15 @@ class OrderService {
       //     console.log(element.schedules)
       //   }
       // }
+      console.log(object.hour.split("-")[1].split(" ")[1], object.hour.split("-")[1].split(" ")[2])
       const hourService = await MakeHour(object.hour.split("-")[1].split(" ")[1], object.hour.split("-")[1].split(" ")[2])
       currentDate.setHours(`${hourService.split(':')[0]}`, '00', '00', '00')
-      console.log(parseInt(moment().format('HHmm')))
-      console.log(parseInt(moment(new Date(currentDate)).format('HHmm')))
+      console.log(moment(currentDate).format('HH:mm'), moment().format('HH:mm'))
+      console.log(parseInt(moment().format('HHmm')) > parseInt(moment(currentDate).format('HHmm')))
       if (parseInt(moment().format('HHmm')) > parseInt(moment(new Date(currentDate)).format('HHmm'))) {
         const user = await UserModel.get({ _id: object.user._id })
-        // await NotificationController.messaging({ title: 'DiaMarket', body: 'Tu pedido ha sido cancelado, el supermercado no lo ha aceptado', _id: object._id, status: 5, tokenMessaging: user.tokenCloudingMessagin })
-        // await OrderServiceModel.update(object._id, { status: 5, paymentStatus: 3 })
+        await NotificationController.messaging({ title: 'DiaMarket', body: 'Tu pedido ha sido cancelado, el supermercado no lo ha aceptado', _id: object._id, status: 5, tokenMessaging: user.tokenCloudingMessagin })
+        await OrderServiceModel.update(object._id, { status: 5, paymentStatus: 3 })
       }
     }
     return orders
