@@ -164,7 +164,7 @@ routesOrderServiceWeb.get('/detail/:id', isAdminAndIsSuperAdmin, async (request,
  *              type: string
  *              example: No hay ordenes registradas
  */
-routesOrderServiceWeb.get('/forsupermarket/:isImmediate', isAdmin, async (request, response) => {
+routesOrderServiceWeb.get('/forsupermarket/isImmediate/:isImmediate', isAdmin, async (request, response) => {
   const idAdmin = request.User.id
   if(request.params.isImmediate === 'false'){
     const { _d } = moment().set('date' ,moment().get('date') + 1).set('hours', 00).set('minutes', 00)
@@ -181,6 +181,8 @@ routesOrderServiceWeb.get('/forsupermarket/:isImmediate', isAdmin, async (reques
 routesOrderServiceWeb.get('/forsupermarket/history', isAdmin, async(request, response) => {
   const idAdmin = request.User.id
   const date = moment().set('hours', 00).set('minutes', 00)
+  console.log("-------.--.-.-")
+  console.log(date.format('YYYY-MM-DD HH:mm'))
   const data = await OrderServiceController.forSupermarket({idAdmin}, { dateService: [ {dateService: {$lte: date._d}} ] })
   response.json(data)
 })
