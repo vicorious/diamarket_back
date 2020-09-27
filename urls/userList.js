@@ -180,10 +180,10 @@ routesUserListApp.put('/:id', isClient, async (request, response) => {
  *              type: string
  *              example: 'No se encuentran listas creadas'
  */
-routesUserListApp.get('/', isClient, async (request, response) => {
-  // const supermarket = request.params.supermarket
+routesUserListApp.get('/:supermarket', isClient, async (request, response) => {
+  const supermarket = request.params.supermarket
   const user = request.User.id
-  const list = await UserListController.all({ user })
+  const list = await UserListController.all({ user, supermarket})
   response.json(list)
 })
 
